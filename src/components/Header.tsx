@@ -1,5 +1,3 @@
-
-
 import { Gem, Zap, Plus, MoreVertical } from "lucide-react";
 import {
   DropdownMenu,
@@ -72,7 +70,7 @@ export const Header = () => {
             size="sm" 
             variant="ghost" 
             className="w-4 h-4 p-0 hover:bg-primary/20"
-            onClick={() => navigate('/upgrade')}
+            onClick={() => navigate('/store')}
           >
             <Plus className="w-2.5 h-2.5 text-primary" />
           </Button>
@@ -96,4 +94,3 @@ export const Header = () => {
     </header>
   );
 };
-
