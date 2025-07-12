@@ -11,16 +11,24 @@ const scenarios = {
     { name: "Library", description: "Quiet study sessions and intellectual discussions", image: "/lovable-uploads/50f94529-fde3-4503-a70e-fd535d66b29c.png" }
   ],
   "Kiara": [
-    { name: "Gaming Setup", description: "Level up together in virtual worlds", image: "/lovable-uploads/19b66d34-44b1-4308-ad36-a5bb744b2815.png" },
-    { name: "Coffee Shop", description: "Casual meetups over your favorite brew", image: "/lovable-uploads/19b66d34-44b1-4308-ad36-a5bb744b2815.png" }
+    { name: "Gaming Cafe", description: "Level up together in virtual worlds", image: "/lovable-uploads/dc15c973-9dbe-4e7b-a777-d7a81585ba62.png" },
+    { name: "Gaming Room", description: "Casual meetups over your favorite brew", image: "/lovable-uploads/025face0-1f9c-44c5-9dd5-4ca5ee5020cb.png" }
   ],
   "Luna": [
-    { name: "Mystic Garden", description: "Enchanted conversations under starlight", image: "/lovable-uploads/19b66d34-44b1-4308-ad36-a5bb744b2815.png" },
-    { name: "Moonlit Balcony", description: "Romantic evening chats with city views", image: "/lovable-uploads/19b66d34-44b1-4308-ad36-a5bb744b2815.png" }
+    { name: "Fortune Teller Shop", description: "Enchanted conversations under starlight", image: "/lovable-uploads/4fc5bc2f-3332-4366-b643-7d242a70219f.png" },
+    { name: "Tarot Tent", description: "Romantic evening chats with city views", image: "/lovable-uploads/09630fd7-9981-4183-9829-86e68672db83.png" }
   ],
   "Valentina": [
-    { name: "Dance Studio", description: "Express yourself through movement and rhythm", image: "/lovable-uploads/19b66d34-44b1-4308-ad36-a5bb744b2815.png" },
-    { name: "Rooftop Terrace", description: "Elevated conversations above the city", image: "/lovable-uploads/19b66d34-44b1-4308-ad36-a5bb744b2815.png" }
+    { name: "Dance Studio", description: "Express yourself through movement and rhythm", image: "/lovable-uploads/003d5bde-12bd-4f9c-bb6d-5f6851403243.png" },
+    { name: "Latin Club", description: "Elevated conversations above the city", image: "/lovable-uploads/a9b6decd-ce26-4a00-a92b-4b3e22bfe115.png" }
+  ],
+  "Scarlett": [
+    { name: "CEO Office", description: "Professional conversations in a sophisticated setting", image: "/lovable-uploads/d9ecc33d-d09a-40a7-bfb2-88d8a364fc49.png" },
+    { name: "Hotel Room", description: "Intimate luxury conversations with city views", image: "/lovable-uploads/ee761090-99e3-4139-82ee-c831f51cbddb.png" }
+  ],
+  "Natasha": [
+    { name: "Private Gym", description: "Fitness motivation and wellness conversations", image: "/lovable-uploads/92e25a99-523c-4c8d-a7a9-392d2097a740.png" },
+    { name: "Yoga Studio", description: "Peaceful mindfulness and meditation sessions", image: "/lovable-uploads/caa59d97-289f-4c02-b5a2-4aa74dd9612c.png" }
   ]
 };
 
