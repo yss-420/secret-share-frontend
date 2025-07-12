@@ -7,8 +7,8 @@ import { useToast } from "@/hooks/use-toast";
 
 const scenarios = {
   "Aria": [
-    { name: "Dorm Room", description: "A cozy private space for intimate conversations", image: "/lovable-uploads/19b66d34-44b1-4308-ad36-a5bb744b2815.png" },
-    { name: "Library", description: "Quiet study sessions and intellectual discussions", image: "/lovable-uploads/19b66d34-44b1-4308-ad36-a5bb744b2815.png" }
+    { name: "Dorm Room", description: "A cozy private space for intimate conversations", image: "/lovable-uploads/1eac8510-8e36-4bb1-8c7a-a9f8f8e6eda3.png" },
+    { name: "Library", description: "Quiet study sessions and intellectual discussions", image: "/lovable-uploads/50f94529-fde3-4503-a70e-fd535d66b29c.png" }
   ],
   "Kiara": [
     { name: "Gaming Setup", description: "Level up together in virtual worlds", image: "/lovable-uploads/19b66d34-44b1-4308-ad36-a5bb744b2815.png" },
