@@ -24,7 +24,7 @@ const Index = () => {
       name: "Kiara",
       description: "Playful gamer girl eager for late night adventures",
       points: 980,
-      image: "/lovable-uploads/f6d65e1e-c5f0-4027-ae2f-c4bdb65d30fd.png"
+      image: "/lovable-uploads/fb446c37-8762-4d69-9f23-3a78cc53c8e9.png"
     },
     {
       name: "Luna",
