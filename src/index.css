@@ -90,22 +90,23 @@
 
   /* Custom scrollbar */
   ::-webkit-scrollbar {
-    width: 4px;
+    width: 8px;
   }
   
   ::-webkit-scrollbar-track {
-    @apply bg-black/20;
+    @apply bg-muted;
   }
   
   ::-webkit-scrollbar-thumb {
-    @apply bg-black/60 rounded-lg;
+    background: var(--gradient-primary);
+    @apply rounded-full;
   }
 }
 
 @layer components {
   /* Elegant button variants */
   .btn-premium {
-    @apply relative overflow-hidden rounded-lg px-8 py-3 font-semibold transition-all duration-300;
+    @apply relative overflow-hidden rounded-xl px-8 py-3 font-semibold transition-all duration-300;
     background: var(--gradient-primary);
     box-shadow: var(--shadow-elegant);
   }
@@ -121,7 +122,7 @@
 
   /* Gorgeous card styling */
   .card-premium {
-    @apply relative overflow-hidden rounded-lg border-0 p-0;
+    @apply relative overflow-hidden rounded-2xl border-0 p-0;
     background: var(--gradient-card);
     box-shadow: var(--shadow-card);
     backdrop-filter: blur(20px);
