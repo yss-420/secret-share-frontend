@@ -5,11 +5,13 @@ import { ActionCard } from "@/components/ActionCard";
 import { NavigationBar } from "@/components/NavigationBar";
 import { Header } from "@/components/Header";
 import { useAuth } from "@/contexts/AuthContext";
+import { useDevMode } from "@/hooks/useDevMode";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState('characters');
   const navigate = useNavigate();
   const { user, telegramUser, isLoading, isAuthenticated } = useAuth();
+  const { isDevMode } = useDevMode();
 
   const companions = [
     {
@@ -88,7 +90,9 @@ const Index = () => {
       <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black text-white flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Connecting to Telegram...</p>
+          <p className="text-muted-foreground">
+            {isDevMode ? 'Loading development mode...' : 'Connecting to Telegram...'}
+          </p>
         </div>
       </div>
     );
@@ -101,6 +105,11 @@ const Index = () => {
           <h1 className="text-2xl font-bold mb-4">Access Restricted</h1>
           <p className="text-muted-foreground mb-4">This app can only be accessed through Telegram.</p>
           <p className="text-sm text-muted-foreground">Please open this app from within Telegram.</p>
+          {isDevMode && (
+            <div className="mt-4 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+              <p className="text-yellow-500 text-sm">Development mode detected but authentication failed</p>
+            </div>
+          )}
         </div>
       </div>
     );
@@ -119,7 +128,8 @@ const Index = () => {
               <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-4">
                 <div className="w-1.5 h-1.5 bg-primary rounded-full mr-2" />
                 <span className="text-xs text-primary font-medium">
-                  Welcome, {user.nickname || telegramUser?.first_name}!
+                  Welcome, {user.nickname || user.user_name || 'Developer'}!
+                  {isDevMode && ' (Dev Mode)'}
                 </span>
               </div>
             )}

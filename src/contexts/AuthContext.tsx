@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useTelegramAuth } from '@/hooks/useTelegramAuth';
+import { useDevMode } from '@/hooks/useDevMode';
 import { Tables } from '@/integrations/supabase/types';
 
 type User = Tables<'users'>;
@@ -16,11 +17,22 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const { user: telegramUser, isLoading: telegramLoading, isAuthenticated } = useTelegramAuth();
+  const { user: telegramUser, isLoading: telegramLoading, isAuthenticated: telegramAuthenticated } = useTelegramAuth();
+  const { isDevMode, devUser } = useDevMode();
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Determine if user is authenticated (either via Telegram or dev mode)
+  const isAuthenticated = telegramAuthenticated || isDevMode;
+
   const refreshUser = async () => {
+    // Use dev user in development mode
+    if (isDevMode && devUser) {
+      setUser(devUser as User);
+      setIsLoading(false);
+      return;
+    }
+
     if (!telegramUser?.id) return;
 
     try {
@@ -63,18 +75,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   useEffect(() => {
-    if (telegramLoading) return;
+    if (telegramLoading && !isDevMode) return;
     
-    if (isAuthenticated && telegramUser) {
+    if (isDevMode) {
+      // In dev mode, immediately set dev user
+      refreshUser();
+    } else if (isAuthenticated && telegramUser) {
       refreshUser();
     } else {
       setIsLoading(false);
     }
-  }, [telegramUser, isAuthenticated, telegramLoading]);
+  }, [telegramUser, telegramAuthenticated, telegramLoading, isDevMode]);
 
-  // Set up real-time subscription for user data
+  // Set up real-time subscription for user data (only in production)
   useEffect(() => {
-    if (!user?.telegram_id) return;
+    if (!user?.telegram_id || isDevMode) return;
 
     const channel = supabase
       .channel('user_updates')
@@ -95,14 +110,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [user?.telegram_id]);
+  }, [user?.telegram_id, isDevMode]);
 
   return (
     <AuthContext.Provider value={{
       user,
-      telegramUser,
-      isLoading: isLoading || telegramLoading,
-      isAuthenticated: isAuthenticated && !!user,
+      telegramUser: telegramUser || (isDevMode ? devUser : null),
+      isLoading: isDevMode ? false : (isLoading || telegramLoading),
+      isAuthenticated,
       refreshUser
     }}>
       {children}
