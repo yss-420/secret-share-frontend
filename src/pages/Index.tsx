@@ -5,7 +5,7 @@ import { ActionCard } from "@/components/ActionCard";
 import { NavigationBar } from "@/components/NavigationBar";
 import { Header } from "@/components/Header";
 
-export default function Index() {
+const Index = () => {
   const [activeTab, setActiveTab] = useState('characters');
   const navigate = useNavigate();
 
@@ -142,4 +142,6 @@ export default function Index() {
       />
     </div>
   );
-}
+};
+
+export default Index;
