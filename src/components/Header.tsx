@@ -33,13 +33,12 @@ export const Header = () => {
           <span className="text-xs font-medium text-foreground">0</span>
         </div>
 
-        {/* Combined Energy + Plus button */}
-        <div className="flex items-center space-x-1">
-          <div className="flex items-center space-x-1 bg-accent/15 px-2 py-1 rounded-full">
-            <Zap className="w-3 h-3 text-accent" />
-            <span className="text-xs font-medium text-foreground">50/50</span>
-          </div>
-          <Button size="sm" variant="outline" className="w-7 h-7 p-0 border-primary/30 bg-primary/10 hover:bg-primary/20">
+        {/* Combined Energy + Plus button pill */}
+        <div className="flex items-center space-x-1 bg-accent/15 px-2 py-1 rounded-full border border-accent/20">
+          <Zap className="w-3 h-3 text-accent" />
+          <span className="text-xs font-medium text-foreground">50/50</span>
+          <div className="w-px h-3 bg-white/20 mx-1" />
+          <Button size="sm" variant="ghost" className="w-5 h-5 p-0 hover:bg-primary/20">
             <Plus className="w-3 h-3 text-primary" />
           </Button>
         </div>

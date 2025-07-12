@@ -5,6 +5,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import ScenarioSelection from "./pages/ScenarioSelection";
+import Store from "./pages/Store";
+import Settings from "./pages/Settings";
+import Upgrade from "./pages/Upgrade";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -18,6 +21,9 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/character/:name" element={<ScenarioSelection />} />
+          <Route path="/store" element={<Store />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/upgrade" element={<Upgrade />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

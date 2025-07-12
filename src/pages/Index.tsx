@@ -65,11 +65,20 @@ const Index = () => {
   };
 
   const handleVisitStore = () => {
-    console.log("Visiting store for new characters");
+    navigate('/store');
   };
 
   const handleOpenSettings = () => {
-    console.log("Opening personalization settings");
+    navigate('/settings');
+  };
+
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    if (tab === 'upgrade') {
+      navigate('/upgrade');
+    } else if (tab === 'settings') {
+      navigate('/settings');
+    }
   };
 
   return (
@@ -138,7 +147,7 @@ const Index = () => {
       {/* Navigation */}
       <NavigationBar 
         activeTab={activeTab}
-        onTabChange={setActiveTab}
+        onTabChange={handleTabChange}
       />
     </div>
   );
