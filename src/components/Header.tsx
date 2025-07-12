@@ -1,4 +1,5 @@
 
+
 import { Gem, Zap, Plus, MoreVertical } from "lucide-react";
 import {
   DropdownMenu,
@@ -10,10 +11,13 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserData } from "@/hooks/useUserData";
 import { LoadingSpinner } from "./LoadingSpinner";
+import { useNavigate } from "react-router-dom";
 
 export const Header = () => {
   const { user, telegramUser } = useAuth();
   const { userStats, loading } = useUserData();
+  const navigate = useNavigate();
+
   return (
     <header className="flex items-center justify-between px-4 py-3 bg-white/10 backdrop-blur-xl border-b border-white/20">
       {/* Left side - Profile and Brand */}
@@ -33,11 +37,11 @@ export const Header = () => {
 
       {/* Right side - Combined Stats and Menu */}
       <div className="flex items-center space-x-2">
-        {/* Combined Gems + Energy + Plus button pill */}
-        <div className="flex items-center space-x-2 bg-white/10 px-3 py-1.5 rounded-full border border-white/20">
+        {/* Combined Gems + Energy + Plus button pill (smaller) */}
+        <div className="flex items-center space-x-1.5 bg-white/10 px-2 py-1 rounded-full border border-white/20">
           {/* Gems */}
-          <div className="flex items-center space-x-1">
-            <Gem className="w-3 h-3 text-primary" />
+          <div className="flex items-center space-x-0.5">
+            <Gem className="w-2.5 h-2.5 text-primary" />
             {loading ? (
               <LoadingSpinner size="sm" />
             ) : (
@@ -46,11 +50,11 @@ export const Header = () => {
           </div>
 
           {/* Divider */}
-          <div className="w-px h-3 bg-white/20" />
+          <div className="w-px h-2.5 bg-white/20" />
 
           {/* Energy */}
-          <div className="flex items-center space-x-1">
-            <Zap className="w-3 h-3 text-accent" />
+          <div className="flex items-center space-x-0.5">
+            <Zap className="w-2.5 h-2.5 text-accent" />
             {loading ? (
               <LoadingSpinner size="sm" />
             ) : (
@@ -61,11 +65,16 @@ export const Header = () => {
           </div>
 
           {/* Divider */}
-          <div className="w-px h-3 bg-white/20" />
+          <div className="w-px h-2.5 bg-white/20" />
 
           {/* Plus button */}
-          <Button size="sm" variant="ghost" className="w-5 h-5 p-0 hover:bg-primary/20">
-            <Plus className="w-3 h-3 text-primary" />
+          <Button 
+            size="sm" 
+            variant="ghost" 
+            className="w-4 h-4 p-0 hover:bg-primary/20"
+            onClick={() => navigate('/upgrade')}
+          >
+            <Plus className="w-2.5 h-2.5 text-primary" />
           </Button>
         </div>
 
@@ -87,3 +96,4 @@ export const Header = () => {
     </header>
   );
 };
+
