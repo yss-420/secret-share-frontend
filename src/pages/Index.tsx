@@ -90,7 +90,7 @@ const Index = () => {
             </div>
           </div>
 
-          <h1 className="text-4xl font-bold text-gradient mb-4 leading-tight">
+          <h1 className="text-2xl font-bold text-gradient mb-4 leading-tight">
             Choose Your Companion
           </h1>
           <p className="text-muted-foreground text-lg">
