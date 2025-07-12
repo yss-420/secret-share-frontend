@@ -14,49 +14,49 @@ const Index = () => {
       name: "Aria",
       description: "Sweet college cutie who loves sharing intimate secrets",
       points: 1250,
-      image: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJoc2woMjI1IDE1JSAxNSUpIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iaHNsKDIxMCA0MCUgOTglKSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkFyaWE8L3RleHQ+PC9zdmc+"
+      image: "/lovable-uploads/ed5f65c3-2811-4c61-95f0-bb60d3e98f47.png"
     },
     {
       name: "Kiara",
       description: "Playful gamer girl eager for late night adventures",
       points: 980,
-      image: "https://color-state-95490294.figma.site/_assets/v10/53d3bf1f13b3edbdfa6c5ebde9ccb8c4580055ca.png"
+      image: "/lovable-uploads/fb446c37-8762-4d69-9f23-3a78cc53c8e9.png"
     },
     {
       name: "Luna",
       description: "Enchanting mystic who reads your deepest hidden desires",
       points: 2100,
-      image: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJoc2woMjI1IDE1JSAxNSUpIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iaHNsKDIxMCA0MCUgOTglKSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkx1bmE8L3RleHQ+PC9zdmc+"
+      image: "/lovable-uploads/2a608754-8f81-4213-aedb-d66210e6cf9c.png"
     },
     {
       name: "Valentina",
       description: "Passionate dancer ready to ignite your wildest fantasies",
       points: 1850,
-      image: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=400&h=600&fit=crop&auto=format"
+      image: "/lovable-uploads/5d917985-c59f-4815-9c31-fbc3bb34a88d.png"
     },
     {
       name: "Scarlett",
       description: "Sophisticated executive who takes complete loving control",
       points: 1650,
-      image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&h=600&fit=crop&auto=format"
+      image: "/lovable-uploads/1b525e27-8551-44dc-b558-9c471b9bb00c.png"
     },
     {
       name: "Natasha",
       description: "Fit beauty who'll motivate your most intense workouts",
       points: 1420,
-      image: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJoc2woMjI1IDE1JSAxNSUpIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iaHNsKDIxMCA0MCUgOTglKSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPk5hdGFzaGE8L3RleHQ+PC9zdmc+"
+      image: "/lovable-uploads/a966a842-02ab-4922-a9dd-8ea904e06504.png"
     },
     {
       name: "Isabella",
       description: "Warm Italian goddess who nurtures your every craving",
       points: 1320,
-      image: "https://images.unsplash.com/photo-1500917293891-ef795e70e1f6?w=400&h=600&fit=crop&auto=format"
+      image: "/lovable-uploads/73e08a39-ce3b-4eea-839a-8c962abf7336.png"
     },
     {
       name: "Priyanka",
       description: "Bold adventurous spirit ready to explore forbidden pleasures",
       points: 1150,
-      image: "https://images.unsplash.com/photo-1524250502761-1ac6f2e30d43?w=400&h=600&fit=crop&auto=format"
+      image: "/lovable-uploads/0c5dca49-a71d-43d9-a495-c79a2079aab2.png"
     }
   ];
 
