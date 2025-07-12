@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { CompanionCard } from "@/components/CompanionCard";
 import { ActionCard } from "@/components/ActionCard";
 import { NavigationBar } from "@/components/NavigationBar";
@@ -6,6 +7,7 @@ import { Header } from "@/components/Header";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState('characters');
+  const navigate = useNavigate();
 
   const companions = [
     {
@@ -58,8 +60,8 @@ const Index = () => {
     }
   ];
 
-  const handleStartChat = (companionName: string) => {
-    console.log(`Starting chat with ${companionName}`);
+  const handleCharacterSelect = (companionName: string) => {
+    navigate(`/character/${companionName}`);
   };
 
   const handleVisitStore = () => {
@@ -102,16 +104,16 @@ const Index = () => {
       {/* Companions Grid */}
       <div className="px-4 mb-8">
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-3">
-          {companions.map((companion) => (
-            <CompanionCard
-              key={companion.name}
-              name={companion.name}
-              description={companion.description}
-              points={companion.points}
-              image={companion.image}
-              onStartChat={() => handleStartChat(companion.name)}
-            />
-          ))}
+            {companions.map((companion) => (
+              <CompanionCard
+                key={companion.name}
+                name={companion.name}
+                description={companion.description}
+                points={companion.points}
+                image={companion.image}
+                onClick={() => handleCharacterSelect(companion.name)}
+              />
+            ))}
         </div>
       </div>
 
