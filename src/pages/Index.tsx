@@ -2,6 +2,7 @@ import { useState } from "react";
 import { CompanionCard } from "@/components/CompanionCard";
 import { ActionCard } from "@/components/ActionCard";
 import { NavigationBar } from "@/components/NavigationBar";
+import { Header } from "@/components/Header";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState('characters');
@@ -71,6 +72,8 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background pb-24">
+      <Header />
+      
       {/* Header Section */}
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5" />
@@ -98,7 +101,7 @@ const Index = () => {
 
       {/* Companions Grid */}
       <div className="px-6 mb-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {companions.map((companion) => (
             <CompanionCard
               key={companion.name}
