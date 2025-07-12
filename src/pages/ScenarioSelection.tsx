@@ -2,6 +2,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { openTelegramChat } from "@/utils/telegramDeepLink";
+import { useToast } from "@/hooks/use-toast";
 
 const scenarios = {
   "Aria": [
@@ -25,13 +27,26 @@ const scenarios = {
 export default function ScenarioSelection() {
   const { name } = useParams<{ name: string }>();
   const navigate = useNavigate();
+  const { toast } = useToast();
   
   const characterScenarios = name ? scenarios[name as keyof typeof scenarios] || [] : [];
 
   const handleScenarioSelect = (scenarioName: string) => {
-    // Navigate to chat with character and scenario
-    console.log(`Starting chat with ${name} in ${scenarioName}`);
-    // For now, just log - you can implement chat page later
+    if (!name) return;
+    
+    try {
+      openTelegramChat(name, scenarioName);
+      toast({
+        title: "Opening Telegram Chat",
+        description: `Starting ${scenarioName} scenario with ${name}`,
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to open Telegram chat. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (

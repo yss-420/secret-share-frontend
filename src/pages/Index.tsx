@@ -4,10 +4,12 @@ import { CompanionCard } from "@/components/CompanionCard";
 import { ActionCard } from "@/components/ActionCard";
 import { NavigationBar } from "@/components/NavigationBar";
 import { Header } from "@/components/Header";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState('characters');
   const navigate = useNavigate();
+  const { user, telegramUser, isLoading, isAuthenticated } = useAuth();
 
   const companions = [
     {
@@ -81,6 +83,29 @@ const Index = () => {
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Connecting to Telegram...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black text-white flex items-center justify-center">
+        <div className="text-center px-6">
+          <h1 className="text-2xl font-bold mb-4">Access Restricted</h1>
+          <p className="text-muted-foreground mb-4">This app can only be accessed through Telegram.</p>
+          <p className="text-sm text-muted-foreground">Please open this app from within Telegram.</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background pb-24">
       <Header />
@@ -90,15 +115,14 @@ const Index = () => {
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5" />
         <div className="relative px-4 pt-6 pb-4">
           <div className="text-center mb-2">
-            <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-destructive/10 border border-destructive/20 mb-4">
-              <div className="w-1.5 h-1.5 bg-destructive rounded-full mr-2 animate-pulse" />
-              <span className="text-xs text-destructive font-medium">
-                Using demo data - configure Supabase for real data
-              </span>
-              <button className="ml-2 text-xs text-destructive underline">
-                Retry
-              </button>
-            </div>
+            {user && (
+              <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-4">
+                <div className="w-1.5 h-1.5 bg-primary rounded-full mr-2" />
+                <span className="text-xs text-primary font-medium">
+                  Welcome, {user.nickname || telegramUser?.first_name}!
+                </span>
+              </div>
+            )}
           </div>
 
           <h1 className="text-xl font-bold text-gradient mb-2 leading-tight">
