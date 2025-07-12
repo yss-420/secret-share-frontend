@@ -1,3 +1,4 @@
+
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -29,6 +30,14 @@ const scenarios = {
   "Natasha": [
     { name: "Private Gym", description: "Fitness motivation and wellness conversations", image: "/lovable-uploads/92e25a99-523c-4c8d-a7a9-392d2097a740.png" },
     { name: "Yoga Studio", description: "Peaceful mindfulness and meditation sessions", image: "/lovable-uploads/caa59d97-289f-4c02-b5a2-4aa74dd9612c.png" }
+  ],
+  "Isabella": [
+    { name: "Kitchen", description: "Cozy cooking sessions and intimate culinary conversations", image: "/lovable-uploads/186f6487-1060-44c9-9cd4-76948d7d3a62.png" },
+    { name: "Wine Cellar", description: "Sophisticated tastings and deep conversations", image: "/lovable-uploads/8fb8fa40-1f8c-4100-85cf-70ab6d503156.png" }
+  ],
+  "Priyanka": [
+    { name: "Chai Stall", description: "Authentic street-side conversations over warm chai", image: "/lovable-uploads/eb059d9a-7465-4767-b164-2994a6e730e3.png" },
+    { name: "Wedding Hall", description: "Celebrate life's beautiful moments together", image: "/lovable-uploads/6392af8b-95ef-405a-99b3-27c2b6394070.png" }
   ]
 };
 
