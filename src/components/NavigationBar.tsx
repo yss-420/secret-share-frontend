@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { useNavigate, useLocation } from "react-router-dom";
 
 interface NavigationBarProps {
   activeTab: string;
@@ -7,27 +6,10 @@ interface NavigationBarProps {
 }
 
 export const NavigationBar = ({ activeTab, onTabChange }: NavigationBarProps) => {
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const getCurrentTab = () => {
-    switch (location.pathname) {
-      case '/':
-        return 'characters';
-      case '/store':
-        return 'upgrade';
-      case '/settings':
-        return 'settings';
-      default:
-        return activeTab;
-    }
-  };
-
-  const currentTab = getCurrentTab();
   const tabs = [
-    { id: 'characters', label: 'Characters', route: '/' },
-    { id: 'upgrade', label: 'Store', route: '/store' },
-    { id: 'settings', label: 'Settings', route: '/settings' }
+    { id: 'characters', label: 'Characters' },
+    { id: 'upgrade', label: 'Upgrade' },
+    { id: 'settings', label: 'Settings' }
   ];
 
   return (
@@ -36,16 +18,13 @@ export const NavigationBar = ({ activeTab, onTabChange }: NavigationBarProps) =>
         {tabs.map((tab) => (
           <Button
             key={tab.id}
-            variant={currentTab === tab.id ? "premium" : "ghost"}
+            variant={activeTab === tab.id ? "premium" : "ghost"}
             size="sm"
-            onClick={() => {
-              onTabChange(tab.id);
-              navigate(tab.route);
-            }}
-            className={`relative ${currentTab === tab.id ? '' : 'text-muted-foreground hover:text-foreground'}`}
+            onClick={() => onTabChange(tab.id)}
+            className={`relative ${activeTab === tab.id ? '' : 'text-muted-foreground hover:text-foreground'}`}
           >
             {tab.label}
-            {currentTab === tab.id && (
+            {activeTab === tab.id && (
               <div className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 w-1 h-1 rounded-full bg-gradient-to-r from-primary to-accent" />
             )}
           </Button>
