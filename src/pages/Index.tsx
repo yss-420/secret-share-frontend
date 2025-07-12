@@ -42,7 +42,7 @@ const Index = () => {
       name: "Scarlett",
       description: "Sophisticated executive who takes complete loving control",
       points: 1650,
-      image: "/lovable-uploads/1b525e27-8551-44dc-b558-9c471b9bb00c.png"
+      image: "/lovable-uploads/7498a4ea-b6a7-49c8-b5fa-8ea86186b887.png"
     },
     {
       name: "Natasha",

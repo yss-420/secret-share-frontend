@@ -15,11 +15,11 @@ export const CompanionCard = ({ name, description, points, image, onClick }: Com
       className="card-premium transition-smooth group overflow-hidden cursor-pointer rounded-lg"
       onClick={onClick}
     >
-      <div className="relative aspect-[4/5] overflow-hidden">
+      <div className="relative aspect-[4/5] overflow-hidden bg-muted/30 flex items-center justify-center">
         <img 
           src={image}
           alt={name}
-          className="w-full h-full object-cover transition-smooth group-hover:scale-105 rounded-t-lg"
+          className="w-full h-full object-contain transition-smooth rounded-t-lg"
           onError={(e) => {
             e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjI1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJoc2woMjI1IDE1JSAxNSUpIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMiIgZmlsbD0iaHNsKDIxMCA0MCUgOTglKSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
           }}
