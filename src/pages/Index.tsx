@@ -77,12 +77,12 @@ const Index = () => {
       {/* Header Section */}
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5" />
-        <div className="relative px-6 pt-12 pb-8">
+        <div className="relative px-4 pt-6 pb-4">
           <div className="text-center mb-2">
-            <div className="inline-flex items-center px-4 py-2 rounded-full bg-destructive/10 border border-destructive/20 mb-6">
-              <div className="w-2 h-2 bg-destructive rounded-full mr-2 animate-pulse" />
-              <span className="text-sm text-destructive font-medium">
-                Using demo data - configure Supabase for real data Using offline data.
+            <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-destructive/10 border border-destructive/20 mb-4">
+              <div className="w-1.5 h-1.5 bg-destructive rounded-full mr-2 animate-pulse" />
+              <span className="text-xs text-destructive font-medium">
+                Using demo data - configure Supabase for real data
               </span>
               <button className="ml-2 text-xs text-destructive underline">
                 Retry
@@ -90,18 +90,18 @@ const Index = () => {
             </div>
           </div>
 
-          <h1 className="text-2xl font-bold text-gradient mb-4 leading-tight">
+          <h1 className="text-xl font-bold text-gradient mb-2 leading-tight">
             Choose Your Companion
           </h1>
-          <p className="text-muted-foreground text-lg">
+          <p className="text-muted-foreground text-sm">
             {companions.length} characters available for intimate conversations
           </p>
         </div>
       </div>
 
       {/* Companions Grid */}
-      <div className="px-6 mb-12">
-        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="px-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-3">
           {companions.map((companion) => (
             <CompanionCard
               key={companion.name}
@@ -116,8 +116,8 @@ const Index = () => {
       </div>
 
       {/* Action Cards Section */}
-      <div className="px-6 mb-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+      <div className="px-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
           <ActionCard
             title="Discover New Characters"
             description="More companions are being added regularly"
