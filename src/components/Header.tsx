@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 
 export const Header = () => {
   return (
-    <header className="flex items-center justify-between px-4 py-3 bg-card/30 backdrop-blur-sm border-b border-border/50">
+    <header className="flex items-center justify-between px-4 py-3 bg-white/10 backdrop-blur-xl border-b border-white/20">
       {/* Left side - Profile and Brand */}
       <div className="flex items-center space-x-2">
         <div className="w-8 h-8 rounded-full overflow-hidden border border-primary/30">
@@ -33,16 +33,16 @@ export const Header = () => {
           <span className="text-xs font-medium text-foreground">0</span>
         </div>
 
-        {/* Energy */}
-        <div className="flex items-center space-x-1 bg-accent/15 px-2 py-1 rounded-full">
-          <Zap className="w-3 h-3 text-accent" />
-          <span className="text-xs font-medium text-foreground">100/50</span>
+        {/* Combined Energy + Plus button */}
+        <div className="flex items-center space-x-1">
+          <div className="flex items-center space-x-1 bg-accent/15 px-2 py-1 rounded-full">
+            <Zap className="w-3 h-3 text-accent" />
+            <span className="text-xs font-medium text-foreground">50/50</span>
+          </div>
+          <Button size="sm" variant="outline" className="w-7 h-7 p-0 border-primary/30 bg-primary/10 hover:bg-primary/20">
+            <Plus className="w-3 h-3 text-primary" />
+          </Button>
         </div>
-
-        {/* Plus button */}
-        <Button size="sm" variant="outline" className="w-7 h-7 p-0 border-border/50">
-          <Plus className="w-3 h-3" />
-        </Button>
 
         {/* Menu dropdown */}
         <DropdownMenu>
