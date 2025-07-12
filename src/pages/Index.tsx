@@ -54,7 +54,7 @@ const Index = () => {
       name: "Isabella",
       description: "Warm Italian goddess who nurtures your every craving",
       points: 1320,
-      image: "/lovable-uploads/fea78758-5300-40da-beac-30d7c42cdd19.png"
+      image: "/lovable-uploads/cf3cd7ac-d0a8-4d28-8cee-c3f7b9207c26.png"
     },
     {
       name: "Priyanka",
