@@ -1,11 +1,30 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Header } from "@/components/Header";
+import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { ArrowLeft, Star, Crown, Sparkles, Check } from "lucide-react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "@/hooks/use-toast";
 
 const Upgrade = () => {
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  const handleSubscribe = async (planName: string) => {
+    setLoading(true);
+    
+    // Simulate subscription process
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    toast({
+      title: "Subscription Started!",
+      description: `Welcome to ${planName}! Your free trial has begun.`,
+    });
+    
+    setLoading(false);
+    // TODO: Integrate with actual payment processor
+  };
 
   const plans = [
     {
@@ -120,8 +139,10 @@ const Upgrade = () => {
                   variant={plan.popular ? "premium" : "elegant"} 
                   size="lg" 
                   className="w-full"
+                  onClick={() => handleSubscribe(plan.name)}
+                  disabled={loading}
                 >
-                  Start Free Trial
+                  {loading ? <LoadingSpinner size="sm" /> : "Start Free Trial"}
                 </Button>
               </Card>
             );

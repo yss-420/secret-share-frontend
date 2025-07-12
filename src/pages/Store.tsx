@@ -2,13 +2,41 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Header } from "@/components/Header";
 import { NavigationBar } from "@/components/NavigationBar";
+import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { Gem, Crown, Gift, ArrowLeft } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useUserData } from "@/hooks/useUserData";
+import { apiService } from "@/services/api";
 
 const Store = () => {
   const [activeTab, setActiveTab] = useState('characters');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { updateGems } = useUserData();
+
+  const handleGemPurchase = async (gemPackage: typeof gemPackages[0]) => {
+    setLoading(true);
+    const success = await apiService.purchaseGems({
+      gems: gemPackage.gems,
+      price: gemPackage.price,
+      package_type: gemPackage.popular ? 'popular' : 'standard'
+    });
+    
+    if (success) {
+      updateGems(gemPackage.gems);
+    }
+    setLoading(false);
+  };
+
+  const handleDailyReward = async () => {
+    setLoading(true);
+    const success = await apiService.claimDailyReward('dev-user-123'); // TODO: Use real user ID
+    if (success) {
+      updateGems(10);
+    }
+    setLoading(false);
+  };
 
   const gemPackages = [
     { gems: 85, price: "$0.99", color: "from-blue-500 to-blue-600", popular: false },
@@ -49,8 +77,14 @@ const Store = () => {
               </div>
               <div className="text-lg font-bold text-foreground mb-1">{pkg.gems.toLocaleString()}</div>
               <div className="text-xs text-muted-foreground mb-3">Gems</div>
-              <Button variant="elegant" size="sm" className="w-full">
-                {pkg.price}
+              <Button 
+                variant="elegant" 
+                size="sm" 
+                className="w-full" 
+                onClick={() => handleGemPurchase(pkg)}
+                disabled={loading}
+              >
+                {loading ? <LoadingSpinner size="sm" /> : pkg.price}
               </Button>
             </Card>
           ))}
@@ -90,8 +124,13 @@ const Store = () => {
                 <p className="text-xs text-muted-foreground">Claim your free gems every day</p>
               </div>
             </div>
-            <Button variant="elegant" size="sm">
-              Claim
+            <Button 
+              variant="elegant" 
+              size="sm" 
+              onClick={handleDailyReward}
+              disabled={loading}
+            >
+              {loading ? <LoadingSpinner size="sm" /> : "Claim"}
             </Button>
           </div>
         </Card>

@@ -7,9 +7,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
+import { useUserData } from "@/hooks/useUserData";
+import { LoadingSpinner } from "./LoadingSpinner";
 
 export const Header = () => {
   const { user, telegramUser } = useAuth();
+  const { userStats, loading } = useUserData();
   return (
     <header className="flex items-center justify-between px-4 py-3 bg-white/10 backdrop-blur-xl border-b border-white/20">
       {/* Left side - Profile and Brand */}
@@ -32,13 +35,23 @@ export const Header = () => {
         {/* Gems */}
         <div className="flex items-center space-x-1 bg-primary/15 px-2 py-1 rounded-full">
           <Gem className="w-3 h-3 text-primary" />
-          <span className="text-xs font-medium text-foreground">{user?.gems || 0}</span>
+          {loading ? (
+            <LoadingSpinner size="sm" />
+          ) : (
+            <span className="text-xs font-medium text-foreground">{userStats?.gems || 0}</span>
+          )}
         </div>
 
         {/* Combined Energy + Plus button pill */}
         <div className="flex items-center space-x-1 bg-accent/15 px-2 py-1 rounded-full border border-accent/20">
           <Zap className="w-3 h-3 text-accent" />
-          <span className="text-xs font-medium text-foreground">{user?.messages_today || 0}/10</span>
+          {loading ? (
+            <LoadingSpinner size="sm" />
+          ) : (
+            <span className="text-xs font-medium text-foreground">
+              {userStats?.messages_today || 0}/{userStats?.tier === 'premium' ? '∞' : '10'}
+            </span>
+          )}
           <div className="w-px h-3 bg-white/20 mx-1" />
           <Button size="sm" variant="ghost" className="w-5 h-5 p-0 hover:bg-primary/20">
             <Plus className="w-3 h-3 text-primary" />
