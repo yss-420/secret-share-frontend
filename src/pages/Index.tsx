@@ -30,7 +30,7 @@ const Index = () => {
       name: "Luna",
       description: "Enchanting mystic who reads your deepest hidden desires",
       points: 2100,
-      image: "/lovable-uploads/2a608754-8f81-4213-aedb-d66210e6cf9c.png"
+      image: "/lovable-uploads/f4cb3191-0f77-4b97-9c96-65a954a5dec7.png"
     },
     {
       name: "Valentina",
