@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
@@ -69,11 +68,11 @@ const Settings = () => {
       <Header />
       
       {/* Header with back button */}
-      <div className="flex items-center px-4 py-4 border-b border-white/10">
+      <div className="flex items-center px-4 py-3">
         <Button variant="ghost" size="sm" onClick={() => navigate('/')}>
           <ArrowLeft className="w-4 h-4" />
         </Button>
-        <h1 className="text-xl font-bold text-gradient ml-3">Settings</h1>
+        <h1 className="text-base font-semibold text-gradient ml-3">Settings</h1>
       </div>
 
       <div className="px-4 py-6 space-y-6">
