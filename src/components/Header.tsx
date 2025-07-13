@@ -1,3 +1,4 @@
+
 import { Gem, Zap, Plus, MoreVertical } from "lucide-react";
 import {
   DropdownMenu,
@@ -17,7 +18,7 @@ export const Header = () => {
   const navigate = useNavigate();
 
   return (
-    <header className="flex items-center justify-between px-4 py-3 bg-white/10 backdrop-blur-xl border-b border-white/20">
+    <header className="flex items-center justify-between px-4 py-3 bg-background border-b border-white/20">
       {/* Left side - Profile and Brand */}
       <div className="flex items-center space-x-3">
         <div className="w-8 h-8 rounded-full overflow-hidden border border-primary/30">
@@ -39,7 +40,7 @@ export const Header = () => {
         <div className="flex items-center space-x-1.5 bg-white/10 px-2 py-1 rounded-full border border-white/20">
           {/* Gems */}
           <div className="flex items-center space-x-0.5">
-            <Gem className="w-2.5 h-2.5 text-primary" />
+            <Gem className="w-2.5 h-2.5 text-blue-500" />
             {loading ? (
               <LoadingSpinner size="sm" />
             ) : (
@@ -52,7 +53,7 @@ export const Header = () => {
 
           {/* Energy */}
           <div className="flex items-center space-x-0.5">
-            <Zap className="w-2.5 h-2.5 text-accent" />
+            <Zap className="w-2.5 h-2.5 text-yellow-500" />
             {loading ? (
               <LoadingSpinner size="sm" />
             ) : (
