@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
@@ -57,7 +58,7 @@ const Settings = () => {
     if (tab === 'characters') {
       navigate('/');
     } else if (tab === 'upgrade') {
-      navigate('/upgrade');
+      navigate('/store');
     } else if (tab === 'settings') {
       navigate('/settings');
     }
@@ -94,7 +95,7 @@ const Settings = () => {
                   </div>
                 </div>
               </div>
-              <Button variant="premium" size="sm" onClick={() => navigate('/upgrade')}>
+              <Button variant="premium" size="sm" onClick={() => navigate('/store')}>
                 Upgrade
               </Button>
             </div>

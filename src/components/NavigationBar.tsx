@@ -14,6 +14,15 @@ export const NavigationBar = ({ activeTab, onTabChange }: NavigationBarProps) =>
     { id: 'settings', label: 'Settings', icon: Settings }
   ];
 
+  const handleTabClick = (tabId: string) => {
+    if (tabId === 'upgrade') {
+      // Navigate to the unified store page instead of upgrade
+      window.location.href = '/store';
+    } else {
+      onTabChange(tabId);
+    }
+  };
+
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 bg-white/5 backdrop-blur-xl border-t border-white/10">
       <div className="flex items-center justify-around py-3 px-6 max-w-md mx-auto">
@@ -25,7 +34,7 @@ export const NavigationBar = ({ activeTab, onTabChange }: NavigationBarProps) =>
               key={tab.id}
               variant="ghost"
               size="sm"
-              onClick={() => onTabChange(tab.id)}
+              onClick={() => handleTabClick(tab.id)}
               className={`relative flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-all ${
                 isActive 
                   ? 'text-primary' 
