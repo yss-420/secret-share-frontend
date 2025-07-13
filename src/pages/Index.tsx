@@ -28,7 +28,7 @@ const Index = () => {
     },
     {
       name: "Luna",
-      description: "Mysterious fortune teller with fate between her legs",
+      description: "Mysterious Psychic with fate between her legs",
       points: 2100,
       image: "/lovable-uploads/f4cb3191-0f77-4b97-9c96-65a954a5dec7.png"
     },
@@ -58,7 +58,7 @@ const Index = () => {
     },
     {
       name: "Priyanka",
-      description: "Witty, wild, and waiting desi girl",
+      description: "Witty, wild, and waiting Desi girl",
       points: 1150,
       image: "/lovable-uploads/0c5dca49-a71d-43d9-a495-c79a2079aab2.png"
     }
