@@ -1,11 +1,5 @@
 
-import { Gem, Zap, Plus, MoreVertical } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { Gem, Zap, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserData } from "@/hooks/useUserData";
@@ -34,9 +28,9 @@ export const Header = () => {
         </div>
       </div>
 
-      {/* Right side - Combined Stats and Menu */}
+      {/* Right side - Combined Stats and Plus button */}
       <div className="flex items-center space-x-2">
-        {/* Combined Gems + Energy + Plus button pill (smaller) */}
+        {/* Combined Gems + Energy + Plus button pill */}
         <div className="flex items-center space-x-1.5 bg-white/10 px-2 py-1 rounded-full border border-white/20">
           {/* Gems */}
           <div className="flex items-center space-x-0.5">
@@ -76,21 +70,6 @@ export const Header = () => {
             <Plus className="w-2.5 h-2.5 text-primary" />
           </Button>
         </div>
-
-        {/* Menu dropdown */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="w-7 h-7 p-0">
-              <MoreVertical className="w-3 h-3" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-48">
-            <DropdownMenuItem>Purchase History</DropdownMenuItem>
-            <DropdownMenuItem>Restore Purchase</DropdownMenuItem>
-            <DropdownMenuItem>Contact Support</DropdownMenuItem>
-            <DropdownMenuItem>Billing Settings</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
       </div>
     </header>
   );

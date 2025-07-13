@@ -185,8 +185,8 @@ const Store = () => {
                 <Card key={pkg.gems} className="card-premium transition-smooth group p-4 text-center relative">
                   {pkg.popular && (
                     <div className="absolute -top-2 left-1/2 transform -translate-x-1/2">
-                      <div className="bg-orange-500 px-3 py-1 rounded-full text-xs font-bold text-white">
-                        Most Popular
+                      <div className="bg-orange-500 px-2 py-0.5 rounded-full text-xs font-medium text-white">
+                        Popular
                       </div>
                     </div>
                   )}
