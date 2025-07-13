@@ -28,13 +28,13 @@ const Index = () => {
     },
     {
       name: "Luna",
-      description: "Mysterious fortune teller who knows your deepest desires",
+      description: "Mysterious fortune teller with fate between her legs",
       points: 2100,
       image: "/lovable-uploads/f4cb3191-0f77-4b97-9c96-65a954a5dec7.png"
     },
     {
       name: "Valentina",
-      description: "Passionate and flexible Spanish dance instructor",
+      description: "Passionate and flexible Spanish dancer",
       points: 1850,
       image: "/lovable-uploads/5d917985-c59f-4815-9c31-fbc3bb34a88d.png"
     },
@@ -46,7 +46,7 @@ const Index = () => {
     },
     {
       name: "Natasha",
-      description: "Demanding fit beauty who is extemely submissive",
+      description: "Demanding yet submissive fitness freak",
       points: 1420,
       image: "/lovable-uploads/a966a842-02ab-4922-a9dd-8ea904e06504.png"
     },
@@ -58,7 +58,7 @@ const Index = () => {
     },
     {
       name: "Priyanka",
-      description: "Desi girl ready to explore forbidden fantasies",
+      description: "Witty, wild, and waiting desi girl",
       points: 1150,
       image: "/lovable-uploads/0c5dca49-a71d-43d9-a495-c79a2079aab2.png"
     }
