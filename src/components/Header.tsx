@@ -29,7 +29,7 @@ export const Header = () => {
         </div>
         <div>
           <h1 className="text-sm font-semibold text-foreground">Secret Share</h1>
-          <p className="text-xs text-muted-foreground">AI Chat Platform</p>
+          <p className="text-xs text-muted-foreground">Your AI Companion</p>
         </div>
       </div>
 
