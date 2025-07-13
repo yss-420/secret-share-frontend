@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CompanionCard } from "@/components/CompanionCard";
@@ -107,7 +108,7 @@ const Index = () => {
             )}
           </div>
 
-          <h1 className="text-xl font-bold text-gradient mb-2 leading-tight">
+          <h1 className="text-xl font-bold text-white mb-2 leading-tight">
             Choose Your Companion
           </h1>
           <p className="text-muted-foreground text-sm">

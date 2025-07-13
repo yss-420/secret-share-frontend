@@ -1,8 +1,9 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Glassmorphism Design System - Clean & Modern */
+/* Glassmorphism Design System - Purple/Pink Theme */
 
 @layer base {
   :root {
@@ -18,10 +19,10 @@
     --popover: 215 28% 12%;
     --popover-foreground: 210 40% 98%;
 
-    /* Clean blue primary colors */
-    --primary: 220 70% 50%;
+    /* Purple/Pink primary colors */
+    --primary: 270 70% 60%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 220 60% 70%;
+    --primary-glow: 270 60% 70%;
 
     /* Dark secondary palette */
     --secondary: 215 28% 16%;
@@ -31,8 +32,8 @@
     --muted: 215 28% 16%;
     --muted-foreground: 210 20% 66%;
 
-    /* Soft accent colors */
-    --accent: 180 60% 60%;
+    /* Pink accent colors */
+    --accent: 320 60% 65%;
     --accent-foreground: 0 0% 100%;
 
     /* Warning colors */
@@ -42,10 +43,10 @@
     /* Dark glass borders and inputs */
     --border: 210 40% 20%;
     --input: 215 28% 12%;
-    --ring: 220 70% 50%;
+    --ring: 270 70% 60%;
 
-    /* Dark glassmorphism design tokens */
-    --gradient-primary: linear-gradient(135deg, hsl(220 70% 50%) 0%, hsl(180 60% 60%) 100%);
+    /* Purple/Pink glassmorphism design tokens */
+    --gradient-primary: linear-gradient(135deg, hsl(270 70% 60%) 0%, hsl(320 60% 65%) 100%);
     --gradient-glass: linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
     --gradient-hero: linear-gradient(180deg, hsl(215 28% 8%) 0%, hsl(215 30% 12%) 100%);
     --shadow-glass: 0 4px 30px rgba(0, 0, 0, 0.3);
@@ -55,19 +56,12 @@
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
@@ -138,12 +132,3 @@
   .transition-smooth {
     transition: all 0.3s cubic-bezier(0.23, 1, 0.320, 1);
   }
-  
-  /* Clean typography */
-  .text-gradient {
-    background: var(--gradient-primary);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-}

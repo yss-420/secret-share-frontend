@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
@@ -17,7 +18,7 @@ export const ActionCard = ({ title, description, buttonText, onAction }: ActionC
         </div>
       </div>
       
-      <h3 className="text-xl font-bold text-gradient mb-3">{title}</h3>
+      <h3 className="text-xl font-bold text-white mb-3">{title}</h3>
       <p className="text-muted-foreground text-sm leading-relaxed mb-6">
         {description}
       </p>

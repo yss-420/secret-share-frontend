@@ -1,3 +1,4 @@
+
 import { Card } from "@/components/ui/card";
 import { Users } from "lucide-react";
 
@@ -34,7 +35,7 @@ export const CompanionCard = ({ name, description, points, image, onClick }: Com
       </div>
       
       <div className="p-3">
-        <h3 className="text-sm font-bold text-gradient mb-1.5 line-clamp-1">{name}</h3>
+        <h3 className="text-sm font-bold text-white mb-1.5 line-clamp-1">{name}</h3>
         <p className="text-muted-foreground text-xs leading-relaxed line-clamp-2">
           {description}
         </p>

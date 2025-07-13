@@ -207,6 +207,7 @@ export type Database = {
           last_seen: string | null
           messages_today: number | null
           nickname: string | null
+          session_data: Json | null
           subscription_end: string | null
           subscription_type: string | null
           telegram_id: number
@@ -228,6 +229,7 @@ export type Database = {
           last_seen?: string | null
           messages_today?: number | null
           nickname?: string | null
+          session_data?: Json | null
           subscription_end?: string | null
           subscription_type?: string | null
           telegram_id: number
@@ -249,6 +251,7 @@ export type Database = {
           last_seen?: string | null
           messages_today?: number | null
           nickname?: string | null
+          session_data?: Json | null
           subscription_end?: string | null
           subscription_type?: string | null
           telegram_id?: number
@@ -309,6 +312,67 @@ export type Database = {
           },
         ]
       }
+      voice_calls: {
+        Row: {
+          agent_id: string
+          call_id: string
+          created_at: string | null
+          duration_minutes: number
+          gem_cost: number
+          id: number
+          phone_number: string
+          status: string
+          updated_at: string | null
+          user_id: number
+        }
+        Insert: {
+          agent_id: string
+          call_id: string
+          created_at?: string | null
+          duration_minutes?: number
+          gem_cost?: number
+          id?: number
+          phone_number: string
+          status?: string
+          updated_at?: string | null
+          user_id: number
+        }
+        Update: {
+          agent_id?: string
+          call_id?: string
+          created_at?: string | null
+          duration_minutes?: number
+          gem_cost?: number
+          id?: number
+          phone_number?: string
+          status?: string
+          updated_at?: string | null
+          user_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_voice_calls_user_id"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "conversations_view"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "fk_voice_calls_user_id"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["telegram_id"]
+          },
+          {
+            foreignKeyName: "fk_voice_calls_user_id"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "voice_call_analytics"
+            referencedColumns: ["telegram_id"]
+          },
+        ]
+      }
     }
     Views: {
       conversations_view: {
@@ -322,10 +386,49 @@ export type Database = {
         }
         Relationships: []
       }
+      session_analytics: {
+        Row: {
+          avg_hours_since_last_seen: number | null
+          total_users: number | null
+          users_with_sessions: number | null
+        }
+        Relationships: []
+      }
+      voice_call_analytics: {
+        Row: {
+          avg_call_duration: number | null
+          last_call_date: string | null
+          telegram_id: number | null
+          total_calls: number | null
+          total_duration_minutes: number | null
+          total_gems_spent: number | null
+          user_name: string | null
+          username: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
+      cleanup_old_sessions: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       increment_user_messages: {
         Args: { p_user_id: number }
+        Returns: undefined
+      }
+      log_voice_call: {
+        Args: {
+          p_user_id: number
+          p_call_id: string
+          p_agent_id: string
+          p_phone_number: string
+          p_gem_cost?: number
+        }
+        Returns: undefined
+      }
+      update_call_duration: {
+        Args: { p_call_id: string; p_duration_minutes: number }
         Returns: undefined
       }
     }
