@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CompanionCard } from "@/components/CompanionCard";
-import { ActionCard } from "@/components/ActionCard";
 import { NavigationBar } from "@/components/NavigationBar";
 import { Header } from "@/components/Header";
 import { useAuth } from "@/contexts/AuthContext";
@@ -69,14 +68,6 @@ const Index = () => {
     navigate(`/character/${companionName}`);
   };
 
-  const handleVisitStore = () => {
-    navigate('/store');
-  };
-
-  const handleOpenSettings = () => {
-    navigate('/settings');
-  };
-
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
     if (tab === 'upgrade') {
@@ -85,8 +76,6 @@ const Index = () => {
       navigate('/settings');
     }
   };
-
-  // Removed authentication restriction - app is now fully accessible
 
   return (
     <div className="min-h-screen bg-background pb-24">
@@ -130,24 +119,6 @@ const Index = () => {
                 onClick={() => handleCharacterSelect(companion.name)}
               />
             ))}
-        </div>
-      </div>
-
-      {/* Action Cards Section */}
-      <div className="px-4 mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
-          <ActionCard
-            title="Discover New Characters"
-            description="More companions are being added regularly"
-            buttonText="Visit Store"
-            onAction={handleVisitStore}
-          />
-          <ActionCard
-            title="Personalize Experience"
-            description="Customize your chat preferences and style"
-            buttonText="Open Settings"
-            onAction={handleOpenSettings}
-          />
         </div>
       </div>
 
