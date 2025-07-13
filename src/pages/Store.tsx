@@ -46,12 +46,14 @@ const Store = () => {
   };
 
   const gemPackages = [
-    { gems: 85, price: "$10.00", color: "from-blue-500 to-blue-600", popular: false },
-    { gems: 210, price: "$21.00", color: "from-green-500 to-green-600", popular: false },
-    { gems: 540, price: "$45.00", color: "from-purple-500 to-purple-600", popular: true },
-    { gems: 1360, price: "$95.00", color: "from-orange-500 to-orange-600", popular: false },
-    { gems: 2720, price: "$160.00", color: "from-pink-500 to-pink-600", popular: false },
-    { gems: 5000, price: "$225.00", color: "from-red-500 to-red-600", popular: false },
+    { gems: 75, price: "$4.99", color: "from-blue-500 to-blue-600", popular: false },
+    { gems: 180, price: "$9.99", color: "from-green-500 to-green-600", popular: false },
+    { gems: 400, price: "$19.99", color: "from-purple-500 to-purple-600", popular: false },
+    { gems: 650, price: "$29.99", color: "from-orange-500 to-orange-600", popular: false },
+    { gems: 1100, price: "$49.99", color: "from-pink-500 to-pink-600", popular: true },
+    { gems: 2600, price: "$99.99", color: "from-red-500 to-red-600", popular: false },
+    { gems: 4200, price: "$149.99", color: "from-yellow-500 to-yellow-600", popular: false },
+    { gems: 8500, price: "$249.99", color: "from-indigo-500 to-indigo-600", popular: false },
   ];
 
   const subscriptionPlans = [
@@ -62,25 +64,26 @@ const Store = () => {
       icon: Star,
       color: "from-blue-500 to-blue-600",
       features: [
-        "Unlimited conversations",
-        "Premium characters",
-        "Ad-free experience",
-        "Priority support"
+        "**450 Monthly Gems**",
+        "Est. Value: 🎙️ 15+ Voice Notes or 📞 10+ Call Mins or 🎬 5+ Videos",
+        "Unlimited Conversations",
+        "Ad-Free Experience",
+        "Priority Support"
       ]
     },
     {
-      name: "Pro",
+      name: "Plus",
       price: "$19.99",
       period: "/month",
       icon: Crown,
       color: "from-purple-500 to-purple-600",
       popular: true,
       features: [
+        "**1,200 Monthly Gems**",
+        "Est. Value: 🎙️ 40+ Voice Notes or 📞 25+ Call Mins or 🎬 15+ Videos",
         "Everything in Essential",
-        "Exclusive content",
-        "Advanced AI responses",
-        "Custom character creation",
-        "Voice messages"
+        "Media Priority Queue",
+        "Enhanced Media Quality"
       ]
     },
     {
@@ -90,12 +93,12 @@ const Store = () => {
       icon: Sparkles,
       color: "from-yellow-500 to-yellow-600",
       features: [
-        "Everything in Pro",
-        "VIP-only characters",
-        "Unlimited gems",
-        "Priority new features",
-        "Personal assistant",
-        "Custom scenarios"
+        "**2,500 Monthly Gems**",
+        "Est. Value: 🎙️ 85+ Voice Notes or 📞 50+ Call Mins or 🎬 30+ Videos",
+        "Everything in Plus",
+        "Ultimate Priority Queue",
+        "Early Access to New Characters",
+        "Priority Access to New Features"
       ]
     }
   ];
@@ -112,9 +115,9 @@ const Store = () => {
         <h1 className="text-base font-semibold text-gradient ml-3">Store</h1>
       </div>
 
-      <div className="px-4 py-6">
+      <div className="px-4 py-3">
         <Tabs defaultValue="subscriptions" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-6">
+          <TabsList className="grid w-full grid-cols-2 mb-4">
             <TabsTrigger value="subscriptions">Subscriptions</TabsTrigger>
             <TabsTrigger value="gems">Get Gems</TabsTrigger>
           </TabsList>
@@ -150,7 +153,15 @@ const Store = () => {
                     {plan.features.map((feature, index) => (
                       <div key={index} className="flex items-center space-x-2">
                         <Check className="w-4 h-4 text-primary flex-shrink-0" />
-                        <span className="text-sm text-foreground">{feature}</span>
+                        <span className="text-sm text-foreground">
+                          {feature.includes('**') ? (
+                            <span dangerouslySetInnerHTML={{
+                              __html: feature.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                            }} />
+                          ) : (
+                            feature
+                          )}
+                        </span>
                       </div>
                     ))}
                   </div>
@@ -170,7 +181,7 @@ const Store = () => {
           </TabsContent>
 
           <TabsContent value="gems" className="space-y-4">
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {gemPackages.map((pkg) => (
                 <Card key={pkg.gems} className="card-premium transition-smooth group p-6 text-center relative">
                   {pkg.popular && (
