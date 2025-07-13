@@ -56,7 +56,7 @@ const Store = () => {
 
   const subscriptionPlans = [
     {
-      name: "Essentials",
+      name: "Essential",
       price: "$9.99",
       period: "/month",
       icon: Star,
@@ -76,7 +76,7 @@ const Store = () => {
       color: "from-purple-500 to-purple-600",
       popular: true,
       features: [
-        "Everything in Essentials",
+        "Everything in Essential",
         "Exclusive content",
         "Advanced AI responses",
         "Custom character creation",
@@ -115,7 +115,7 @@ const Store = () => {
       <div className="px-4 py-6">
         <Tabs defaultValue="subscriptions" className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-6">
-            <TabsTrigger value="subscriptions">Premium Subscriptions</TabsTrigger>
+            <TabsTrigger value="subscriptions">Subscriptions</TabsTrigger>
             <TabsTrigger value="gems">Get Gems</TabsTrigger>
           </TabsList>
 
@@ -156,7 +156,7 @@ const Store = () => {
                   </div>
 
                   <Button 
-                    variant={plan.popular ? "premium" : "elegant"} 
+                    variant="premium" 
                     size="lg" 
                     className="w-full"
                     onClick={() => handleSubscribe(plan.name)}
