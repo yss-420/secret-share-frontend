@@ -101,7 +101,7 @@ const Index = () => {
             Choose Your Companion
           </h1>
           <p className="text-muted-foreground text-sm">
-            {companions.length} characters available for intimate conversations
+            {companions.length} An experience with no limits awaits for you
           </p>
         </div>
       </div>
