@@ -6,19 +6,27 @@ import { NavigationBar } from "@/components/NavigationBar";
 import { TransactionHistory } from "@/components/TransactionHistory";
 import { ArrowLeft, ChevronRight, Crown, Globe, Bell, Save, HelpCircle, Shield, FileText, Receipt } from "lucide-react";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserData } from "@/hooks/useUserData";
 import { apiService } from "@/services/api";
 
 const Settings = () => {
-  const [activeTab, setActiveTab] = useState('settings');
+  const location = useLocation();
+  const navigate = useNavigate();
   const [pushNotifications, setPushNotifications] = useState(true);
   const [autoSave, setAutoSave] = useState(true);
   const [showTransactions, setShowTransactions] = useState(false);
-  const navigate = useNavigate();
   const { user } = useAuth();
   const { userStats } = useUserData();
+
+  // Determine active tab based on current route
+  const getActiveTab = () => {
+    const path = location.pathname;
+    if (path === '/upgrade') return 'upgrade';
+    if (path === '/settings') return 'settings';
+    return 'characters';
+  };
 
   // Load user settings
   useEffect(() => {
@@ -44,6 +52,16 @@ const Settings = () => {
     };
     saveSettings();
   }, [pushNotifications, autoSave, user?.id]);
+
+  const handleTabChange = (tab: string) => {
+    if (tab === 'characters') {
+      navigate('/');
+    } else if (tab === 'upgrade') {
+      navigate('/upgrade');
+    } else if (tab === 'settings') {
+      navigate('/settings');
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background pb-24">
@@ -188,7 +206,7 @@ const Settings = () => {
         </div>
       </div>
 
-      <NavigationBar activeTab={activeTab} onTabChange={setActiveTab} />
+      <NavigationBar activeTab={getActiveTab()} onTabChange={handleTabChange} />
     </div>
   );
 };

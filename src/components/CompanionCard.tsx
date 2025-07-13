@@ -1,4 +1,5 @@
 
+
 import { Card } from "@/components/ui/card";
 import { Users } from "lucide-react";
 
@@ -31,7 +32,7 @@ export const CompanionCard = ({ name, description, points, image, onClick }: Com
             {points.toLocaleString()}
           </span>
         </div>
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       </div>
       
       <div className="p-3">
@@ -43,3 +44,4 @@ export const CompanionCard = ({ name, description, points, image, onClick }: Com
     </Card>
   );
 };
+

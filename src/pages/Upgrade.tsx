@@ -1,15 +1,35 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Header } from "@/components/Header";
+import { NavigationBar } from "@/components/NavigationBar";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { ArrowLeft, Star, Crown, Sparkles, Check } from "lucide-react";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 
 const Upgrade = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Determine active tab based on current route
+  const getActiveTab = () => {
+    const path = location.pathname;
+    if (path === '/upgrade') return 'upgrade';
+    if (path === '/settings') return 'settings';
+    return 'characters';
+  };
+
+  const handleTabChange = (tab: string) => {
+    if (tab === 'characters') {
+      navigate('/');
+    } else if (tab === 'upgrade') {
+      navigate('/upgrade');
+    } else if (tab === 'settings') {
+      navigate('/settings');
+    }
+  };
 
   const handleSubscribe = async (planName: string) => {
     setLoading(true);
@@ -73,7 +93,7 @@ const Upgrade = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-24">
       <Header />
       
       {/* Header with back button */}
@@ -149,6 +169,8 @@ const Upgrade = () => {
           })}
         </div>
       </div>
+
+      <NavigationBar activeTab={getActiveTab()} onTabChange={handleTabChange} />
     </div>
   );
 };
