@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -183,7 +182,7 @@ const Store = () => {
           <TabsContent value="gems" className="space-y-4">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {gemPackages.map((pkg) => (
-                <Card key={pkg.gems} className="card-premium transition-smooth group p-6 text-center relative">
+                <Card key={pkg.gems} className="card-premium transition-smooth group p-4 text-center relative">
                   {pkg.popular && (
                     <div className="absolute -top-2 left-1/2 transform -translate-x-1/2">
                       <div className="bg-orange-500 px-3 py-1 rounded-full text-xs font-bold text-white">
@@ -191,15 +190,15 @@ const Store = () => {
                       </div>
                     </div>
                   )}
-                  <div className={`w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br ${pkg.color} flex items-center justify-center`}>
+                  <div className={`w-16 h-16 mx-auto mb-3 rounded-2xl bg-gradient-to-br ${pkg.color} flex items-center justify-center`}>
                     <Gem className="w-8 h-8 text-white" />
                   </div>
-                  <div className="flex items-center justify-center mb-2">
+                  <div className="flex items-center justify-center mb-1">
                     <Gem className="w-4 h-4 text-primary mr-1" />
                     <span className="text-xl font-bold text-foreground">{pkg.gems.toLocaleString()}</span>
                   </div>
-                  <div className="text-sm text-muted-foreground mb-4">Gems</div>
-                  <div className="text-xl font-bold text-green-400 mb-4">{pkg.price}</div>
+                  <div className="text-sm text-muted-foreground mb-2">Gems</div>
+                  <div className="text-xl font-bold text-green-400 mb-3">{pkg.price}</div>
                   <Button 
                     variant="elegant" 
                     className="w-full bg-slate-600 hover:bg-slate-500 text-white border-none" 
