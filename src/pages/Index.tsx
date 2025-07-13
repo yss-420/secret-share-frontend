@@ -58,7 +58,7 @@ const Index = () => {
     },
     {
       name: "Priyanka",
-      description: "Witty, wild, and waiting Desi girl exploring forbidden fantasies",
+      description: "Witty, wild, and waiting Desi girl",
       points: 1150,
       image: "/lovable-uploads/0c5dca49-a71d-43d9-a495-c79a2079aab2.png"
     }
