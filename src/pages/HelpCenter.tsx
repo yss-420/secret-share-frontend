@@ -37,7 +37,7 @@ const HelpCenter = () => {
                 </div>
                 <div>
                   <p className="font-medium text-foreground">2. Ask Directly!</p>
-                  <p>You are in control. Try using keywords in your conversation. If you want a voice note, try saying things like "whisper it to me" or "I want to hear your voice." For a video, you could say "show me you dancing" or "send me a video." The bot is designed to understand these requests and will present you with an offer to purchase the content with your Gems.</p>
+                  <p>You are in control. Try using keywords in your conversation. If you want a voice note, try saying things like "send me a voice note" or "whisper it to me" or "I want to hear your voice." For a video, you could say "record a video" or "send me a video." For a voice call, you could say "can you call me?" or "call me" or "I want to talk to you". The bot is designed to understand these requests (identifying keywords you've mentioned in the request) and will present you with an offer to purchase the content with your Gems.</p>
                 </div>
               </div>
             </div>
