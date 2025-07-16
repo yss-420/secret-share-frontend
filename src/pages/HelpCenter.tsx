@@ -37,7 +37,7 @@ const HelpCenter = () => {
                 </div>
                 <div>
                   <p className="font-medium text-foreground">2. Ask Directly!</p>
-                  <p>You are in control. Try using keywords in your conversation. If you want a voice note, try saying things like "send me a voice note" or "whisper it to me" or "I want to hear your voice." For a video, you could say "record a video" or "send me a video." For a voice call, you could say "can you call me?" or "call me" or "I want to talk to you". The bot is designed to understand these requests (identifying keywords you've mentioned in the request) and will present you with an offer to purchase the content with your Gems.</p>
+                  <p>You are in control. Try using keywords in your conversation. If you want a voice note, try saying things like "whisper it to me" or "I want to hear your voice." For a video, you could say "show me you dancing" or "send me a video." The bot is designed to understand these requests and will present you with an offer to purchase the content with your Gems.</p>
                 </div>
               </div>
             </div>
@@ -63,7 +63,7 @@ const HelpCenter = () => {
           <Card className="card-premium transition-smooth p-6">
             <h3 className="text-lg font-semibold text-foreground mb-4">Is my conversation private?</h3>
             <p className="text-sm text-muted-foreground">
-              Yes. We prioritize your privacy. Conversation transcripts are only stored temporarily (for 30 days) to allow your AI companion to have memory and to help our team debug any technical issues. Please see our Privacy Policy for full details.
+              Yes. We prioritize your privacy. Conversation transcripts are only stored temporarily (for 7 days) to allow your AI companion to have memory and to help our team debug any technical issues. Please see our Privacy Policy for full details.
             </p>
           </Card>
 
