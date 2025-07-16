@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -8,6 +9,7 @@ import Index from "./pages/Index";
 import ScenarioSelection from "./pages/ScenarioSelection";
 import Store from "./pages/Store";
 import Settings from "./pages/Settings";
+import HelpCenter from "./pages/HelpCenter";
 import Upgrade from "./pages/Upgrade";
 import NotFound from "./pages/NotFound";
 
@@ -25,6 +27,7 @@ const App = () => (
             <Route path="/character/:name" element={<ScenarioSelection />} />
             <Route path="/store" element={<Store />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/help-center" element={<HelpCenter />} />
             <Route path="/upgrade" element={<Upgrade />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Header } from "@/components/Header";
 import { NavigationBar } from "@/components/NavigationBar";
-import { ArrowLeft, ChevronRight, Crown, Globe, HelpCircle, Shield, FileText, Receipt, Phone } from "lucide-react";
+import { ArrowLeft, ChevronRight, Crown, Globe, HelpCircle, Phone } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserData } from "@/hooks/useUserData";
@@ -70,32 +70,6 @@ const Settings = () => {
           </Card>
         </div>
 
-        {/* Account & Billing */}
-        <div>
-          <h2 className="text-lg font-semibold text-foreground mb-3">Account & Billing</h2>
-          <div className="space-y-3">
-            <Card className="card-premium transition-smooth p-4 cursor-pointer">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <Receipt className="w-5 h-5 text-primary" />
-                  <div className="text-sm font-semibold text-foreground">Purchase History</div>
-                </div>
-                <ChevronRight className="w-4 h-4 text-muted-foreground" />
-              </div>
-            </Card>
-
-            <Card className="card-premium transition-smooth p-4 cursor-pointer">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <Receipt className="w-5 h-5 text-primary" />
-                  <div className="text-sm font-semibold text-foreground">Manage Billing</div>
-                </div>
-                <ChevronRight className="w-4 h-4 text-muted-foreground" />
-              </div>
-            </Card>
-          </div>
-        </div>
-
         {/* App Settings */}
         <div>
           <h2 className="text-lg font-semibold text-foreground mb-3">App Settings</h2>
@@ -117,31 +91,11 @@ const Settings = () => {
         <div>
           <h2 className="text-lg font-semibold text-foreground mb-3">Help & Support</h2>
           <div className="space-y-3">
-            <Card className="card-premium transition-smooth p-4 cursor-pointer">
+            <Card className="card-premium transition-smooth p-4 cursor-pointer" onClick={() => navigate('/help-center')}>
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <HelpCircle className="w-5 h-5 text-primary" />
                   <div className="text-sm font-semibold text-foreground">Help Center</div>
-                </div>
-                <ChevronRight className="w-4 h-4 text-muted-foreground" />
-              </div>
-            </Card>
-
-            <Card className="card-premium transition-smooth p-4 cursor-pointer">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <Shield className="w-5 h-5 text-primary" />
-                  <div className="text-sm font-semibold text-foreground">Privacy Policy</div>
-                </div>
-                <ChevronRight className="w-4 h-4 text-muted-foreground" />
-              </div>
-            </Card>
-
-            <Card className="card-premium transition-smooth p-4 cursor-pointer">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <FileText className="w-5 h-5 text-primary" />
-                  <div className="text-sm font-semibold text-foreground">Terms of Service</div>
                 </div>
                 <ChevronRight className="w-4 h-4 text-muted-foreground" />
               </div>
