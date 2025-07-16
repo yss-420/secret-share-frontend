@@ -10,7 +10,7 @@ import ScenarioSelection from "./pages/ScenarioSelection";
 import Store from "./pages/Store";
 import Settings from "./pages/Settings";
 import HelpCenter from "./pages/HelpCenter";
-import Upgrade from "./pages/Upgrade";
+import ContactSupport from "./pages/ContactSupport";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,7 +28,7 @@ const App = () => (
             <Route path="/store" element={<Store />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/help-center" element={<HelpCenter />} />
-            <Route path="/upgrade" element={<Upgrade />} />
+            <Route path="/contact-support" element={<ContactSupport />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

@@ -16,7 +16,7 @@ export const NavigationBar = ({ activeTab, onTabChange }: NavigationBarProps) =>
 
   const handleTabClick = (tabId: string) => {
     if (tabId === 'upgrade') {
-      // Navigate to the unified store page instead of upgrade
+      // Navigate to the store page for all upgrade-related functionality
       window.location.href = '/store';
     } else {
       onTabChange(tabId);

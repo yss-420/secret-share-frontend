@@ -17,7 +17,7 @@ const Settings = () => {
   // Determine active tab based on current route
   const getActiveTab = () => {
     const path = location.pathname;
-    if (path === '/upgrade') return 'upgrade';
+    if (path === '/store') return 'upgrade';
     if (path === '/settings') return 'settings';
     return 'characters';
   };
@@ -101,7 +101,7 @@ const Settings = () => {
               </div>
             </Card>
 
-            <Card className="card-premium transition-smooth p-4 cursor-pointer">
+            <Card className="card-premium transition-smooth p-4 cursor-pointer" onClick={() => navigate('/contact-support')}>
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <Phone className="w-5 h-5 text-primary" />
