@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -45,21 +46,21 @@ const Store = () => {
   };
 
   const gemPackages = [
-    { gems: 75, price: "$4.99", color: "from-blue-500 to-blue-600", popular: false },
-    { gems: 180, price: "$9.99", color: "from-green-500 to-green-600", popular: false },
-    { gems: 400, price: "$19.99", color: "from-purple-500 to-purple-600", popular: false },
-    { gems: 650, price: "$29.99", color: "from-orange-500 to-orange-600", popular: false },
-    { gems: 1100, price: "$49.99", color: "from-pink-500 to-pink-600", popular: true },
-    { gems: 2600, price: "$99.99", color: "from-red-500 to-red-600", popular: false },
-    { gems: 4200, price: "$149.99", color: "from-yellow-500 to-yellow-600", popular: false },
-    { gems: 8500, price: "$249.99", color: "from-indigo-500 to-indigo-600", popular: false },
+    { gems: 75, price: "⭐️ 50", color: "from-blue-500 to-blue-600", popular: false },
+    { gems: 180, price: "⭐️ 100", color: "from-green-500 to-green-600", popular: false },
+    { gems: 400, price: "⭐️ 250", color: "from-purple-500 to-purple-600", popular: false },
+    { gems: 650, price: "⭐️ 500", color: "from-orange-500 to-orange-600", popular: false },
+    { gems: 1100, price: "⭐️ 1,000", color: "from-pink-500 to-pink-600", popular: true },
+    { gems: 2600, price: "⭐️ 2,500", color: "from-red-500 to-red-600", popular: false },
+    { gems: 4200, price: "⭐️ 5,000", color: "from-yellow-500 to-yellow-600", popular: false },
+    { gems: 8500, price: "⭐️ 10,000", color: "from-indigo-500 to-indigo-600", popular: false },
   ];
 
   const subscriptionPlans = [
     {
       name: "Essential",
-      price: "$9.99",
-      period: "/month",
+      price: "⭐️ 400",
+      period: "Stars / month",
       icon: Star,
       color: "from-blue-500 to-blue-600",
       features: [
@@ -72,8 +73,8 @@ const Store = () => {
     },
     {
       name: "Plus",
-      price: "$19.99",
-      period: "/month",
+      price: "⭐️ 800",
+      period: "Stars / month",
       icon: Crown,
       color: "from-purple-500 to-purple-600",
       popular: true,
@@ -87,8 +88,8 @@ const Store = () => {
     },
     {
       name: "Premium",
-      price: "$39.99",
-      period: "/month",
+      price: "⭐️ 1,600",
+      period: "Stars / month",
       icon: Sparkles,
       color: "from-yellow-500 to-yellow-600",
       features: [
@@ -182,10 +183,10 @@ const Store = () => {
           <TabsContent value="gems" className="space-y-4">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {gemPackages.map((pkg) => (
-                <Card key={pkg.gems} className="card-premium transition-smooth group p-4 text-center relative">
+                <Card key={pkg.gems} className="card-premium transition-smooth group p-4 text-center relative overflow-visible">
                   {pkg.popular && (
-                    <div className="absolute -top-2 left-1/2 transform -translate-x-1/2">
-                      <div className="bg-orange-500 px-2 py-0.5 rounded-full text-xs font-medium text-white">
+                    <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 z-10">
+                      <div className="bg-orange-500 px-1.5 py-0.5 rounded-full text-xs font-medium text-white whitespace-nowrap">
                         Popular
                       </div>
                     </div>

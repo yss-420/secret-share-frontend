@@ -79,6 +79,36 @@ export type Database = {
         }
         Relationships: []
       }
+      gem_packages: {
+        Row: {
+          description: string | null
+          gems_amount: number | null
+          id: number
+          monthly_gems: number | null
+          product_code: string
+          stars_price: number
+          tier: string | null
+        }
+        Insert: {
+          description?: string | null
+          gems_amount?: number | null
+          id?: number
+          monthly_gems?: number | null
+          product_code: string
+          stars_price: number
+          tier?: string | null
+        }
+        Update: {
+          description?: string | null
+          gems_amount?: number | null
+          id?: number
+          monthly_gems?: number | null
+          product_code?: string
+          stars_price?: number
+          tier?: string | null
+        }
+        Relationships: []
+      }
       images: {
         Row: {
           character_name: string
@@ -161,6 +191,55 @@ export type Database = {
           },
         ]
       }
+      subscriptions: {
+        Row: {
+          created_at: string | null
+          expires_at: string
+          id: number
+          tier: string
+          updated_at: string | null
+          user_id: number
+        }
+        Insert: {
+          created_at?: string | null
+          expires_at: string
+          id?: number
+          tier: string
+          updated_at?: string | null
+          user_id: number
+        }
+        Update: {
+          created_at?: string | null
+          expires_at?: string
+          id?: number
+          tier?: string
+          updated_at?: string | null
+          user_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "conversations_view"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["telegram_id"]
+          },
+          {
+            foreignKeyName: "subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "voice_call_analytics"
+            referencedColumns: ["telegram_id"]
+          },
+        ]
+      }
       transactions: {
         Row: {
           amount: number
@@ -207,6 +286,7 @@ export type Database = {
           last_seen: string | null
           messages_today: number | null
           nickname: string | null
+          pending_gem_refund: number | null
           session_data: Json | null
           subscription_end: string | null
           subscription_type: string | null
@@ -229,6 +309,7 @@ export type Database = {
           last_seen?: string | null
           messages_today?: number | null
           nickname?: string | null
+          pending_gem_refund?: number | null
           session_data?: Json | null
           subscription_end?: string | null
           subscription_type?: string | null
@@ -251,6 +332,7 @@ export type Database = {
           last_seen?: string | null
           messages_today?: number | null
           nickname?: string | null
+          pending_gem_refund?: number | null
           session_data?: Json | null
           subscription_end?: string | null
           subscription_type?: string | null
