@@ -11,6 +11,31 @@ export const Header = () => {
   const { userStats, loading } = useUserData();
   const navigate = useNavigate();
 
+  // Check if user has an active subscription
+  const hasActiveSubscription = () => {
+    if (!userStats?.subscription_end || !userStats?.tier) return false;
+    
+    const subscriptionEnd = new Date(userStats.subscription_end);
+    const now = new Date();
+    
+    // User has active subscription if:
+    // 1. Subscription hasn't expired AND
+    // 2. Tier is not 'free'
+    return subscriptionEnd > now && userStats.tier !== 'free';
+  };
+
+  const getMessageDisplay = () => {
+    if (loading) return <LoadingSpinner size="sm" />;
+    
+    const messagesUsed = userStats?.messages_today || 0;
+    
+    if (hasActiveSubscription()) {
+      return <span className="text-xs font-medium text-foreground">∞</span>;
+    } else {
+      return <span className="text-xs font-medium text-foreground">{messagesUsed}/50</span>;
+    }
+  };
+
   return (
     <header className="flex items-center justify-between px-4 py-3 bg-background border-b border-white/20">
       {/* Left side - Profile and Brand */}
@@ -48,13 +73,7 @@ export const Header = () => {
           {/* Energy */}
           <div className="flex items-center space-x-0.5">
             <Zap className="w-2.5 h-2.5 text-yellow-500" />
-            {loading ? (
-              <LoadingSpinner size="sm" />
-            ) : (
-              <span className="text-xs font-medium text-foreground">
-                {userStats?.messages_today || 0}/{userStats?.tier === 'premium' ? '∞' : '10'}
-              </span>
-            )}
+            {getMessageDisplay()}
           </div>
 
           {/* Divider */}
