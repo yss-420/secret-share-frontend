@@ -71,7 +71,7 @@ const Index = () => {
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
     if (tab === 'upgrade') {
-      navigate('/upgrade');
+      navigate('/store');
     } else if (tab === 'settings') {
       navigate('/settings');
     }
