@@ -1,5 +1,5 @@
 
-import { Gem, Zap, Plus } from "lucide-react";
+import { Gem, Zap, Plus, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserData } from "@/hooks/useUserData";
@@ -7,8 +7,8 @@ import { LoadingSpinner } from "./LoadingSpinner";
 import { useNavigate } from "react-router-dom";
 
 export const Header = () => {
-  const { user, telegramUser } = useAuth();
-  const { userStats, loading } = useUserData();
+  const { user, telegramUser, error: authError } = useAuth();
+  const { userStats, loading, error: userDataError } = useUserData();
   const navigate = useNavigate();
 
   // Check if user has an active subscription
@@ -26,6 +26,7 @@ export const Header = () => {
 
   const getMessageDisplay = () => {
     if (loading) return <LoadingSpinner size="sm" />;
+    if (authError || userDataError) return <AlertCircle className="w-2.5 h-2.5 text-red-500" />;
     
     const messagesUsed = userStats?.messages_today || 0;
     
@@ -34,6 +35,12 @@ export const Header = () => {
     } else {
       return <span className="text-xs font-medium text-foreground">{messagesUsed}/50</span>;
     }
+  };
+
+  const getGemsDisplay = () => {
+    if (loading) return <LoadingSpinner size="sm" />;
+    if (authError || userDataError) return <AlertCircle className="w-2.5 h-2.5 text-red-500" />;
+    return <span className="text-xs font-medium text-foreground">{userStats?.gems || 0}</span>;
   };
 
   return (
@@ -60,11 +67,7 @@ export const Header = () => {
           {/* Gems */}
           <div className="flex items-center space-x-0.5">
             <Gem className="w-2.5 h-2.5 text-blue-500" />
-            {loading ? (
-              <LoadingSpinner size="sm" />
-            ) : (
-              <span className="text-xs font-medium text-foreground">{userStats?.gems || 0}</span>
-            )}
+            {getGemsDisplay()}
           </div>
 
           {/* Divider */}

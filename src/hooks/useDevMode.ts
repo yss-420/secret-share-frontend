@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 
 interface DevUser {
@@ -30,10 +31,15 @@ export const useDevMode = () => {
   const [isDevMode, setIsDevMode] = useState(false);
 
   useEffect(() => {
-    // Check if we're in development mode
-    const isDev = import.meta.env.DEV || window.location.hostname === 'localhost';
+    // Check multiple conditions for dev mode
+    const isDev = import.meta.env.DEV;
+    const isLocalhost = window.location.hostname === 'localhost';
     const hasDevParam = new URLSearchParams(window.location.search).has('dev');
-    setIsDevMode(isDev || hasDevParam);
+    const isDevEnvironment = isDev || isLocalhost || hasDevParam;
+    
+    console.log('Dev mode check:', { isDev, isLocalhost, hasDevParam, isDevEnvironment });
+    
+    setIsDevMode(isDevEnvironment);
   }, []);
 
   const getDevUser = () => isDevMode ? DEV_USER : null;
