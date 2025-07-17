@@ -59,8 +59,19 @@ export const useTelegramAuth = (): TelegramAuthData => {
 
         // Configure WebApp appearance
         WebApp.expand();
-        WebApp.setHeaderColor('#000000');
-        WebApp.setBackgroundColor('#000000');
+        
+        // Use try-catch for setHeaderColor and setBackgroundColor as they might not be supported
+        try {
+          WebApp.setHeaderColor('#000000');
+        } catch (e) {
+          console.warn('setHeaderColor not supported in this Telegram version');
+        }
+        
+        try {
+          WebApp.setBackgroundColor('#000000');
+        } catch (e) {
+          console.warn('setBackgroundColor not supported in this Telegram version');
+        }
         
         setIsLoading(false);
       } catch (error) {
