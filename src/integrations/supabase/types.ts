@@ -207,13 +207,6 @@ export type Database = {
             foreignKeyName: "processed_payments_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "conversations_view"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "processed_payments_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
             referencedRelation: "top_customers"
             referencedColumns: ["telegram_id"]
           },
@@ -222,13 +215,6 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
-            referencedColumns: ["telegram_id"]
-          },
-          {
-            foreignKeyName: "processed_payments_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "voice_call_analytics"
             referencedColumns: ["telegram_id"]
           },
         ]
@@ -319,13 +305,6 @@ export type Database = {
             foreignKeyName: "star_earnings_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "conversations_view"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "star_earnings_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
             referencedRelation: "top_customers"
             referencedColumns: ["telegram_id"]
           },
@@ -334,13 +313,6 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
-            referencedColumns: ["telegram_id"]
-          },
-          {
-            foreignKeyName: "star_earnings_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "voice_call_analytics"
             referencedColumns: ["telegram_id"]
           },
         ]
@@ -375,13 +347,6 @@ export type Database = {
             foreignKeyName: "subscriptions_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "conversations_view"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "subscriptions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
             referencedRelation: "top_customers"
             referencedColumns: ["telegram_id"]
           },
@@ -390,13 +355,6 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
-            referencedColumns: ["telegram_id"]
-          },
-          {
-            foreignKeyName: "subscriptions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "voice_call_analytics"
             referencedColumns: ["telegram_id"]
           },
         ]
@@ -597,13 +555,6 @@ export type Database = {
             foreignKeyName: "fk_voice_calls_user_id"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "conversations_view"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "fk_voice_calls_user_id"
-            columns: ["user_id"]
-            isOneToOne: false
             referencedRelation: "top_customers"
             referencedColumns: ["telegram_id"]
           },
@@ -612,13 +563,6 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
-            referencedColumns: ["telegram_id"]
-          },
-          {
-            foreignKeyName: "fk_voice_calls_user_id"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "voice_call_analytics"
             referencedColumns: ["telegram_id"]
           },
         ]
@@ -633,6 +577,22 @@ export type Database = {
           id: string | null
           user_id: number | null
           user_message: string | null
+        }
+        Insert: {
+          bot_response?: string | null
+          character?: string | null
+          created_at?: string | null
+          id?: string | null
+          user_id?: number | null
+          user_message?: string | null
+        }
+        Update: {
+          bot_response?: string | null
+          character?: string | null
+          created_at?: string | null
+          id?: string | null
+          user_id?: number | null
+          user_message?: string | null
         }
         Relationships: []
       }
@@ -699,7 +659,22 @@ export type Database = {
           user_name: string | null
           username: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "fk_voice_calls_user_id"
+            columns: ["telegram_id"]
+            isOneToOne: false
+            referencedRelation: "top_customers"
+            referencedColumns: ["telegram_id"]
+          },
+          {
+            foreignKeyName: "fk_voice_calls_user_id"
+            columns: ["telegram_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["telegram_id"]
+          },
+        ]
       }
     }
     Functions: {
