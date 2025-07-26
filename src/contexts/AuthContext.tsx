@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useTelegramAuth } from '@/hooks/useTelegramAuth';
 import { useDevMode } from '@/hooks/useDevMode';
 import { Tables } from '@/integrations/supabase/types';
+import { WELCOME_GEMS_BONUS } from '@/constants/gems';
 
 type User = Tables<'users'>;
 
@@ -63,7 +64,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             username: telegramUser.username,
             user_name: telegramUser.first_name + (telegramUser.last_name ? ` ${telegramUser.last_name}` : ''),
             nickname: telegramUser.first_name,
-            gems: 50,
+            gems: WELCOME_GEMS_BONUS,
             tier: 'free'
           })
           .select()
