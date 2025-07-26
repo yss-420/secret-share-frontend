@@ -147,6 +147,92 @@ export type Database = {
           },
         ]
       }
+      processed_payments: {
+        Row: {
+          amount: number
+          completed_at: string | null
+          created_at: string | null
+          currency: string | null
+          error: string | null
+          id: number
+          invoice_payload: string | null
+          payload: string
+          processed_at: string
+          provider_payment_charge_id: string | null
+          refund_reason: string | null
+          refunded: boolean | null
+          refunded_at: string | null
+          status: string
+          telegram_charge_id: string
+          user_id: number
+        }
+        Insert: {
+          amount: number
+          completed_at?: string | null
+          created_at?: string | null
+          currency?: string | null
+          error?: string | null
+          id?: number
+          invoice_payload?: string | null
+          payload: string
+          processed_at: string
+          provider_payment_charge_id?: string | null
+          refund_reason?: string | null
+          refunded?: boolean | null
+          refunded_at?: string | null
+          status?: string
+          telegram_charge_id: string
+          user_id: number
+        }
+        Update: {
+          amount?: number
+          completed_at?: string | null
+          created_at?: string | null
+          currency?: string | null
+          error?: string | null
+          id?: number
+          invoice_payload?: string | null
+          payload?: string
+          processed_at?: string
+          provider_payment_charge_id?: string | null
+          refund_reason?: string | null
+          refunded?: boolean | null
+          refunded_at?: string | null
+          status?: string
+          telegram_charge_id?: string
+          user_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "processed_payments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "conversations_view"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "processed_payments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "top_customers"
+            referencedColumns: ["telegram_id"]
+          },
+          {
+            foreignKeyName: "processed_payments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["telegram_id"]
+          },
+          {
+            foreignKeyName: "processed_payments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "voice_call_analytics"
+            referencedColumns: ["telegram_id"]
+          },
+        ]
+      }
       relationships: {
         Row: {
           character_name: string
@@ -191,6 +277,74 @@ export type Database = {
           },
         ]
       }
+      star_earnings: {
+        Row: {
+          created_at: string | null
+          gems_granted: number | null
+          id: number
+          payload: string
+          payment_type: string
+          processed_at: string | null
+          stars_amount: number
+          subscription_tier: string | null
+          telegram_charge_id: string
+          user_id: number
+        }
+        Insert: {
+          created_at?: string | null
+          gems_granted?: number | null
+          id?: number
+          payload: string
+          payment_type: string
+          processed_at?: string | null
+          stars_amount: number
+          subscription_tier?: string | null
+          telegram_charge_id: string
+          user_id: number
+        }
+        Update: {
+          created_at?: string | null
+          gems_granted?: number | null
+          id?: number
+          payload?: string
+          payment_type?: string
+          processed_at?: string | null
+          stars_amount?: number
+          subscription_tier?: string | null
+          telegram_charge_id?: string
+          user_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "star_earnings_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "conversations_view"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "star_earnings_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "top_customers"
+            referencedColumns: ["telegram_id"]
+          },
+          {
+            foreignKeyName: "star_earnings_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["telegram_id"]
+          },
+          {
+            foreignKeyName: "star_earnings_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "voice_call_analytics"
+            referencedColumns: ["telegram_id"]
+          },
+        ]
+      }
       subscriptions: {
         Row: {
           created_at: string | null
@@ -223,6 +377,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "conversations_view"
             referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "top_customers"
+            referencedColumns: ["telegram_id"]
           },
           {
             foreignKeyName: "subscriptions_user_id_fkey"
@@ -443,6 +604,13 @@ export type Database = {
             foreignKeyName: "fk_voice_calls_user_id"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "top_customers"
+            referencedColumns: ["telegram_id"]
+          },
+          {
+            foreignKeyName: "fk_voice_calls_user_id"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["telegram_id"]
           },
@@ -468,11 +636,55 @@ export type Database = {
         }
         Relationships: []
       }
+      earnings_analytics: {
+        Row: {
+          date: string | null
+          gems_revenue: number | null
+          stars_earned: number | null
+          subscription_revenue: number | null
+          total_transactions: number | null
+          unique_customers: number | null
+        }
+        Relationships: []
+      }
+      monthly_earnings: {
+        Row: {
+          avg_transaction_value: number | null
+          month: string | null
+          total_stars: number | null
+          total_transactions: number | null
+          unique_customers: number | null
+        }
+        Relationships: []
+      }
+      payment_analytics: {
+        Row: {
+          avg_payment_amount: number | null
+          failed_payments: number | null
+          payment_date: string | null
+          revenue_stars: number | null
+          successful_payments: number | null
+          total_payments: number | null
+          unique_paying_users: number | null
+        }
+        Relationships: []
+      }
       session_analytics: {
         Row: {
           avg_hours_since_last_seen: number | null
           total_users: number | null
           users_with_sessions: number | null
+        }
+        Relationships: []
+      }
+      top_customers: {
+        Row: {
+          last_purchase_date: string | null
+          telegram_id: number | null
+          total_purchases: number | null
+          total_stars_spent: number | null
+          user_name: string | null
+          username: string | null
         }
         Relationships: []
       }
@@ -495,6 +707,37 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      get_earnings_period: {
+        Args: { period_days?: number }
+        Returns: {
+          total_stars: number
+          total_transactions: number
+          unique_customers: number
+          avg_transaction_value: number
+        }[]
+      }
+      get_payment_analytics: {
+        Args: { p_days?: number }
+        Returns: {
+          total_payments: number
+          total_revenue_stars: number
+          successful_payments: number
+          failed_payments: number
+          refunded_payments: number
+          avg_payment_amount: number
+          top_products: Json
+        }[]
+      }
+      get_total_earnings: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          total_stars: number
+          total_transactions: number
+          total_customers: number
+          gems_revenue: number
+          subscription_revenue: number
+        }[]
+      }
       increment_user_messages: {
         Args: { p_user_id: number }
         Returns: undefined
@@ -508,6 +751,18 @@ export type Database = {
           p_gem_cost?: number
         }
         Returns: undefined
+      }
+      process_payment_safely: {
+        Args: {
+          p_telegram_charge_id: string
+          p_user_id: number
+          p_payload: string
+          p_amount: number
+          p_gems_to_add?: number
+          p_subscription_tier?: string
+          p_subscription_days?: number
+        }
+        Returns: Json
       }
       update_call_duration: {
         Args: { p_call_id: string; p_duration_minutes: number }
