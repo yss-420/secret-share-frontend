@@ -14,20 +14,20 @@ import { supabase } from "@/integrations/supabase/client";
 
 // Package mapping constants
 const GEM_PACKAGE_MAP: Record<number, string> = {
-  50: 'gems_50',     // 50 Stars → 45 Gems
-  100: 'gems_100',   // 100 Stars → 95 Gems
-  250: 'gems_250',   // 250 Stars → 250 Gems
-  500: 'gems_500',   // 500 Stars → 525 Gems
-  1000: 'gems_1000', // 1000 Stars → 1100 Gems
-  2500: 'gems_2500', // 2500 Stars → 2600 Gems
-  5000: 'gems_5000', // 5000 Stars → 4200 Gems
-  10000: 'gems_10000' // 10000 Stars → 8500 Gems
+  100: 'gems_50',     // 100 Stars → 50 Gems
+  200: 'gems_100',    // 200 Stars → 100 Gems
+  400: 'gems_250',    // 400 Stars → 250 Gems
+  750: 'gems_500',    // 750 Stars → 500 Gems
+  1500: 'gems_1000', // 1500 Stars → 1000 Gems
+  4000: 'gems_2500', // 4000 Stars → 2500 Gems
+  7500: 'gems_5000', // 7500 Stars → 5000 Gems
+  10000: 'gems_10000' // 10000 Stars → 10000 Gems
 };
 
 const SUBSCRIPTION_MAP: Record<string, string> = {
-  'Essential': 'sub_essential', // 400 Stars
-  'Plus': 'sub_plus',          // 800 Stars  
-  'Premium': 'sub_premium'     // 1600 Stars
+  'Essential': 'sub_essential', // 500 Stars
+  'Plus': 'sub_plus',          // 1000 Stars  
+  'Premium': 'sub_premium'     // 2000 Stars
 };
 
 const Store = () => {
@@ -223,9 +223,9 @@ const Store = () => {
 
     try {
       const tierPricing: Record<string, { stars: number; gems: number }> = {
-        'Essential': { stars: 400, gems: 450 },
-        'Plus': { stars: 800, gems: 1200 },
-        'Premium': { stars: 1600, gems: 2500 }
+        'Essential': { stars: 500, gems: 450 },
+        'Plus': { stars: 1000, gems: 1200 },
+        'Premium': { stars: 2000, gems: 2500 }
       };
 
       const pricing = tierPricing[planName];
@@ -290,20 +290,20 @@ const Store = () => {
   };
 
   const gemPackages = [
-    { gems: 45, price: "⭐️ 50", color: "from-blue-500 to-blue-600", popular: false },
-    { gems: 95, price: "⭐️ 100", color: "from-green-500 to-green-600", popular: false },
-    { gems: 250, price: "⭐️ 250", color: "from-purple-500 to-purple-600", popular: false },
-    { gems: 525, price: "⭐️ 500", color: "from-orange-500 to-orange-600", popular: false },
-    { gems: 1100, price: "⭐️ 1,000", color: "from-pink-500 to-pink-600", popular: true },
-    { gems: 2600, price: "⭐️ 2,500", color: "from-red-500 to-red-600", popular: false },
-    { gems: 4200, price: "⭐️ 5,000", color: "from-yellow-500 to-yellow-600", popular: false },
-    { gems: 8500, price: "⭐️ 10,000", color: "from-indigo-500 to-indigo-600", popular: false },
+    { gems: 50, price: "⭐️ 100", color: "from-blue-500 to-blue-600", popular: false },
+    { gems: 100, price: "⭐️ 200", color: "from-green-500 to-green-600", popular: false },
+    { gems: 250, price: "⭐️ 400", color: "from-purple-500 to-purple-600", popular: false },
+    { gems: 500, price: "⭐️ 750", color: "from-orange-500 to-orange-600", popular: false },
+    { gems: 1000, price: "⭐️ 1,500", color: "from-pink-500 to-pink-600", popular: true },
+    { gems: 2500, price: "⭐️ 4,000", color: "from-red-500 to-red-600", popular: false },
+    { gems: 5000, price: "⭐️ 7,500", color: "from-yellow-500 to-yellow-600", popular: false },
+    { gems: 10000, price: "⭐️ 10,000", color: "from-indigo-500 to-indigo-600", popular: false },
   ];
 
   const subscriptionPlans = [
     {
       name: "Essential",
-      price: "⭐️ 400",
+      price: "⭐️ 500",
       period: "Stars / month",
       icon: Star,
       color: "from-blue-500 to-blue-600",
@@ -317,7 +317,7 @@ const Store = () => {
     },
     {
       name: "Plus",
-      price: "⭐️ 800",
+      price: "⭐️ 1,000",
       period: "Stars / month",
       icon: Crown,
       color: "from-purple-500 to-purple-600",
@@ -332,7 +332,7 @@ const Store = () => {
     },
     {
       name: "Premium",
-      price: "⭐️ 1,600",
+      price: "⭐️ 2,000",
       period: "Stars / month",
       icon: Sparkles,
       color: "from-yellow-500 to-yellow-600",
