@@ -8,41 +8,123 @@ import { Gem, Crown, ArrowLeft, Star, Sparkles, Check } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUserData } from "@/hooks/useUserData";
-import { apiService } from "@/services/api";
+import { useTelegramAuth } from "@/hooks/useTelegramAuth";
 import { toast } from "@/hooks/use-toast";
+
+// Package mapping constants
+const GEM_PACKAGE_MAP: Record<number, string> = {
+  50: 'gems_50',     // 50 Stars → 75 Gems
+  100: 'gems_100',   // 100 Stars → 180 Gems
+  250: 'gems_250',   // 250 Stars → 400 Gems
+  500: 'gems_500',   // 500 Stars → 650 Gems
+  1000: 'gems_1000', // 1000 Stars → 1100 Gems
+  2500: 'gems_2500', // 2500 Stars → 2600 Gems
+  5000: 'gems_5000', // 5000 Stars → 4200 Gems
+  10000: 'gems_10000' // 10000 Stars → 8500 Gems
+};
+
+const SUBSCRIPTION_MAP: Record<string, string> = {
+  'Essential': 'sub_essential', // 400 Stars
+  'Plus': 'sub_plus',          // 800 Stars  
+  'Premium': 'sub_premium'     // 1600 Stars
+};
 
 const Store = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { updateGems } = useUserData();
+  const { user: telegramUser } = useTelegramAuth();
 
   const handleGemPurchase = async (gemPackage: typeof gemPackages[0]) => {
     setLoading(true);
-    const success = await apiService.purchaseGems({
-      gems: gemPackage.gems,
-      price: gemPackage.price,
-      package_type: gemPackage.popular ? 'popular' : 'standard'
-    });
-    
-    if (success) {
-      updateGems(gemPackage.gems);
+
+    try {
+      // Extract stars from price string (e.g., "⭐️ 50" -> 50)
+      const stars = parseInt(gemPackage.price.replace(/[^\d]/g, ''));
+      const packageType = GEM_PACKAGE_MAP[stars];
+      
+      if (!packageType) {
+        throw new Error('Invalid package type');
+      }
+
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/initiate-payment`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${import.meta.env.VITE_FRONTEND_SECRET_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          telegram_user_id: telegramUser?.id,
+          package_type: packageType
+        })
+      });
+
+      const result = await response.json();
+      
+      if (response.ok && result.success) {
+        toast({
+          title: "Invoice Sent! ⭐️",
+          description: `Check your Telegram to pay ${stars} Stars for ${gemPackage.gems} gems.`,
+        });
+      } else {
+        throw new Error(result.message || 'Payment failed');
+      }
+      
+    } catch (error) {
+      console.error('Payment error:', error);
+      toast({
+        title: "Payment Failed",
+        description: "Unable to send invoice. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleSubscribe = async (planName: string) => {
     setLoading(true);
-    
-    // Simulate subscription process
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    toast({
-      title: "Subscription Started!",
-      description: `Welcome to ${planName}! Your subscription has begun.`,
-    });
-    
-    setLoading(false);
-    // TODO: Integrate with actual payment processor
+
+    try {
+      const packageType = SUBSCRIPTION_MAP[planName];
+      
+      if (!packageType) {
+        throw new Error('Invalid subscription plan');
+      }
+      
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/initiate-payment`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${import.meta.env.VITE_FRONTEND_SECRET_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          telegram_user_id: telegramUser?.id,
+          package_type: packageType
+        })
+      });
+
+      const result = await response.json();
+      
+      if (response.ok && result.success) {
+        toast({
+          title: "Subscription Invoice Sent! ⭐️",
+          description: `Check your Telegram to complete your ${planName} subscription payment.`,
+        });
+      } else {
+        throw new Error(result.message || 'Subscription failed');
+      }
+      
+    } catch (error) {
+      console.error('Subscription error:', error);
+      toast({
+        title: "Subscription Failed", 
+        description: "Unable to send invoice. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const gemPackages = [
