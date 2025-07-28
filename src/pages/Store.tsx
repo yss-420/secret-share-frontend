@@ -5,7 +5,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Header } from "@/components/Header";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { Gem, Crown, ArrowLeft, Star, Sparkles, Check } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUserData } from "@/hooks/useUserData";
 import { useTelegramAuth } from "@/hooks/useTelegramAuth";
@@ -14,12 +14,12 @@ import { supabase } from "@/integrations/supabase/client";
 
 // Package mapping constants
 const GEM_PACKAGE_MAP: Record<number, string> = {
-  50: 'gems_50',     // 50 Stars → 75 Gems
-  100: 'gems_100',   // 100 Stars → 180 Gems
-  250: 'gems_250',   // 250 Stars → 400 Gems
-  500: 'gems_500',   // 500 Stars → 650 Gems
+  50: 'gems_50',     // 50 Stars → 45 Gems
+  100: 'gems_100',   // 100 Stars → 95 Gems
+  250: 'gems_250',   // 250 Stars → 250 Gems
+  500: 'gems_500',   // 500 Stars → 525 Gems
   1000: 'gems_1000', // 1000 Stars → 1100 Gems
-  2500: 'gems_2500', // 2500 Stars → 2600 Gems
+  2500: 'gems_2500', // 2500 Stars → 3000 Gems
   5000: 'gems_5000', // 5000 Stars → 4200 Gems
   10000: 'gems_10000' // 10000 Stars → 8500 Gems
 };
@@ -35,6 +35,14 @@ const Store = () => {
   const navigate = useNavigate();
   const { updateGems, userStats } = useUserData();
   const { user: telegramUser } = useTelegramAuth();
+
+  // Initialize Telegram WebApp
+  useEffect(() => {
+    if (window.Telegram?.WebApp) {
+      window.Telegram.WebApp.ready();
+      window.Telegram.WebApp.expand();
+    }
+  }, []);
 
   // Update user gems in Supabase after successful payment
   const updateUserGems = async (gemsToAdd: number) => {
@@ -94,10 +102,10 @@ const Store = () => {
   };
 
   const handleGemPurchase = async (gemPackage: typeof gemPackages[0]) => {
-    if (!window.Telegram?.WebApp) {
+    if (!window.Telegram?.WebApp?.showInvoice) {
       toast({
         title: "Payment Error",
-        description: "Telegram WebApp not available. Please open in Telegram.",
+        description: "Telegram Stars payments not available. Please open in Telegram.",
         variant: "destructive",
       });
       return;
@@ -115,7 +123,7 @@ const Store = () => {
         provider_token: "", // Empty for Telegram Stars
         currency: "XTR", // Telegram Stars
         prices: [{ label: `${gemPackage.gems} Gems`, amount: stars }],
-        payload: `gems_${gemPackage.gems}`, // For tracking
+        payload: `gems_${stars}`, // Use stars for tracking to match backend
       };
 
       // Open Telegram payment directly in frontend
@@ -154,10 +162,10 @@ const Store = () => {
   };
 
   const handleSubscribe = async (planName: string) => {
-    if (!window.Telegram?.WebApp) {
+    if (!window.Telegram?.WebApp?.showInvoice) {
       toast({
         title: "Payment Error",
-        description: "Telegram WebApp not available. Please open in Telegram.",
+        description: "Telegram Stars payments not available. Please open in Telegram.",
         variant: "destructive",
       });
       return;
@@ -222,12 +230,12 @@ const Store = () => {
   };
 
   const gemPackages = [
-    { gems: 75, price: "⭐️ 50", color: "from-blue-500 to-blue-600", popular: false },
-    { gems: 180, price: "⭐️ 100", color: "from-green-500 to-green-600", popular: false },
-    { gems: 400, price: "⭐️ 250", color: "from-purple-500 to-purple-600", popular: false },
-    { gems: 650, price: "⭐️ 500", color: "from-orange-500 to-orange-600", popular: false },
+    { gems: 45, price: "⭐️ 50", color: "from-blue-500 to-blue-600", popular: false },
+    { gems: 95, price: "⭐️ 100", color: "from-green-500 to-green-600", popular: false },
+    { gems: 250, price: "⭐️ 250", color: "from-purple-500 to-purple-600", popular: false },
+    { gems: 525, price: "⭐️ 500", color: "from-orange-500 to-orange-600", popular: false },
     { gems: 1100, price: "⭐️ 1,000", color: "from-pink-500 to-pink-600", popular: true },
-    { gems: 2600, price: "⭐️ 2,500", color: "from-red-500 to-red-600", popular: false },
+    { gems: 3000, price: "⭐️ 2,500", color: "from-red-500 to-red-600", popular: false },
     { gems: 4200, price: "⭐️ 5,000", color: "from-yellow-500 to-yellow-600", popular: false },
     { gems: 8500, price: "⭐️ 10,000", color: "from-indigo-500 to-indigo-600", popular: false },
   ];
