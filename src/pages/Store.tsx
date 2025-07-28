@@ -54,15 +54,57 @@ const Store = () => {
 
   // Validate Telegram user on component mount
   useEffect(() => {
+    console.log('Store component mounted');
+    console.log('window.Telegram:', window.Telegram);
+    console.log('WebApp available:', !!window.Telegram?.WebApp);
+    
     if (window.Telegram?.WebApp) {
       const tg = window.Telegram.WebApp;
-      tg.ready();
-      tg.expand();
       
-      if (!tg.initDataUnsafe?.user) {
-        tg.showAlert('Please open this store from the Telegram bot!');
-        tg.close();
+      try {
+        tg.ready();
+        tg.expand();
+        console.log('Telegram WebApp initialized');
+        
+        // Check if we're in actual Telegram environment
+        if (!tg.initDataUnsafe?.user) {
+          console.log('No Telegram user found');
+          // Only use Telegram methods if they're actually supported
+          if (typeof tg.showAlert === 'function') {
+            try {
+              tg.showAlert('Please open this store from the Telegram bot!');
+              if (typeof tg.close === 'function') {
+                tg.close();
+              }
+            } catch (error) {
+              console.warn('Telegram WebApp methods not supported in this environment:', error);
+              // Fallback for development environment
+              alert('This store is designed to work within the Telegram bot. You\'re viewing a preview.');
+            }
+          } else {
+            console.log('Development environment detected - Telegram methods not available');
+            // Show a development notice instead
+            toast({
+              title: "Development Preview",
+              description: "This store is designed to work within the Telegram bot.",
+            });
+          }
+        } else {
+          console.log('Telegram user found:', tg.initDataUnsafe.user);
+        }
+      } catch (error) {
+        console.error('Error initializing Telegram WebApp:', error);
+        toast({
+          title: "Preview Mode",
+          description: "You're viewing a preview. This store works best in Telegram.",
+        });
       }
+    } else {
+      console.log('Telegram WebApp not available - showing preview mode');
+      toast({
+        title: "Preview Mode",
+        description: "You're viewing a preview. This store is designed for Telegram.",
+      });
     }
   }, []);
 
@@ -77,7 +119,25 @@ const Store = () => {
     }
 
     if (!telegramUser?.id) {
-      window.Telegram.WebApp.showAlert('User not authenticated!');
+      // Use safe method calling
+      if (window.Telegram.WebApp.showAlert && typeof window.Telegram.WebApp.showAlert === 'function') {
+        try {
+          window.Telegram.WebApp.showAlert('User not authenticated!');
+        } catch (error) {
+          console.warn('showAlert not supported:', error);
+          toast({
+            title: "Authentication Required",
+            description: "Please open this store from the Telegram bot.",
+            variant: "destructive",
+          });
+        }
+      } else {
+        toast({
+          title: "Authentication Required", 
+          description: "Please open this store from the Telegram bot.",
+          variant: "destructive",
+        });
+      }
       return;
     }
 
@@ -106,12 +166,38 @@ const Store = () => {
         // Open Telegram payment using invoice link
         window.Telegram.WebApp.openInvoice(data.invoice_url, (status) => {
           if (status === "paid") {
-            window.Telegram.WebApp.showAlert('Payment successful! 🎉');
+            // Safe alert call
+            if (typeof window.Telegram.WebApp.showAlert === 'function') {
+              try {
+                window.Telegram.WebApp.showAlert('Payment successful! 🎉');
+              } catch (error) {
+                console.warn('showAlert not supported:', error);
+                toast({ title: "Payment Successful! 🎉", description: "Your gems have been added." });
+              }
+            } else {
+              toast({ title: "Payment Successful! 🎉", description: "Your gems have been added." });
+            }
             window.location.reload();
           } else if (status === "cancelled") {
-            window.Telegram.WebApp.showAlert('Payment cancelled.');
+            if (typeof window.Telegram.WebApp.showAlert === 'function') {
+              try {
+                window.Telegram.WebApp.showAlert('Payment cancelled.');
+              } catch (error) {
+                toast({ title: "Payment Cancelled", description: "You cancelled the payment." });
+              }
+            } else {
+              toast({ title: "Payment Cancelled", description: "You cancelled the payment." });
+            }
           } else {
-            window.Telegram.WebApp.showAlert('Payment failed. Please try again.');
+            if (typeof window.Telegram.WebApp.showAlert === 'function') {
+              try {
+                window.Telegram.WebApp.showAlert('Payment failed. Please try again.');
+              } catch (error) {
+                toast({ title: "Payment Failed", description: "Please try again.", variant: "destructive" });
+              }
+            } else {
+              toast({ title: "Payment Failed", description: "Please try again.", variant: "destructive" });
+            }
           }
           setLoading(false);
         });
@@ -121,7 +207,23 @@ const Store = () => {
 
     } catch (error) {
       console.error('Payment error:', error);
-      window.Telegram.WebApp.showAlert('Error creating payment. Please try again.');
+      if (typeof window.Telegram.WebApp.showAlert === 'function') {
+        try {
+          window.Telegram.WebApp.showAlert('Error creating payment. Please try again.');
+        } catch (alertError) {
+          toast({
+            title: "Payment Error",
+            description: "Unable to process payment. Please try again.",
+            variant: "destructive",
+          });
+        }
+      } else {
+        toast({
+          title: "Payment Error",
+          description: "Unable to process payment. Please try again.",
+          variant: "destructive",
+        });
+      }
       setLoading(false);
     }
   };
@@ -137,7 +239,25 @@ const Store = () => {
     }
 
     if (!telegramUser?.id) {
-      window.Telegram.WebApp.showAlert('User not authenticated!');
+      // Use safe method calling
+      if (window.Telegram.WebApp.showAlert && typeof window.Telegram.WebApp.showAlert === 'function') {
+        try {
+          window.Telegram.WebApp.showAlert('User not authenticated!');
+        } catch (error) {
+          console.warn('showAlert not supported:', error);
+          toast({
+            title: "Authentication Required",
+            description: "Please open this store from the Telegram bot.",
+            variant: "destructive",
+          });
+        }
+      } else {
+        toast({
+          title: "Authentication Required", 
+          description: "Please open this store from the Telegram bot.",
+          variant: "destructive",
+        });
+      }
       return;
     }
 
@@ -164,12 +284,37 @@ const Store = () => {
         // Open Telegram payment using invoice link
         window.Telegram.WebApp.openInvoice(data.invoice_url, (status) => {
           if (status === "paid") {
-            window.Telegram.WebApp.showAlert('Subscription activated! 🎉');
+            if (typeof window.Telegram.WebApp.showAlert === 'function') {
+              try {
+                window.Telegram.WebApp.showAlert('Subscription activated! 🎉');
+              } catch (error) {
+                console.warn('showAlert not supported:', error);
+                toast({ title: "Subscription Activated! 🎉", description: "Your subscription is now active." });
+              }
+            } else {
+              toast({ title: "Subscription Activated! 🎉", description: "Your subscription is now active." });
+            }
             window.location.reload();
           } else if (status === "cancelled") {
-            window.Telegram.WebApp.showAlert('Payment cancelled.');
+            if (typeof window.Telegram.WebApp.showAlert === 'function') {
+              try {
+                window.Telegram.WebApp.showAlert('Payment cancelled.');
+              } catch (error) {
+                toast({ title: "Payment Cancelled", description: "You cancelled the payment." });
+              }
+            } else {
+              toast({ title: "Payment Cancelled", description: "You cancelled the payment." });
+            }
           } else {
-            window.Telegram.WebApp.showAlert('Payment failed. Please try again.');
+            if (typeof window.Telegram.WebApp.showAlert === 'function') {
+              try {
+                window.Telegram.WebApp.showAlert('Payment failed. Please try again.');
+              } catch (error) {
+                toast({ title: "Payment Failed", description: "Please try again.", variant: "destructive" });
+              }
+            } else {
+              toast({ title: "Payment Failed", description: "Please try again.", variant: "destructive" });
+            }
           }
           setLoading(false);
         });
@@ -179,7 +324,23 @@ const Store = () => {
 
     } catch (error) {
       console.error('Subscription error:', error);
-      window.Telegram.WebApp.showAlert('Error creating payment. Please try again.');
+      if (typeof window.Telegram.WebApp.showAlert === 'function') {
+        try {
+          window.Telegram.WebApp.showAlert('Error creating payment. Please try again.');
+        } catch (alertError) {
+          toast({
+            title: "Subscription Failed",
+            description: "Unable to process payment. Please try again.",
+            variant: "destructive",
+          });
+        }
+      } else {
+        toast({
+          title: "Subscription Failed",
+          description: "Unable to process payment. Please try again.",
+          variant: "destructive",
+        });
+      }
       setLoading(false);
     }
   };
