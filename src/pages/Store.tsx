@@ -52,69 +52,21 @@ const Store = () => {
     }
   }, []);
 
-  // Update user gems in Supabase after successful payment
-  const updateUserGems = async (gemsToAdd: number) => {
-    try {
-      if (!telegramUser?.id) return;
+  // Validate Telegram user on component mount
+  useEffect(() => {
+    if (window.Telegram?.WebApp) {
+      const tg = window.Telegram.WebApp;
+      tg.ready();
+      tg.expand();
       
-      const { error } = await supabase
-        .from('users')
-        .update({ 
-          gems: (userStats?.gems || 0) + gemsToAdd,
-          last_seen: new Date().toISOString()
-        })
-        .eq('telegram_id', telegramUser.id);
-
-      if (error) throw error;
-      
-      // Update local state via existing hook
-      updateGems(gemsToAdd);
-      
-    } catch (error) {
-      console.error('Failed to update gems:', error);
-      toast({
-        title: "Update Failed",
-        description: "Gems were purchased but failed to update. Please refresh.",
-        variant: "destructive",
-      });
+      if (!tg.initDataUnsafe?.user) {
+        tg.showAlert('Please open this store from the Telegram bot!');
+        tg.close();
+      }
     }
-  };
-
-  // Update user subscription in Supabase after successful payment
-  const updateUserSubscription = async (tier: string, gemsToAdd: number) => {
-    try {
-      if (!telegramUser?.id) return;
-      
-      const { error } = await supabase
-        .from('users')
-        .update({ 
-          gems: (userStats?.gems || 0) + gemsToAdd,
-          subscription_type: tier.toLowerCase(),
-          last_seen: new Date().toISOString()
-        })
-        .eq('telegram_id', telegramUser.id);
-
-      if (error) throw error;
-      
-      // Update local state via existing hook
-      updateGems(gemsToAdd);
-      
-    } catch (error) {
-      console.error('Failed to update subscription:', error);
-      toast({
-        title: "Update Failed", 
-        description: "Subscription was purchased but failed to update. Please refresh.",
-        variant: "destructive",
-      });
-    }
-  };
+  }, []);
 
   const handleGemPurchase = async (gemPackage: typeof gemPackages[0]) => {
-    // Debug logging
-    console.log('Telegram object:', window.Telegram);
-    console.log('WebApp object:', window.Telegram?.WebApp);
-    console.log('openInvoice available:', typeof window.Telegram?.WebApp?.openInvoice);
-    
     if (!window.Telegram?.WebApp) {
       toast({
         title: "Telegram WebApp Error",
@@ -124,83 +76,57 @@ const Store = () => {
       return;
     }
 
-    if (typeof window.Telegram.WebApp.openInvoice !== 'function') {
-      toast({
-        title: "Payment Feature Unavailable", 
-        description: "Telegram Stars payments are not available. Please ensure you're using the latest Telegram version.",
-        variant: "destructive",
-      });
+    if (!telegramUser?.id) {
+      window.Telegram.WebApp.showAlert('User not authenticated!');
       return;
     }
 
     setLoading(true);
 
     try {
-      // Extract stars from price string (e.g., "⭐️ 50" -> 50)
+      // Extract stars from price string (e.g., "⭐️ 100" -> 100)
       const stars = parseInt(gemPackage.price.replace(/[^\d,]/g, '').replace(',', ''));
+      const packageType = `gems_${gemPackage.gems}`;
 
-      // Create invoice link via backend
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/create-invoice`, {
+      // Create invoice via backend using the approved method
+      const response = await fetch('https://secret-share-backend-production.up.railway.app/api/create-invoice', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          title: `${gemPackage.gems} Gems`,
-          description: `Purchase ${gemPackage.gems} Gems for premium features`,
-          payload: `gems_${stars}`,
-          currency: "XTR",
-          prices: [{ amount: stars, label: `${gemPackage.gems} Gems` }]
-        }),
+          user_id: telegramUser.id,
+          package_type: packageType
+        })
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to create invoice');
+      const data = await response.json();
+
+      if (data.success && data.invoice_url) {
+        // Open Telegram payment using invoice link
+        window.Telegram.WebApp.openInvoice(data.invoice_url, (status) => {
+          if (status === "paid") {
+            window.Telegram.WebApp.showAlert('Payment successful! 🎉');
+            window.location.reload();
+          } else if (status === "cancelled") {
+            window.Telegram.WebApp.showAlert('Payment cancelled.');
+          } else {
+            window.Telegram.WebApp.showAlert('Payment failed. Please try again.');
+          }
+          setLoading(false);
+        });
+      } else {
+        throw new Error(data.error || 'Failed to create invoice');
       }
-
-      const { invoiceLink } = await response.json();
-
-      // Open Telegram payment using invoice link
-      window.Telegram.WebApp.openInvoice(invoiceLink, async (status) => {
-        if (status === "paid") {
-          // Payment successful - update Supabase directly
-          await updateUserGems(gemPackage.gems);
-          toast({
-            title: "Payment Successful! 💎",
-            description: `${gemPackage.gems} gems added to your account.`,
-          });
-        } else if (status === "failed") {
-          toast({
-            title: "Payment Failed",
-            description: "Payment was not completed. Please try again.",
-            variant: "destructive",
-          });
-        } else if (status === "cancelled") {
-          toast({
-            title: "Payment Cancelled",
-            description: "You cancelled the payment.",
-          });
-        }
-        setLoading(false);
-      });
 
     } catch (error) {
       console.error('Payment error:', error);
-      toast({
-        title: "Payment Error",
-        description: "Unable to process payment. Please try again.",
-        variant: "destructive",
-      });
+      window.Telegram.WebApp.showAlert('Error creating payment. Please try again.');
       setLoading(false);
     }
   };
 
   const handleSubscribe = async (planName: string) => {
-    // Debug logging
-    console.log('Telegram object:', window.Telegram);
-    console.log('WebApp object:', window.Telegram?.WebApp);
-    console.log('openInvoice available:', typeof window.Telegram?.WebApp?.openInvoice);
-    
     if (!window.Telegram?.WebApp) {
       toast({
         title: "Telegram WebApp Error",
@@ -210,81 +136,50 @@ const Store = () => {
       return;
     }
 
-    if (typeof window.Telegram.WebApp.openInvoice !== 'function') {
-      toast({
-        title: "Payment Feature Unavailable",
-        description: "Telegram Stars payments are not available. Please ensure you're using the latest Telegram version.", 
-        variant: "destructive",
-      });
+    if (!telegramUser?.id) {
+      window.Telegram.WebApp.showAlert('User not authenticated!');
       return;
     }
 
     setLoading(true);
 
     try {
-      const tierPricing: Record<string, { stars: number; gems: number }> = {
-        'Essential': { stars: 500, gems: 450 },
-        'Plus': { stars: 1000, gems: 1200 },
-        'Premium': { stars: 2000, gems: 2500 }
-      };
+      const packageType = `sub_${planName.toLowerCase()}`;
 
-      const pricing = tierPricing[planName];
-      if (!pricing) {
-        throw new Error('Invalid subscription plan');
-      }
-
-      // Create invoice link via backend
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/create-invoice`, {
+      // Create invoice via backend using the approved method
+      const response = await fetch('https://secret-share-backend-production.up.railway.app/api/create-invoice', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          title: `${planName} Subscription`,
-          description: `Monthly ${planName} subscription with ${pricing.gems} gems`,
-          payload: `sub_${planName.toLowerCase()}`,
-          currency: "XTR",
-          prices: [{ amount: pricing.stars, label: `${planName} Monthly` }]
-        }),
+          user_id: telegramUser.id,
+          package_type: packageType
+        })
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to create invoice');
+      const data = await response.json();
+
+      if (data.success && data.invoice_url) {
+        // Open Telegram payment using invoice link
+        window.Telegram.WebApp.openInvoice(data.invoice_url, (status) => {
+          if (status === "paid") {
+            window.Telegram.WebApp.showAlert('Subscription activated! 🎉');
+            window.location.reload();
+          } else if (status === "cancelled") {
+            window.Telegram.WebApp.showAlert('Payment cancelled.');
+          } else {
+            window.Telegram.WebApp.showAlert('Payment failed. Please try again.');
+          }
+          setLoading(false);
+        });
+      } else {
+        throw new Error(data.error || 'Failed to create invoice');
       }
-
-      const { invoiceLink } = await response.json();
-
-      // Open Telegram payment using invoice link
-      window.Telegram.WebApp.openInvoice(invoiceLink, async (status) => {
-        if (status === "paid") {
-          // Payment successful - update Supabase directly
-          await updateUserSubscription(planName, pricing.gems);
-          toast({
-            title: "Subscription Activated! 🎉",
-            description: `${planName} subscription activated with ${pricing.gems} gems.`,
-          });
-        } else if (status === "failed") {
-          toast({
-            title: "Payment Failed",
-            description: "Payment was not completed. Please try again.",
-            variant: "destructive",
-          });
-        } else if (status === "cancelled") {
-          toast({
-            title: "Payment Cancelled",
-            description: "You cancelled the payment.",
-          });
-        }
-        setLoading(false);
-      });
 
     } catch (error) {
       console.error('Subscription error:', error);
-      toast({
-        title: "Subscription Failed",
-        description: "Unable to process payment. Please try again.",
-        variant: "destructive",
-      });
+      window.Telegram.WebApp.showAlert('Error creating payment. Please try again.');
       setLoading(false);
     }
   };

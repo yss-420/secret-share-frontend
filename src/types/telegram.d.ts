@@ -3,6 +3,7 @@ interface TelegramWebApp {
   WebApp: {
     ready(): void;
     expand(): void;
+    close(): void;
     setHeaderColor(color: string): void;
     setBackgroundColor(color: string): void;
     initData: string;
@@ -18,6 +19,7 @@ interface TelegramWebApp {
       };
     };
     openInvoice(invoiceLink: string, callback: (status: 'paid' | 'cancelled' | 'failed' | 'pending') => void): void;
+    showAlert(message: string): void;
     showPopup(params: {
       title: string;
       message: string;
