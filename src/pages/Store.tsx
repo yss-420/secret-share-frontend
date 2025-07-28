@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { useUserData } from "@/hooks/useUserData";
 import { useTelegramAuth } from "@/hooks/useTelegramAuth";
 import { toast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 // Package mapping constants
 const GEM_PACKAGE_MAP: Record<number, string> = {
@@ -32,97 +33,190 @@ const SUBSCRIPTION_MAP: Record<string, string> = {
 const Store = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { updateGems } = useUserData();
+  const { updateGems, userStats } = useUserData();
   const { user: telegramUser } = useTelegramAuth();
 
+  // Update user gems in Supabase after successful payment
+  const updateUserGems = async (gemsToAdd: number) => {
+    try {
+      if (!telegramUser?.id) return;
+      
+      const { error } = await supabase
+        .from('users')
+        .update({ 
+          gems: (userStats?.gems || 0) + gemsToAdd,
+          last_seen: new Date().toISOString()
+        })
+        .eq('telegram_id', telegramUser.id);
+
+      if (error) throw error;
+      
+      // Update local state via existing hook
+      updateGems(gemsToAdd);
+      
+    } catch (error) {
+      console.error('Failed to update gems:', error);
+      toast({
+        title: "Update Failed",
+        description: "Gems were purchased but failed to update. Please refresh.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Update user subscription in Supabase after successful payment
+  const updateUserSubscription = async (tier: string, gemsToAdd: number) => {
+    try {
+      if (!telegramUser?.id) return;
+      
+      const { error } = await supabase
+        .from('users')
+        .update({ 
+          gems: (userStats?.gems || 0) + gemsToAdd,
+          subscription_type: tier.toLowerCase(),
+          last_seen: new Date().toISOString()
+        })
+        .eq('telegram_id', telegramUser.id);
+
+      if (error) throw error;
+      
+      // Update local state via existing hook
+      updateGems(gemsToAdd);
+      
+    } catch (error) {
+      console.error('Failed to update subscription:', error);
+      toast({
+        title: "Update Failed", 
+        description: "Subscription was purchased but failed to update. Please refresh.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleGemPurchase = async (gemPackage: typeof gemPackages[0]) => {
+    if (!window.Telegram?.WebApp) {
+      toast({
+        title: "Payment Error",
+        description: "Telegram WebApp not available. Please open in Telegram.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setLoading(true);
 
     try {
       // Extract stars from price string (e.g., "⭐️ 50" -> 50)
-      const stars = parseInt(gemPackage.price.replace(/[^\d]/g, ''));
-      const packageType = GEM_PACKAGE_MAP[stars];
-      
-      if (!packageType) {
-        throw new Error('Invalid package type');
-      }
+      const stars = parseInt(gemPackage.price.replace(/[^\d,]/g, '').replace(',', ''));
 
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/initiate-payment`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${import.meta.env.VITE_FRONTEND_SECRET_KEY}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          telegram_user_id: telegramUser?.id,
-          package_type: packageType
-        })
+      const invoice = {
+        title: `${gemPackage.gems} Gems`,
+        description: `Purchase ${gemPackage.gems} Gems for premium features`,
+        provider_token: "", // Empty for Telegram Stars
+        currency: "XTR", // Telegram Stars
+        prices: [{ label: `${gemPackage.gems} Gems`, amount: stars }],
+        payload: `gems_${gemPackage.gems}`, // For tracking
+      };
+
+      // Open Telegram payment directly in frontend
+      window.Telegram.WebApp.showInvoice(invoice, async (status) => {
+        if (status === "paid") {
+          // Payment successful - update Supabase directly
+          await updateUserGems(gemPackage.gems);
+          toast({
+            title: "Payment Successful! 💎",
+            description: `${gemPackage.gems} gems added to your account.`,
+          });
+        } else if (status === "failed") {
+          toast({
+            title: "Payment Failed",
+            description: "Payment was not completed. Please try again.",
+            variant: "destructive",
+          });
+        } else if (status === "cancelled") {
+          toast({
+            title: "Payment Cancelled",
+            description: "You cancelled the payment.",
+          });
+        }
+        setLoading(false);
       });
 
-      const result = await response.json();
-      
-      if (response.ok && result.success) {
-        toast({
-          title: "Invoice Sent! ⭐️",
-          description: `Check your Telegram to pay ${stars} Stars for ${gemPackage.gems} gems.`,
-        });
-      } else {
-        throw new Error(result.message || 'Payment failed');
-      }
-      
     } catch (error) {
       console.error('Payment error:', error);
       toast({
-        title: "Payment Failed",
-        description: "Unable to send invoice. Please try again.",
+        title: "Payment Error",
+        description: "Unable to process payment. Please try again.",
         variant: "destructive",
       });
-    } finally {
       setLoading(false);
     }
   };
 
   const handleSubscribe = async (planName: string) => {
+    if (!window.Telegram?.WebApp) {
+      toast({
+        title: "Payment Error",
+        description: "Telegram WebApp not available. Please open in Telegram.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setLoading(true);
 
     try {
-      const packageType = SUBSCRIPTION_MAP[planName];
-      
-      if (!packageType) {
+      const tierPricing: Record<string, { stars: number; gems: number }> = {
+        'Essential': { stars: 400, gems: 450 },
+        'Plus': { stars: 800, gems: 1200 },
+        'Premium': { stars: 1600, gems: 2500 }
+      };
+
+      const pricing = tierPricing[planName];
+      if (!pricing) {
         throw new Error('Invalid subscription plan');
       }
-      
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/initiate-payment`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${import.meta.env.VITE_FRONTEND_SECRET_KEY}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          telegram_user_id: telegramUser?.id,
-          package_type: packageType
-        })
+
+      const invoice = {
+        title: `${planName} Subscription`,
+        description: `Monthly ${planName} subscription with ${pricing.gems} gems`,
+        provider_token: "", // Empty for Telegram Stars
+        currency: "XTR", // Telegram Stars
+        prices: [{ label: `${planName} Monthly`, amount: pricing.stars }],
+        payload: `sub_${planName.toLowerCase()}`, // For tracking
+      };
+
+      // Open Telegram payment directly in frontend
+      window.Telegram.WebApp.showInvoice(invoice, async (status) => {
+        if (status === "paid") {
+          // Payment successful - update Supabase directly
+          await updateUserSubscription(planName, pricing.gems);
+          toast({
+            title: "Subscription Activated! 🎉",
+            description: `${planName} subscription activated with ${pricing.gems} gems.`,
+          });
+        } else if (status === "failed") {
+          toast({
+            title: "Payment Failed",
+            description: "Payment was not completed. Please try again.",
+            variant: "destructive",
+          });
+        } else if (status === "cancelled") {
+          toast({
+            title: "Payment Cancelled",
+            description: "You cancelled the payment.",
+          });
+        }
+        setLoading(false);
       });
 
-      const result = await response.json();
-      
-      if (response.ok && result.success) {
-        toast({
-          title: "Subscription Invoice Sent! ⭐️",
-          description: `Check your Telegram to complete your ${planName} subscription payment.`,
-        });
-      } else {
-        throw new Error(result.message || 'Subscription failed');
-      }
-      
     } catch (error) {
       console.error('Subscription error:', error);
       toast({
-        title: "Subscription Failed", 
-        description: "Unable to send invoice. Please try again.",
+        title: "Subscription Failed",
+        description: "Unable to process payment. Please try again.",
         variant: "destructive",
       });
-    } finally {
       setLoading(false);
     }
   };
