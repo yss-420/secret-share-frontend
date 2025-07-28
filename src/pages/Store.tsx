@@ -46,7 +46,7 @@ const Store = () => {
       window.Telegram.WebApp.ready();
       window.Telegram.WebApp.expand();
       console.log('Telegram WebApp initialized');
-      console.log('showInvoice method available:', typeof window.Telegram.WebApp.showInvoice);
+      console.log('openInvoice method available:', typeof window.Telegram.WebApp.openInvoice);
     } else {
       console.warn('Telegram WebApp not found');
     }
@@ -113,7 +113,7 @@ const Store = () => {
     // Debug logging
     console.log('Telegram object:', window.Telegram);
     console.log('WebApp object:', window.Telegram?.WebApp);
-    console.log('showInvoice available:', typeof window.Telegram?.WebApp?.showInvoice);
+    console.log('openInvoice available:', typeof window.Telegram?.WebApp?.openInvoice);
     
     if (!window.Telegram?.WebApp) {
       toast({
@@ -124,10 +124,10 @@ const Store = () => {
       return;
     }
 
-    if (typeof window.Telegram.WebApp.showInvoice !== 'function') {
+    if (typeof window.Telegram.WebApp.openInvoice !== 'function') {
       toast({
         title: "Payment Feature Unavailable", 
-        description: "Telegram Stars payments require Telegram Premium or may not be available in your region.",
+        description: "Telegram Stars payments are not available. Please ensure you're using the latest Telegram version.",
         variant: "destructive",
       });
       return;
@@ -139,17 +139,29 @@ const Store = () => {
       // Extract stars from price string (e.g., "⭐️ 50" -> 50)
       const stars = parseInt(gemPackage.price.replace(/[^\d,]/g, '').replace(',', ''));
 
-      const invoice = {
-        title: `${gemPackage.gems} Gems`,
-        description: `Purchase ${gemPackage.gems} Gems for premium features`,
-        provider_token: "", // Empty for Telegram Stars
-        currency: "XTR", // Telegram Stars
-        prices: [{ label: `${gemPackage.gems} Gems`, amount: stars }],
-        payload: `gems_${stars}`, // Use stars for tracking to match backend
-      };
+      // Create invoice link via backend
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/create-invoice`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: `${gemPackage.gems} Gems`,
+          description: `Purchase ${gemPackage.gems} Gems for premium features`,
+          payload: `gems_${stars}`,
+          currency: "XTR",
+          prices: [{ amount: stars, label: `${gemPackage.gems} Gems` }]
+        }),
+      });
 
-      // Open Telegram payment directly in frontend
-      window.Telegram.WebApp.showInvoice(invoice, async (status) => {
+      if (!response.ok) {
+        throw new Error('Failed to create invoice');
+      }
+
+      const { invoiceLink } = await response.json();
+
+      // Open Telegram payment using invoice link
+      window.Telegram.WebApp.openInvoice(invoiceLink, async (status) => {
         if (status === "paid") {
           // Payment successful - update Supabase directly
           await updateUserGems(gemPackage.gems);
@@ -187,7 +199,7 @@ const Store = () => {
     // Debug logging
     console.log('Telegram object:', window.Telegram);
     console.log('WebApp object:', window.Telegram?.WebApp);
-    console.log('showInvoice available:', typeof window.Telegram?.WebApp?.showInvoice);
+    console.log('openInvoice available:', typeof window.Telegram?.WebApp?.openInvoice);
     
     if (!window.Telegram?.WebApp) {
       toast({
@@ -198,10 +210,10 @@ const Store = () => {
       return;
     }
 
-    if (typeof window.Telegram.WebApp.showInvoice !== 'function') {
+    if (typeof window.Telegram.WebApp.openInvoice !== 'function') {
       toast({
         title: "Payment Feature Unavailable",
-        description: "Telegram Stars payments require Telegram Premium or may not be available in your region.", 
+        description: "Telegram Stars payments are not available. Please ensure you're using the latest Telegram version.", 
         variant: "destructive",
       });
       return;
@@ -221,17 +233,29 @@ const Store = () => {
         throw new Error('Invalid subscription plan');
       }
 
-      const invoice = {
-        title: `${planName} Subscription`,
-        description: `Monthly ${planName} subscription with ${pricing.gems} gems`,
-        provider_token: "", // Empty for Telegram Stars
-        currency: "XTR", // Telegram Stars
-        prices: [{ label: `${planName} Monthly`, amount: pricing.stars }],
-        payload: `sub_${planName.toLowerCase()}`, // For tracking
-      };
+      // Create invoice link via backend
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/create-invoice`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: `${planName} Subscription`,
+          description: `Monthly ${planName} subscription with ${pricing.gems} gems`,
+          payload: `sub_${planName.toLowerCase()}`,
+          currency: "XTR",
+          prices: [{ amount: pricing.stars, label: `${planName} Monthly` }]
+        }),
+      });
 
-      // Open Telegram payment directly in frontend
-      window.Telegram.WebApp.showInvoice(invoice, async (status) => {
+      if (!response.ok) {
+        throw new Error('Failed to create invoice');
+      }
+
+      const { invoiceLink } = await response.json();
+
+      // Open Telegram payment using invoice link
+      window.Telegram.WebApp.openInvoice(invoiceLink, async (status) => {
         if (status === "paid") {
           // Payment successful - update Supabase directly
           await updateUserSubscription(planName, pricing.gems);

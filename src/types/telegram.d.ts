@@ -17,14 +17,7 @@ interface TelegramWebApp {
         photo_url?: string;
       };
     };
-    showInvoice(invoice: {
-      title: string;
-      description: string;
-      provider_token: string;
-      currency: string;
-      prices: Array<{ label: string; amount: number }>;
-      payload: string;
-    }, callback: (status: 'paid' | 'cancelled' | 'failed' | 'pending') => void): void;
+    openInvoice(invoiceLink: string, callback: (status: 'paid' | 'cancelled' | 'failed' | 'pending') => void): void;
     showPopup(params: {
       title: string;
       message: string;
