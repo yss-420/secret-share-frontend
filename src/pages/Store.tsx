@@ -19,7 +19,7 @@ const GEM_PACKAGE_MAP: Record<number, string> = {
   250: 'gems_250',   // 250 Stars → 250 Gems
   500: 'gems_500',   // 500 Stars → 525 Gems
   1000: 'gems_1000', // 1000 Stars → 1100 Gems
-  2500: 'gems_2500', // 2500 Stars → 3000 Gems
+  2500: 'gems_2500', // 2500 Stars → 2600 Gems
   5000: 'gems_5000', // 5000 Stars → 4200 Gems
   10000: 'gems_10000' // 10000 Stars → 8500 Gems
 };
@@ -38,9 +38,17 @@ const Store = () => {
 
   // Initialize Telegram WebApp
   useEffect(() => {
+    console.log('Initializing Telegram WebApp...');
+    console.log('window.Telegram:', window.Telegram);
+    
     if (window.Telegram?.WebApp) {
+      console.log('Telegram WebApp found, initializing...');
       window.Telegram.WebApp.ready();
       window.Telegram.WebApp.expand();
+      console.log('Telegram WebApp initialized');
+      console.log('showInvoice method available:', typeof window.Telegram.WebApp.showInvoice);
+    } else {
+      console.warn('Telegram WebApp not found');
     }
   }, []);
 
@@ -102,10 +110,24 @@ const Store = () => {
   };
 
   const handleGemPurchase = async (gemPackage: typeof gemPackages[0]) => {
-    if (!window.Telegram?.WebApp?.showInvoice) {
+    // Debug logging
+    console.log('Telegram object:', window.Telegram);
+    console.log('WebApp object:', window.Telegram?.WebApp);
+    console.log('showInvoice available:', typeof window.Telegram?.WebApp?.showInvoice);
+    
+    if (!window.Telegram?.WebApp) {
       toast({
-        title: "Payment Error",
-        description: "Telegram Stars payments not available. Please open in Telegram.",
+        title: "Telegram WebApp Error",
+        description: "Telegram WebApp not found. Please ensure you're using the latest Telegram version.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (typeof window.Telegram.WebApp.showInvoice !== 'function') {
+      toast({
+        title: "Payment Feature Unavailable", 
+        description: "Telegram Stars payments require Telegram Premium or may not be available in your region.",
         variant: "destructive",
       });
       return;
@@ -162,10 +184,24 @@ const Store = () => {
   };
 
   const handleSubscribe = async (planName: string) => {
-    if (!window.Telegram?.WebApp?.showInvoice) {
+    // Debug logging
+    console.log('Telegram object:', window.Telegram);
+    console.log('WebApp object:', window.Telegram?.WebApp);
+    console.log('showInvoice available:', typeof window.Telegram?.WebApp?.showInvoice);
+    
+    if (!window.Telegram?.WebApp) {
       toast({
-        title: "Payment Error",
-        description: "Telegram Stars payments not available. Please open in Telegram.",
+        title: "Telegram WebApp Error",
+        description: "Telegram WebApp not found. Please ensure you're using the latest Telegram version.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (typeof window.Telegram.WebApp.showInvoice !== 'function') {
+      toast({
+        title: "Payment Feature Unavailable",
+        description: "Telegram Stars payments require Telegram Premium or may not be available in your region.", 
         variant: "destructive",
       });
       return;
@@ -235,7 +271,7 @@ const Store = () => {
     { gems: 250, price: "⭐️ 250", color: "from-purple-500 to-purple-600", popular: false },
     { gems: 525, price: "⭐️ 500", color: "from-orange-500 to-orange-600", popular: false },
     { gems: 1100, price: "⭐️ 1,000", color: "from-pink-500 to-pink-600", popular: true },
-    { gems: 3000, price: "⭐️ 2,500", color: "from-red-500 to-red-600", popular: false },
+    { gems: 2600, price: "⭐️ 2,500", color: "from-red-500 to-red-600", popular: false },
     { gems: 4200, price: "⭐️ 5,000", color: "from-yellow-500 to-yellow-600", popular: false },
     { gems: 8500, price: "⭐️ 10,000", color: "from-indigo-500 to-indigo-600", popular: false },
   ];
