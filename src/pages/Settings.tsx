@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Header } from "@/components/Header";
 import { NavigationBar } from "@/components/NavigationBar";
-import { ArrowLeft, ChevronRight, Crown, Globe, HelpCircle, Phone } from "lucide-react";
+import { ArrowLeft, ChevronRight, Crown, Globe, HelpCircle, Phone, Shield } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserData } from "@/hooks/useUserData";
@@ -106,6 +106,16 @@ const Settings = () => {
                 <div className="flex items-center space-x-3">
                   <Phone className="w-5 h-5 text-primary" />
                   <div className="text-sm font-semibold text-foreground">Contact Support</div>
+                </div>
+                <ChevronRight className="w-4 h-4 text-muted-foreground" />
+              </div>
+            </Card>
+
+            <Card className="card-premium transition-smooth p-4 cursor-pointer" onClick={() => navigate('/privacy-policy')}>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <Shield className="w-5 h-5 text-primary" />
+                  <div className="text-sm font-semibold text-foreground">Privacy Policy</div>
                 </div>
                 <ChevronRight className="w-4 h-4 text-muted-foreground" />
               </div>
