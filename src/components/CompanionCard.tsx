@@ -2,6 +2,7 @@
 
 import { Card } from "@/components/ui/card";
 import { Users } from "lucide-react";
+import { trackCharacterSelection } from "@/utils/analytics";
 
 interface CompanionCardProps {
   name: string;
@@ -12,10 +13,15 @@ interface CompanionCardProps {
 }
 
 export const CompanionCard = ({ name, description, points, image, onClick }: CompanionCardProps) => {
+  const handleClick = () => {
+    trackCharacterSelection(name);
+    onClick();
+  };
+
   return (
     <Card 
       className="card-premium transition-smooth group overflow-hidden cursor-pointer rounded-lg"
-      onClick={onClick}
+      onClick={handleClick}
     >
       <div className="relative aspect-[4/5] overflow-hidden">
         <img 

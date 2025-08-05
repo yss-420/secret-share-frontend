@@ -1,6 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Users, TrendingUp, Settings } from "lucide-react";
+import { trackNavigation, trackStoreVisit } from "@/utils/analytics";
 
 interface NavigationBarProps {
   activeTab: string;
@@ -16,9 +17,10 @@ export const NavigationBar = ({ activeTab, onTabChange }: NavigationBarProps) =>
 
   const handleTabClick = (tabId: string) => {
     if (tabId === 'upgrade') {
-      // Navigate to the store page for all upgrade-related functionality
+      trackStoreVisit();
       window.location.href = '/store';
     } else {
+      trackNavigation(tabId);
       onTabChange(tabId);
     }
   };

@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import WebApp from '@twa-dev/sdk';
+import { retrieveLaunchParams } from '@telegram-apps/sdk';
 
 interface TelegramUser {
   id: number;
@@ -43,6 +44,17 @@ export const useTelegramAuth = (): TelegramAuthData => {
 
         // Initialize Telegram WebApp
         WebApp.ready();
+        
+        // Initialize Telegram Analytics
+        try {
+          const launchParams = retrieveLaunchParams();
+          if (launchParams) {
+            console.log('Telegram launch params retrieved:', launchParams);
+            console.log('App launched - analytics event tracked');
+          }
+        } catch (error) {
+          console.warn('Failed to initialize Telegram Analytics:', error);
+        }
         
         // Get init data
         const telegramInitData = WebApp.initData;
