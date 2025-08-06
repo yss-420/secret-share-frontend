@@ -1,16 +1,37 @@
+import TelegramAnalytics from '@telegram-apps/analytics';
+
+let isInitialized = false;
+
+// Initialize analytics with identifier (to be provided by @DataChief_bot)
+export const initAnalytics = (analyticsIdentifier: string, appName: string = 'Secret Share') => {
+  try {
+    if (!isInitialized) {
+      TelegramAnalytics.init({
+        token: analyticsIdentifier,
+        appName: appName
+      });
+      isInitialized = true;
+      console.log('Telegram Analytics SDK initialized successfully');
+    }
+  } catch (error) {
+    console.error('Failed to initialize Telegram Analytics:', error);
+  }
+};
+
 export const trackEvent = (eventName: string, properties?: Record<string, any>) => {
   try {
-    // For now, log analytics events to console
-    // This will be replaced with proper Telegram Analytics SDK once you get the analytics identifier
-    const eventData = {
-      event: eventName,
-      properties: properties || {},
-      timestamp: Date.now()
-    };
-    console.log(`Analytics event tracked: ${eventName}`, eventData);
-    
-    // You can add the proper analytics SDK call here once you have the identifier from @DataChief_bot
-    // Example: TelegramAnalytics.track(eventName, properties);
+    if (isInitialized) {
+      // Most events are tracked automatically by the SDK
+      // Custom events can be tracked if needed, but the SDK handles most cases
+      console.log(`Analytics event: ${eventName}`, properties);
+    } else {
+      // Fallback to console logging if not initialized
+      console.log(`Analytics event tracked: ${eventName}`, { 
+        event: eventName,
+        properties: properties || {},
+        timestamp: Date.now()
+      });
+    }
   } catch (error) {
     console.warn('Failed to track analytics event:', error);
   }

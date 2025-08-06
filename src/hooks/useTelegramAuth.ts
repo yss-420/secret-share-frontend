@@ -44,16 +44,31 @@ export const useTelegramAuth = (): TelegramAuthData => {
         // Initialize Telegram WebApp
         WebApp.ready();
         
-        // Initialize Telegram Analytics - simplified approach
+        // Initialize Telegram Analytics SDK
         try {
-          // Log app launch for analytics
-          console.log('App launched - analytics event tracked');
+          // TODO: Replace 'YOUR_ANALYTICS_IDENTIFIER' with actual identifier from @DataChief_bot
+          // Contact @DataChief_bot with:
+          // - App Name: "Secret Share"
+          // - Description: "AI Chat Companions - Telegram Mini App"
+          // - URL: [Your deployment URL]
+          // - Bot: @yoursecretsharebot
+          // - Category: Entertainment
           
-          // Track app launch event using our analytics utility
-          if (typeof window !== 'undefined') {
-            // Basic analytics initialization - will be enhanced once we get the identifier
-            console.log('Telegram Analytics SDK initialized');
-          }
+          // For now, we'll use a placeholder - uncomment the line below once you get the identifier
+          // import('@/utils/analytics').then(({ initAnalytics }) => {
+          //   initAnalytics('YOUR_ANALYTICS_IDENTIFIER');
+          // });
+          
+          // Track app launch event
+          console.log('App launched - ready for analytics tracking');
+          
+          // Import and use analytics functions
+          import('@/utils/analytics').then(({ trackEvent }) => {
+            trackEvent('app_launch', {
+              platform: 'telegram',
+              timestamp: Date.now()
+            });
+          });
         } catch (error) {
           console.warn('Failed to initialize Telegram Analytics:', error);
         }
