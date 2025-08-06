@@ -1,19 +1,11 @@
-// Official Telegram Analytics SDK implementation
-import analytics from '@telegram-apps/analytics';
-
+// Telegram Analytics implementation using direct API calls
 let isInitialized = false;
 let currentUserId: number | null = null;
 
-// Initialize analytics with official SDK
+// Initialize analytics
 export const initAnalytics = (userId?: number) => {
   try {
     if (!isInitialized) {
-      // Initialize with SDK Auth Key and Analytics Identifier
-      analytics.init({
-        token: 'eyJhcHBfbmFtZSI6InNlY3JldF9zaGFyZSIsImFwcF91cmwiOiJodHRwczovL3QubWUvWW91clNlY3JldFNoYXJlQm90IiwiYXBwX2RvbWFpbiI6Imh0dHBzOi8vc2VjcmV0LXNoYXJlLmNvbS8ifQ==!5qhdK7t9nNztBOn4RaVlQXF7KccCDMRR8BSmYRHi/S8=',
-        appName: 'secret_share'
-      });
-      
       isInitialized = true;
       currentUserId = userId || null;
       
