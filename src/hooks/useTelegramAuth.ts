@@ -46,24 +46,11 @@ export const useTelegramAuth = (): TelegramAuthData => {
         
         // Initialize Telegram Analytics SDK
         try {
-          // TODO: Replace 'YOUR_ANALYTICS_IDENTIFIER' with actual identifier from @DataChief_bot
-          // Contact @DataChief_bot with:
-          // - App Name: "Secret Share"
-          // - Description: "AI Chat Companions - Telegram Mini App"
-          // - URL: [Your deployment URL]
-          // - Bot: @yoursecretsharebot
-          // - Category: Entertainment
-          
-          // For now, we'll use a placeholder - uncomment the line below once you get the identifier
-          // import('@/utils/analytics').then(({ initAnalytics }) => {
-          //   initAnalytics('YOUR_ANALYTICS_IDENTIFIER');
-          // });
-          
-          // Track app launch event
-          console.log('App launched - ready for analytics tracking');
-          
-          // Import and use analytics functions
-          import('@/utils/analytics').then(({ trackEvent }) => {
+          // Initialize analytics with the provided SDK Auth Key
+          import('@/utils/analytics').then(({ initAnalytics, trackEvent }) => {
+            initAnalytics('eyJhcHBfbmFtZSI6InNlY3JldF9zaGFyZSIsImFwcF91cmwiOiJodHRwczovL3QubWUvWW91clNlY3JldFNoYXJlQm90IiwiYXBwX2RvbWFpbiI6Imh0dHBzOi8vc2VjcmV0LXNoYXJlLmNvbS8ifQ==!5qhdK7t9nNztBOn4RaVlQXF7KccCDMRR8BSmYRHi/S8=');
+            
+            // Track app launch event
             trackEvent('app_launch', {
               platform: 'telegram',
               timestamp: Date.now()
