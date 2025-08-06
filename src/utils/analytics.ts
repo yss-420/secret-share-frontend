@@ -1,63 +1,50 @@
-// Telegram Analytics implementation with SDK Auth Key integration
+// Official Telegram Analytics SDK implementation
+import analytics from '@telegram-apps/analytics';
 
 let isInitialized = false;
-let analyticsToken: string | null = null;
-let appConfig: any = null;
+let currentUserId: number | null = null;
 
-// Parse the SDK Auth Key to extract app configuration
-const parseSDKAuthKey = (sdkAuthKey: string) => {
+// Initialize analytics with official SDK
+export const initAnalytics = (userId?: number) => {
   try {
-    const [encodedData, signature] = sdkAuthKey.split('!');
-    const decodedData = atob(encodedData);
-    return JSON.parse(decodedData);
-  } catch (error) {
-    console.error('Failed to parse SDK Auth Key:', error);
-    return null;
-  }
-};
-
-// Initialize analytics with SDK Auth Key
-export const initAnalytics = (sdkAuthKey: string, appName: string = 'Secret Share') => {
-  try {
-    if (!isInitialized && sdkAuthKey) {
-      analyticsToken = sdkAuthKey;
-      appConfig = parseSDKAuthKey(sdkAuthKey);
+    if (!isInitialized) {
+      // Initialize with SDK Auth Key and Analytics Identifier
+      analytics.init({
+        token: 'eyJhcHBfbmFtZSI6InNlY3JldF9zaGFyZSIsImFwcF91cmwiOiJodHRwczovL3QubWUvWW91clNlY3JldFNoYXJlQm90IiwiYXBwX2RvbWFpbiI6Imh0dHBzOi8vc2VjcmV0LXNoYXJlLmNvbS8ifQ==!5qhdK7t9nNztBOn4RaVlQXF7KccCDMRR8BSmYRHi/S8=',
+        appName: 'secret_share'
+      });
+      
       isInitialized = true;
+      currentUserId = userId || null;
       
       console.log('📊 Telegram Analytics initialized:', {
-        app_name: appConfig?.app_name || appName,
-        app_url: appConfig?.app_url,
-        token_present: !!analyticsToken
+        app_name: 'secret_share',
+        user_id: userId,
+        initialized: true
       });
       
       // Track initialization
       trackEvent('analytics_initialized', {
-        app_name: appConfig?.app_name || appName,
-        app_url: appConfig?.app_url,
+        app_name: 'secret_share',
         timestamp: Date.now()
       });
+    } else if (userId && userId !== currentUserId) {
+      // Update user ID if provided
+      currentUserId = userId;
+      console.log('📊 Updated user ID:', userId);
     }
   } catch (error) {
     console.error('Failed to initialize analytics:', error);
   }
 };
 
-// Send event to Telegram Analytics API
+// Send event to Telegram Analytics API directly
 const sendToTelegramAnalytics = async (eventData: any) => {
   try {
-    if (!analyticsToken) {
-      console.warn('Analytics token not available');
-      return;
-    }
-
-    // Telegram Analytics API endpoint (this may need to be verified/updated)
-    const apiEndpoint = 'https://api.telegram.org/analytics/event';
-    
-    const response = await fetch(apiEndpoint, {
+    const response = await fetch('https://tganalytics.xyz/api/v1/events', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${analyticsToken}`
       },
       body: JSON.stringify(eventData)
     });
@@ -75,24 +62,27 @@ const sendToTelegramAnalytics = async (eventData: any) => {
 export const trackEvent = (eventName: string, properties?: Record<string, any>) => {
   try {
     const eventData = {
+      token: 'eyJhcHBfbmFtZSI6InNlY3JldF9zaGFyZSIsImFwcF91cmwiOiJodHRwczovL3QubWUvWW91clNlY3JldFNoYXJlQm90IiwiYXBwX2RvbWFpbiI6Imh0dHBzOi8vc2VjcmV0LXNoYXJlLmNvbS8ifQ==!5qhdK7t9nNztBOn4RaVlQXF7KccCDMRR8BSmYRHi/S8=',
+      app_name: 'secret_share',
       event: eventName,
+      user_id: currentUserId || 0,
       properties: {
         ...properties,
-        app_name: appConfig?.app_name || 'Secret Share',
-        app_url: appConfig?.app_url
-      },
-      timestamp: Date.now(),
-      user_agent: navigator.userAgent,
-      platform: 'telegram'
+        timestamp: Date.now(),
+        platform: 'telegram'
+      }
     };
     
     // Always log to console for debugging
     console.log(`📊 Analytics Event: ${eventName}`, eventData);
     
     // Send to Telegram Analytics API if initialized
-    if (isInitialized && analyticsToken) {
+    if (isInitialized) {
       sendToTelegramAnalytics(eventData);
+    } else {
+      console.warn('Analytics not initialized, event will be logged only');
     }
+    
   } catch (error) {
     console.warn('Failed to track analytics event:', error);
   }

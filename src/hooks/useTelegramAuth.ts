@@ -44,15 +44,24 @@ export const useTelegramAuth = (): TelegramAuthData => {
         // Initialize Telegram WebApp
         WebApp.ready();
         
-        // Initialize Telegram Analytics SDK
+        // Get user data first
+        const telegramUser = WebApp.initDataUnsafe?.user;
+        if (telegramUser) {
+          setUser(telegramUser);
+          console.log('Telegram user found:', telegramUser);
+        } else {
+          console.log('No Telegram user data available');
+        }
+
+        // Initialize Telegram Analytics SDK with user ID
         try {
-          // Initialize analytics with the provided SDK Auth Key
           import('@/utils/analytics').then(({ initAnalytics, trackEvent }) => {
-            initAnalytics('eyJhcHBfbmFtZSI6InNlY3JldF9zaGFyZSIsImFwcF91cmwiOiJodHRwczovL3QubWUvWW91clNlY3JldFNoYXJlQm90IiwiYXBwX2RvbWFpbiI6Imh0dHBzOi8vc2VjcmV0LXNoYXJlLmNvbS8ifQ==!5qhdK7t9nNztBOn4RaVlQXF7KccCDMRR8BSmYRHi/S8=');
+            initAnalytics(telegramUser?.id);
             
             // Track app launch event
             trackEvent('app_launch', {
               platform: 'telegram',
+              user_id: telegramUser?.id || 0,
               timestamp: Date.now()
             });
           });
@@ -64,14 +73,6 @@ export const useTelegramAuth = (): TelegramAuthData => {
         const telegramInitData = WebApp.initData;
         setInitData(telegramInitData);
         
-        // Get user data
-        const telegramUser = WebApp.initDataUnsafe?.user;
-        if (telegramUser) {
-          setUser(telegramUser);
-          console.log('Telegram user found:', telegramUser);
-        } else {
-          console.log('No Telegram user data available');
-        }
 
         // Configure WebApp appearance
         WebApp.expand();
