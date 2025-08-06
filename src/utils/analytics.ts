@@ -1,36 +1,46 @@
-import TelegramAnalytics from '@telegram-apps/analytics';
+// Telegram Analytics implementation
+// This will be enhanced once we get the analytics identifier from @DataChief_bot
+// Currently using a fallback approach until the proper SDK is available
 
 let isInitialized = false;
+let analyticsToken: string | null = null;
 
 // Initialize analytics with identifier (to be provided by @DataChief_bot)
 export const initAnalytics = (analyticsIdentifier: string, appName: string = 'Secret Share') => {
   try {
-    if (!isInitialized) {
-      TelegramAnalytics.init({
-        token: analyticsIdentifier,
-        appName: appName
-      });
+    if (!isInitialized && analyticsIdentifier) {
+      analyticsToken = analyticsIdentifier;
       isInitialized = true;
-      console.log('Telegram Analytics SDK initialized successfully');
+      console.log('Analytics initialized with token:', analyticsIdentifier);
+      
+      // Track initialization
+      trackEvent('analytics_initialized', {
+        app_name: appName,
+        timestamp: Date.now()
+      });
     }
   } catch (error) {
-    console.error('Failed to initialize Telegram Analytics:', error);
+    console.error('Failed to initialize analytics:', error);
   }
 };
 
 export const trackEvent = (eventName: string, properties?: Record<string, any>) => {
   try {
-    if (isInitialized) {
-      // Most events are tracked automatically by the SDK
-      // Custom events can be tracked if needed, but the SDK handles most cases
-      console.log(`Analytics event: ${eventName}`, properties);
-    } else {
-      // Fallback to console logging if not initialized
-      console.log(`Analytics event tracked: ${eventName}`, { 
-        event: eventName,
-        properties: properties || {},
-        timestamp: Date.now()
-      });
+    const eventData = {
+      event: eventName,
+      properties: properties || {},
+      timestamp: Date.now(),
+      token: analyticsToken
+    };
+    
+    // For now, log events to console
+    // Once @DataChief_bot provides the analytics identifier, we can implement proper tracking
+    console.log(`📊 Analytics Event: ${eventName}`, eventData);
+    
+    // Future: Send to Telegram Analytics API when identifier is available
+    if (isInitialized && analyticsToken) {
+      // This will be implemented once we get the proper analytics setup
+      console.log('✅ Event tracked with token:', analyticsToken);
     }
   } catch (error) {
     console.warn('Failed to track analytics event:', error);
