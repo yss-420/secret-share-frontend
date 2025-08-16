@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import WebApp from '@twa-dev/sdk';
+import { initBemobCid } from '@/utils/bemobCid';
 
 interface TelegramUser {
   id: number;
@@ -74,6 +75,9 @@ export const useTelegramAuth = (): TelegramAuthData => {
         setInitData(telegramInitData);
         
 
+        // Initialize BeMob CID detection
+        initBemobCid();
+        
         // Configure WebApp appearance
         WebApp.expand();
         
