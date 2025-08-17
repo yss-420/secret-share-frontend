@@ -136,8 +136,7 @@ const Store = () => {
         
         console.log('[STORE] Sending WebApp payload:', payload);
         window.Telegram.WebApp.sendData(JSON.stringify(payload));
-        
-        toast({ title: "Purchase Initiated", description: `Processing ${gemPackage.gems} gems purchase...` });
+        trackGemPurchase(gemPackage.gems, stars);
         setLoading(false);
         return;
       }
@@ -147,7 +146,7 @@ const Store = () => {
       
       if (!telegramUser?.id) {
         toast({
-          title: "Authentication Required",
+          title: "Authentication Required", 
           description: "Please open this store from the Telegram bot.",
           variant: "destructive",
         });

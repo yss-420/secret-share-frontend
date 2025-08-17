@@ -16,8 +16,8 @@ export const useUserData = () => {
       setLoading(true);
       setError(null);
 
-      // Use dev data in development mode
-      if (isDevMode && devUser) {
+      // Only use dev data in actual development (not production)
+      if (isDevMode && devUser && window.location.hostname === 'localhost') {
         console.log('[USER_DATA] Using dev user:', devUser);
         setUserStats({
           gems: devUser.gems,
@@ -31,7 +31,7 @@ export const useUserData = () => {
         return;
       }
 
-      // Use public view to fetch user data - avoids RLS issues
+      // Fetch real user data from Supabase
       if (user?.id) {
         const telegramId = parseInt(user.id);
         console.log('[USER_DATA] Fetching data for telegram_id:', telegramId);
@@ -64,11 +64,11 @@ export const useUserData = () => {
         console.log('[USER_DATA] Successfully fetched user data:', data);
         setUserStats({
           gems: data.gems || 0,
-          total_messages: 0, // Not available in public view
+          total_messages: 0,
           messages_today: data.messages_today || 0,
           subscription_type: data.subscription_type,
-          subscription_end: null, // Not available in public view
-          tier: 'free' // Default tier
+          subscription_end: null,
+          tier: 'free'
         });
       } else {
         console.log('[USER_DATA] No user.id available');
