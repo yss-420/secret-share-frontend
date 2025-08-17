@@ -32,9 +32,15 @@ export const useUserData = () => {
       }
 
       // Get telegramId directly from Telegram WebApp
+      console.log('[USER_DATA] Telegram WebApp available:', !!window.Telegram?.WebApp);
+      console.log('[USER_DATA] initDataUnsafe:', window.Telegram?.WebApp?.initDataUnsafe);
+      console.log('[USER_DATA] user object:', window.Telegram?.WebApp?.initDataUnsafe?.user);
+      
       const telegramId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+      console.log('[USER_DATA] Raw telegramId:', telegramId, 'type:', typeof telegramId);
+      
       if (!telegramId || typeof telegramId !== 'number') {
-        console.log('[USER_DATA] No telegram user found');
+        console.log('[USER_DATA] No valid telegram user found - telegramId:', telegramId);
         setError('No Telegram user found');
         setLoading(false);
         return;
