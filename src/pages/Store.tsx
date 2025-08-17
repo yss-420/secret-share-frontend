@@ -11,7 +11,6 @@ import { useUserData } from "@/hooks/useUserData";
 import { useTelegramAuth } from "@/hooks/useTelegramAuth";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { trackGemPurchase, trackSubscriptionPurchase } from "@/utils/conversionPixel";
 
 // Package mapping constants
 const GEM_PACKAGE_MAP: Record<number, string> = {
@@ -167,9 +166,6 @@ const Store = () => {
         // Open Telegram payment using invoice link
         window.Telegram.WebApp.openInvoice(data.invoice_url, (status) => {
           if (status === "paid") {
-            // Fire conversion pixel for successful gem purchase
-            trackGemPurchase(gemPackage.gems, stars, data.invoice_url);
-            
             // Safe alert call
             if (typeof window.Telegram.WebApp.showAlert === 'function') {
               try {
@@ -288,12 +284,6 @@ const Store = () => {
         // Open Telegram payment using invoice link
         window.Telegram.WebApp.openInvoice(data.invoice_url, (status) => {
           if (status === "paid") {
-            // Extract stars from subscription plan
-            const subStars = planName === 'Essential' ? 500 : planName === 'Plus' ? 1000 : 2000;
-            
-            // Fire conversion pixel for successful subscription purchase
-            trackSubscriptionPurchase(planName, subStars, data.invoice_url);
-            
             if (typeof window.Telegram.WebApp.showAlert === 'function') {
               try {
                 window.Telegram.WebApp.showAlert('Subscription activated! 🎉');

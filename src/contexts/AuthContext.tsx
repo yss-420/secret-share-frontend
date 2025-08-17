@@ -20,17 +20,11 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const { user: telegramUser, isLoading: telegramLoading, isAuthenticated: telegramAuthenticated, error: telegramError } = useTelegramAuth();
   const { isDevMode, devUser } = useDevMode();
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  // Initialize Telegram auth based on mode
-  const telegramAuth = isDevMode 
-    ? { user: null, isLoading: false, isAuthenticated: false, error: null }
-    : useTelegramAuth();
-
-  const { user: telegramUser, isLoading: telegramLoading, isAuthenticated: telegramAuthenticated, error: telegramError } = telegramAuth;
 
   // Determine if user is authenticated (either via Telegram or dev mode)
   const isAuthenticated = telegramAuthenticated || isDevMode;
@@ -114,45 +108,30 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setError(telegramError);
       }
     }
-  }, [telegramUser, isAuthenticated, telegramLoading, telegramError, isDevMode]);
+  }, [telegramUser, telegramAuthenticated, telegramLoading, telegramError, isDevMode]);
 
   // Set up real-time subscription for user data (only in production)
   useEffect(() => {
     if (!user?.telegram_id || isDevMode) return;
 
-    let channel: any = null;
-    
-    try {
-      channel = supabase
-        .channel('user_updates')
-        .on(
-          'postgres_changes',
-          {
-            event: 'UPDATE',
-            schema: 'public',
-            table: 'users',
-            filter: `telegram_id=eq.${user.telegram_id}`
-          },
-          (payload) => {
-            setUser(payload.new as User);
-          }
-        )
-        .subscribe();
-    } catch (error) {
-      console.error('Failed to create Supabase channel:', error);
-    }
+    const channel = supabase
+      .channel('user_updates')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'users',
+          filter: `telegram_id=eq.${user.telegram_id}`
+        },
+        (payload) => {
+          setUser(payload.new as User);
+        }
+      )
+      .subscribe();
 
     return () => {
-      try {
-        if (channel && typeof channel.unsubscribe === 'function') {
-          channel.unsubscribe();
-        }
-        if (channel) {
-          supabase.removeChannel(channel);
-        }
-      } catch (error) {
-        console.error('Error cleaning up Supabase channel:', error);
-      }
+      supabase.removeChannel(channel);
     };
   }, [user?.telegram_id, isDevMode]);
 
