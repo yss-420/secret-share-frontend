@@ -25,18 +25,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Safely initialize Telegram auth only when not in dev mode
-  let telegramAuth = { user: null, isLoading: true, isAuthenticated: false, error: null };
-  try {
-    if (!isDevMode) {
-      telegramAuth = useTelegramAuth();
-    } else {
-      telegramAuth = { user: null, isLoading: false, isAuthenticated: false, error: null };
-    }
-  } catch (error) {
-    console.error('Failed to initialize Telegram auth:', error);
-    telegramAuth = { user: null, isLoading: false, isAuthenticated: false, error: 'Telegram auth failed' };
-  }
+  // Initialize Telegram auth based on mode
+  const telegramAuth = isDevMode 
+    ? { user: null, isLoading: false, isAuthenticated: false, error: null }
+    : useTelegramAuth();
 
   const { user: telegramUser, isLoading: telegramLoading, isAuthenticated: telegramAuthenticated, error: telegramError } = telegramAuth;
 
