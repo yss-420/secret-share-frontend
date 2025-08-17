@@ -1,6 +1,5 @@
 
 import { useState, useEffect } from 'react';
-import WebApp from '@twa-dev/sdk';
 
 interface TelegramUser {
   id: number;
@@ -27,89 +26,113 @@ export const useTelegramAuth = (): TelegramAuthData => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const initTelegram = () => {
+    const initTelegram = async () => {
       try {
-        // Check if we're running in Telegram WebApp environment
-        const isTelegramAvailable = typeof window !== 'undefined' && 
-          window.Telegram && 
-          window.Telegram.WebApp;
+        console.log('Starting Telegram WebApp initialization...');
+        
+        // Wait for Telegram WebApp to be available
+        const waitForTelegram = (): Promise<boolean> => {
+          return new Promise((resolve) => {
+            const checkTelegram = () => {
+              if (typeof window !== 'undefined' && 
+                  window.Telegram && 
+                  window.Telegram.WebApp &&
+                  window.Telegram.WebApp.initData !== undefined) {
+                console.log('Telegram WebApp is available');
+                return resolve(true);
+              }
+              
+              console.log('Waiting for Telegram WebApp...');
+              setTimeout(checkTelegram, 100);
+            };
+            
+            checkTelegram();
+            
+            // Timeout after 3 seconds
+            setTimeout(() => {
+              console.log('Telegram WebApp timeout');
+              resolve(false);
+            }, 3000);
+          });
+        };
 
-        if (!isTelegramAvailable) {
+        const telegramAvailable = await waitForTelegram();
+        
+        if (!telegramAvailable) {
           console.log('Telegram WebApp not available - likely running outside Telegram');
           setError('Not running in Telegram environment');
           setIsLoading(false);
           return;
         }
 
-        // Initialize Telegram WebApp
-        WebApp.ready();
+        const webApp = window.Telegram.WebApp;
         
-        // Get user data first
-        const telegramUser = WebApp.initDataUnsafe?.user;
+        // Initialize Telegram WebApp
+        console.log('Calling WebApp.ready()...');
+        webApp.ready();
+        
+        // Wait a bit for initialization to complete
+        await new Promise(resolve => setTimeout(resolve, 200));
+        
+        console.log('WebApp initData:', webApp.initData);
+        console.log('WebApp initDataUnsafe:', webApp.initDataUnsafe);
+        
+        // Get user data
+        const telegramUser = webApp.initDataUnsafe?.user;
         if (telegramUser) {
           setUser(telegramUser);
           console.log('Telegram user found:', telegramUser);
         } else {
-          console.log('No Telegram user data available');
+          console.log('No Telegram user data available in initDataUnsafe');
+          console.log('Full initDataUnsafe object:', webApp.initDataUnsafe);
         }
 
-        // Initialize Telegram Analytics SDK with user ID
+        // Initialize Telegram Analytics with user ID
         try {
-          import('@/utils/analytics').then(({ initAnalytics, trackEvent }) => {
-            initAnalytics(telegramUser?.id);
-            
-            // Track app launch event
-            trackEvent('app_launch', {
-              platform: 'telegram',
-              user_id: telegramUser?.id || 0,
-              timestamp: Date.now()
-            });
+          const { initAnalytics, trackEvent } = await import('@/utils/analytics');
+          initAnalytics(telegramUser?.id);
+          
+          // Track app launch event
+          trackEvent('app_launch', {
+            platform: 'telegram',
+            user_id: telegramUser?.id || 0,
+            timestamp: Date.now()
           });
         } catch (error) {
           console.warn('Failed to initialize Telegram Analytics:', error);
         }
         
         // Get init data
-        const telegramInitData = WebApp.initData;
+        const telegramInitData = webApp.initData;
         setInitData(telegramInitData);
-        
+        console.log('Init data length:', telegramInitData.length);
 
         // Configure WebApp appearance
-        WebApp.expand();
+        webApp.expand();
         
         // Use try-catch for setHeaderColor and setBackgroundColor as they might not be supported
         try {
-          WebApp.setHeaderColor('#000000');
+          webApp.setHeaderColor('#000000');
         } catch (e) {
           console.warn('setHeaderColor not supported in this Telegram version');
         }
         
         try {
-          WebApp.setBackgroundColor('#000000');
+          webApp.setBackgroundColor('#000000');
         } catch (e) {
           console.warn('setBackgroundColor not supported in this Telegram version');
         }
         
+        console.log('Telegram WebApp initialization completed successfully');
         setIsLoading(false);
       } catch (error) {
         console.error('Failed to initialize Telegram WebApp:', error);
-        setError('Failed to initialize Telegram WebApp');
+        setError(`Failed to initialize Telegram WebApp: ${error.message}`);
         setIsLoading(false);
       }
     };
 
-    // Add timeout to prevent infinite loading
-    const timeoutId = setTimeout(() => {
-      if (isLoading) {
-        console.log('Telegram initialization timeout');
-        setError('Telegram initialization timeout');
-        setIsLoading(false);
-      }
-    }, 5000);
-
     initTelegram();
-
-    return () => clearTimeout(timeoutId);
   }, []);
 
   return {
