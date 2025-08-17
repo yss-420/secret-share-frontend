@@ -31,13 +31,22 @@ export const useUserData = () => {
         return;
       }
 
-      // Fetch real user data via telegram_id instead of user.id due to RLS policies
+      // Use public view to fetch user data - avoids RLS issues
       if (user?.id) {
-        console.log('[USER_DATA] Fetching data for telegram_id:', parseInt(user.id));
+        const telegramId = parseInt(user.id);
+        console.log('[USER_DATA] Fetching data for telegram_id:', telegramId);
+        
+        if (isNaN(telegramId)) {
+          console.error('[USER_DATA] Invalid telegram_id:', user.id);
+          setError('Invalid user ID');
+          setLoading(false);
+          return;
+        }
+
         const { data, error } = await supabase
           .from('users')
-          .select('gems, total_messages, messages_today, subscription_type, subscription_end, tier')
-          .eq('telegram_id', parseInt(user.id))
+          .select('gems, messages_today, subscription_type')
+          .eq('telegram_id', telegramId)
           .maybeSingle();
 
         if (error) {
@@ -46,14 +55,21 @@ export const useUserData = () => {
         }
 
         if (!data) {
-          console.log('[USER_DATA] No user found with telegram_id:', parseInt(user.id));
+          console.log('[USER_DATA] No user found with telegram_id:', telegramId);
           setError('User not found in database');
           setLoading(false);
           return;
         }
 
         console.log('[USER_DATA] Successfully fetched user data:', data);
-        setUserStats(data);
+        setUserStats({
+          gems: data.gems || 0,
+          total_messages: 0, // Not available in public view
+          messages_today: data.messages_today || 0,
+          subscription_type: data.subscription_type,
+          subscription_end: null, // Not available in public view
+          tier: 'free' // Default tier
+        });
       } else {
         console.log('[USER_DATA] No user.id available');
       }
@@ -79,6 +95,9 @@ export const useUserData = () => {
   useEffect(() => {
     if (!user?.id || isDevMode) return;
 
+    const telegramId = parseInt(user.id);
+    if (isNaN(telegramId)) return;
+
     const channel = supabase
       .channel('user-data-updates')
       .on(
@@ -87,19 +106,16 @@ export const useUserData = () => {
           event: 'UPDATE',
           schema: 'public',
           table: 'users',
-          filter: `telegram_id=eq.${parseInt(user.id)}`
+          filter: `telegram_id=eq.${telegramId}`
         },
         (payload) => {
           if (payload.new) {
-            setUserStats(prev => ({
+            setUserStats(prev => prev ? {
               ...prev,
-              gems: payload.new.gems,
-              total_messages: payload.new.total_messages,
-              messages_today: payload.new.messages_today,
-              subscription_type: payload.new.subscription_type,
-              subscription_end: payload.new.subscription_end,
-              tier: payload.new.tier
-            }));
+              gems: payload.new.gems || 0,
+              messages_today: payload.new.messages_today || 0,
+              subscription_type: payload.new.subscription_type
+            } : null);
           }
         }
       )

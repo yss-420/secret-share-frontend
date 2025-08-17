@@ -111,49 +111,21 @@ const Store = () => {
   }, []);
 
   const handleGemPurchase = async (gemPackage: typeof gemPackages[0]) => {
-    if (!window.Telegram?.WebApp) {
-      toast({
-        title: "Telegram WebApp Error",
-        description: "Telegram WebApp not found. Please ensure you're using the latest Telegram version.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (!telegramUser?.id) {
-      // Use safe method calling
-      if (window.Telegram.WebApp.showAlert && typeof window.Telegram.WebApp.showAlert === 'function') {
-        try {
-          window.Telegram.WebApp.showAlert('User not authenticated!');
-        } catch (error) {
-          console.warn('showAlert not supported:', error);
-          toast({
-            title: "Authentication Required",
-            description: "Please open this store from the Telegram bot.",
-            variant: "destructive",
-          });
-        }
-      } else {
-        toast({
-          title: "Authentication Required", 
-          description: "Please open this store from the Telegram bot.",
-          variant: "destructive",
-        });
-      }
-      return;
-    }
-
     setLoading(true);
 
     try {
-      // Extract stars from price string (e.g., "⭐️ 100" -> 100)
+      console.log('🛒 Starting gem purchase:', gemPackage);
+      
+      // Extract stars from price string and track conversion
       const stars = parseInt(gemPackage.price.replace(/[^\d,]/g, '').replace(',', ''));
       const packageType = `gems_${gemPackage.gems}`;
       const bemobCid = getCurrentBemobCid();
 
-      // Check if we're in Telegram environment to use WebApp.sendData
-      if (window.Telegram?.WebApp?.sendData && typeof window.Telegram.WebApp.sendData === 'function') {
-        console.log('[STORE] Using WebApp.sendData for Telegram Mini App');
+      // Check if we have valid Telegram WebApp context and user
+      const hasValidTelegram = window.Telegram?.WebApp && telegramUser?.id && window.Telegram.WebApp.initData;
+      
+      if (hasValidTelegram) {
+        console.log('💎 Using WebApp.sendData for Telegram Mini App');
         
         const payload = {
           action: 'buy_gems',
@@ -163,20 +135,26 @@ const Store = () => {
         };
         
         console.log('[STORE] Sending WebApp payload:', payload);
-        if (bemobCid) {
-          console.log('[STORE] BeMob CID included:', bemobCid);
-        } else {
-          console.log('[STORE] No BeMob CID available');
-        }
-        
-        // Send data to bot backend via WebApp
         window.Telegram.WebApp.sendData(JSON.stringify(payload));
+        
+        toast({ title: "Purchase Initiated", description: `Processing ${gemPackage.gems} gems purchase...` });
         setLoading(false);
         return;
       }
 
-      // Fallback to direct API call for non-Telegram environments
-      console.log('[STORE] Using direct API call (non-Telegram environment)');
+      // Fallback to invoice creation when WebApp.sendData isn't available
+      console.log('🔄 Falling back to invoice creation - no valid Telegram context');
+      
+      if (!telegramUser?.id) {
+        toast({
+          title: "Authentication Required",
+          description: "Please open this store from the Telegram bot.",
+          variant: "destructive",
+        });
+        setLoading(false);
+        return;
+      }
+
       const response = await fetch('https://secret-share-backend-production.up.railway.app/api/create-invoice', {
         method: 'POST',
         headers: {
@@ -190,45 +168,16 @@ const Store = () => {
 
       const data = await response.json();
 
-      if (data.success && data.invoice_url) {
-        // Open Telegram payment using invoice link
+      if (data.success && data.invoice_url && window.Telegram?.WebApp?.openInvoice) {
         window.Telegram.WebApp.openInvoice(data.invoice_url, (status) => {
           if (status === "paid") {
-            // Fire conversion pixel for successful gem purchase
             trackGemPurchase(gemPackage.gems, stars, data.invoice_url);
-            
-            // Safe alert call
-            if (typeof window.Telegram.WebApp.showAlert === 'function') {
-              try {
-                window.Telegram.WebApp.showAlert('Payment successful! 🎉');
-              } catch (error) {
-                console.warn('showAlert not supported:', error);
-                toast({ title: "Payment Successful! 🎉", description: "Your gems have been added." });
-              }
-            } else {
-              toast({ title: "Payment Successful! 🎉", description: "Your gems have been added." });
-            }
+            toast({ title: "Payment Successful! 🎉", description: "Your gems have been added." });
             window.location.reload();
           } else if (status === "cancelled") {
-            if (typeof window.Telegram.WebApp.showAlert === 'function') {
-              try {
-                window.Telegram.WebApp.showAlert('Payment cancelled.');
-              } catch (error) {
-                toast({ title: "Payment Cancelled", description: "You cancelled the payment." });
-              }
-            } else {
-              toast({ title: "Payment Cancelled", description: "You cancelled the payment." });
-            }
+            toast({ title: "Payment Cancelled", description: "You cancelled the payment." });
           } else {
-            if (typeof window.Telegram.WebApp.showAlert === 'function') {
-              try {
-                window.Telegram.WebApp.showAlert('Payment failed. Please try again.');
-              } catch (error) {
-                toast({ title: "Payment Failed", description: "Please try again.", variant: "destructive" });
-              }
-            } else {
-              toast({ title: "Payment Failed", description: "Please try again.", variant: "destructive" });
-            }
+            toast({ title: "Payment Failed", description: "Please try again.", variant: "destructive" });
           }
           setLoading(false);
         });
@@ -237,70 +186,30 @@ const Store = () => {
       }
 
     } catch (error) {
-      console.error('Payment error:', error);
-      if (typeof window.Telegram.WebApp.showAlert === 'function') {
-        try {
-          window.Telegram.WebApp.showAlert('Error creating payment. Please try again.');
-        } catch (alertError) {
-          toast({
-            title: "Payment Error",
-            description: "Unable to process payment. Please try again.",
-            variant: "destructive",
-          });
-        }
-      } else {
-        toast({
-          title: "Payment Error",
-          description: "Unable to process payment. Please try again.",
-          variant: "destructive",
-        });
-      }
+      console.error('❌ Purchase error:', error);
+      toast({
+        title: "Payment Error",
+        description: "Unable to process payment. Please try again.",
+        variant: "destructive",
+      });
       setLoading(false);
     }
   };
 
   const handleSubscribe = async (planName: string) => {
-    if (!window.Telegram?.WebApp) {
-      toast({
-        title: "Telegram WebApp Error",
-        description: "Telegram WebApp not found. Please ensure you're using the latest Telegram version.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (!telegramUser?.id) {
-      // Use safe method calling
-      if (window.Telegram.WebApp.showAlert && typeof window.Telegram.WebApp.showAlert === 'function') {
-        try {
-          window.Telegram.WebApp.showAlert('User not authenticated!');
-        } catch (error) {
-          console.warn('showAlert not supported:', error);
-          toast({
-            title: "Authentication Required",
-            description: "Please open this store from the Telegram bot.",
-            variant: "destructive",
-          });
-        }
-      } else {
-        toast({
-          title: "Authentication Required", 
-          description: "Please open this store from the Telegram bot.",
-          variant: "destructive",
-        });
-      }
-      return;
-    }
-
     setLoading(true);
 
     try {
+      console.log('📋 Starting subscription:', planName);
+      
       const packageType = `sub_${planName.toLowerCase()}`;
       const bemobCid = getCurrentBemobCid();
 
-      // Check if we're in Telegram environment to use WebApp.sendData
-      if (window.Telegram?.WebApp?.sendData && typeof window.Telegram.WebApp.sendData === 'function') {
-        console.log('[STORE] Using WebApp.sendData for Telegram Mini App subscription');
+      // Check if we have valid Telegram WebApp context and user
+      const hasValidTelegram = window.Telegram?.WebApp && telegramUser?.id && window.Telegram.WebApp.initData;
+      
+      if (hasValidTelegram) {
+        console.log('⭐ Using WebApp.sendData for Telegram Mini App subscription');
         
         const payload = {
           action: 'buy_gems',
@@ -309,21 +218,27 @@ const Store = () => {
           init_data: window.Telegram.WebApp.initData
         };
         
-        console.log('[STORE] Sending WebApp payload:', payload);
-        if (bemobCid) {
-          console.log('[STORE] BeMob CID included:', bemobCid);
-        } else {
-          console.log('[STORE] No BeMob CID available');
-        }
-        
-        // Send data to bot backend via WebApp
+        console.log('[STORE] Sending subscription payload:', payload);
         window.Telegram.WebApp.sendData(JSON.stringify(payload));
+        
+        toast({ title: "Subscription Initiated", description: `Processing ${planName} subscription...` });
         setLoading(false);
         return;
       }
 
-      // Fallback to direct API call for non-Telegram environments
-      console.log('[STORE] Using direct API call for subscription (non-Telegram environment)');
+      // Fallback to invoice creation when WebApp.sendData isn't available
+      console.log('🔄 Falling back to subscription invoice creation - no valid Telegram context');
+      
+      if (!telegramUser?.id) {
+        toast({
+          title: "Authentication Required",
+          description: "Please open this store from the Telegram bot.",
+          variant: "destructive",
+        });
+        setLoading(false);
+        return;
+      }
+
       const response = await fetch('https://secret-share-backend-production.up.railway.app/api/create-invoice', {
         method: 'POST',
         headers: {
@@ -337,47 +252,17 @@ const Store = () => {
 
       const data = await response.json();
 
-      if (data.success && data.invoice_url) {
-        // Open Telegram payment using invoice link
+      if (data.success && data.invoice_url && window.Telegram?.WebApp?.openInvoice) {
         window.Telegram.WebApp.openInvoice(data.invoice_url, (status) => {
           if (status === "paid") {
-            // Extract stars from subscription plan
             const subStars = planName === 'Essential' ? 500 : planName === 'Plus' ? 1000 : 2000;
-            
-            // Fire conversion pixel for successful subscription purchase
             trackSubscriptionPurchase(planName, subStars, data.invoice_url);
-            
-            if (typeof window.Telegram.WebApp.showAlert === 'function') {
-              try {
-                window.Telegram.WebApp.showAlert('Subscription activated! 🎉');
-              } catch (error) {
-                console.warn('showAlert not supported:', error);
-                toast({ title: "Subscription Activated! 🎉", description: "Your subscription is now active." });
-              }
-            } else {
-              toast({ title: "Subscription Activated! 🎉", description: "Your subscription is now active." });
-            }
+            toast({ title: "Subscription Activated! 🎉", description: "Your subscription is now active." });
             window.location.reload();
           } else if (status === "cancelled") {
-            if (typeof window.Telegram.WebApp.showAlert === 'function') {
-              try {
-                window.Telegram.WebApp.showAlert('Payment cancelled.');
-              } catch (error) {
-                toast({ title: "Payment Cancelled", description: "You cancelled the payment." });
-              }
-            } else {
-              toast({ title: "Payment Cancelled", description: "You cancelled the payment." });
-            }
+            toast({ title: "Payment Cancelled", description: "You cancelled the payment." });
           } else {
-            if (typeof window.Telegram.WebApp.showAlert === 'function') {
-              try {
-                window.Telegram.WebApp.showAlert('Payment failed. Please try again.');
-              } catch (error) {
-                toast({ title: "Payment Failed", description: "Please try again.", variant: "destructive" });
-              }
-            } else {
-              toast({ title: "Payment Failed", description: "Please try again.", variant: "destructive" });
-            }
+            toast({ title: "Payment Failed", description: "Please try again.", variant: "destructive" });
           }
           setLoading(false);
         });
@@ -386,24 +271,12 @@ const Store = () => {
       }
 
     } catch (error) {
-      console.error('Subscription error:', error);
-      if (typeof window.Telegram.WebApp.showAlert === 'function') {
-        try {
-          window.Telegram.WebApp.showAlert('Error creating payment. Please try again.');
-        } catch (alertError) {
-          toast({
-            title: "Subscription Failed",
-            description: "Unable to process payment. Please try again.",
-            variant: "destructive",
-          });
-        }
-      } else {
-        toast({
-          title: "Subscription Failed",
-          description: "Unable to process payment. Please try again.",
-          variant: "destructive",
-        });
-      }
+      console.error('❌ Subscription error:', error);
+      toast({
+        title: "Subscription Failed",
+        description: "Unable to process payment. Please try again.",
+        variant: "destructive",
+      });
       setLoading(false);
     }
   };
