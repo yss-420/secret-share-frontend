@@ -1,8 +1,6 @@
 // Bemob Conversion Pixel Tracking
 // https://docs.bemob.com/en/conversion-pixel
 
-import { getCurrentBemobCid } from './bemobCid';
-
 interface ConversionData {
   cid?: string;    // Campaign ID (optional)
   payout?: number; // Payout amount (optional)
@@ -15,14 +13,11 @@ interface ConversionData {
  */
 export const fireConversionPixel = (data: ConversionData = {}) => {
   try {
-    // Get stored BeMob CID if not provided
-    const bemobCid = data.cid || getCurrentBemobCid();
-    
     // Build pixel URL with optional parameters
     const baseUrl = 'https://jerd8.bemobtrcks.com/conversion.gif';
     const params = new URLSearchParams();
     
-    if (bemobCid) params.append('cid', bemobCid);
+    if (data.cid) params.append('cid', data.cid);
     if (data.payout) params.append('payout', data.payout.toString());
     if (data.txid) params.append('txid', data.txid);
     
@@ -44,12 +39,7 @@ export const fireConversionPixel = (data: ConversionData = {}) => {
     script.onerror = () => console.warn('Conversion script failed to load');
     document.head.appendChild(script);
     
-    console.log('[BEMOB] Conversion pixel fired:', pixelUrl);
-    if (bemobCid) {
-      console.log('[BEMOB] CID included in pixel:', bemobCid);
-    } else {
-      console.log('[BEMOB] No CID available for pixel');
-    }
+    console.log('Conversion pixel fired:', pixelUrl);
     
     // Clean up after 5 seconds
     setTimeout(() => {

@@ -12,7 +12,6 @@ import { useTelegramAuth } from "@/hooks/useTelegramAuth";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { trackGemPurchase, trackSubscriptionPurchase } from "@/utils/conversionPixel";
-import { getCurrentBemobCid } from "@/utils/bemobCid";
 
 // Package mapping constants
 const GEM_PACKAGE_MAP: Record<number, string> = {
@@ -149,33 +148,8 @@ const Store = () => {
       // Extract stars from price string (e.g., "⭐️ 100" -> 100)
       const stars = parseInt(gemPackage.price.replace(/[^\d,]/g, '').replace(',', ''));
       const packageType = `gems_${gemPackage.gems}`;
-      const bemobCid = getCurrentBemobCid();
 
-      // Check if we're in Telegram environment to use WebApp.sendData
-      if (window.Telegram?.WebApp?.sendData && typeof window.Telegram.WebApp.sendData === 'function') {
-        console.log('[STORE] Using WebApp.sendData for Telegram Mini App');
-        
-        const payload = {
-          action: 'buy_gems',
-          package: packageType,
-          bemob_cid: bemobCid
-        };
-        
-        console.log('[STORE] Sending WebApp payload:', payload);
-        if (bemobCid) {
-          console.log('[STORE] BeMob CID included:', bemobCid);
-        } else {
-          console.log('[STORE] No BeMob CID available');
-        }
-        
-        // Send data to bot backend via WebApp
-        window.Telegram.WebApp.sendData(JSON.stringify(payload));
-        setLoading(false);
-        return;
-      }
-
-      // Fallback to direct API call for non-Telegram environments
-      console.log('[STORE] Using direct API call (non-Telegram environment)');
+      // Create invoice via backend using the approved method
       const response = await fetch('https://secret-share-backend-production.up.railway.app/api/create-invoice', {
         method: 'POST',
         headers: {
@@ -295,33 +269,8 @@ const Store = () => {
 
     try {
       const packageType = `sub_${planName.toLowerCase()}`;
-      const bemobCid = getCurrentBemobCid();
 
-      // Check if we're in Telegram environment to use WebApp.sendData
-      if (window.Telegram?.WebApp?.sendData && typeof window.Telegram.WebApp.sendData === 'function') {
-        console.log('[STORE] Using WebApp.sendData for Telegram Mini App subscription');
-        
-        const payload = {
-          action: 'buy_gems',
-          package: packageType,
-          bemob_cid: bemobCid
-        };
-        
-        console.log('[STORE] Sending WebApp payload:', payload);
-        if (bemobCid) {
-          console.log('[STORE] BeMob CID included:', bemobCid);
-        } else {
-          console.log('[STORE] No BeMob CID available');
-        }
-        
-        // Send data to bot backend via WebApp
-        window.Telegram.WebApp.sendData(JSON.stringify(payload));
-        setLoading(false);
-        return;
-      }
-
-      // Fallback to direct API call for non-Telegram environments
-      console.log('[STORE] Using direct API call for subscription (non-Telegram environment)');
+      // Create invoice via backend using the approved method
       const response = await fetch('https://secret-share-backend-production.up.railway.app/api/create-invoice', {
         method: 'POST',
         headers: {

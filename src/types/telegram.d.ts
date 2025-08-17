@@ -25,7 +25,6 @@ interface TelegramWebApp {
       message: string;
       buttons: Array<{ id: string; type: 'default' | 'ok' | 'close' | 'cancel' | 'destructive'; text?: string }>;
     }, callback: (buttonId: string) => void): void;
-    sendData(data: string): void;
   };
 }
 
