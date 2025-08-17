@@ -26,7 +26,7 @@ export const Header = () => {
 
   const getMessageDisplay = () => {
     if (loading) return <LoadingSpinner size="sm" />;
-    if (authError || userDataError) return <AlertCircle className="w-2.5 h-2.5 text-red-500" />;
+    if (!userStats && (authError || userDataError)) return <AlertCircle className="w-2.5 h-2.5 text-red-500" />;
     
     const messagesUsed = userStats?.messages_today || 0;
     
@@ -39,7 +39,7 @@ export const Header = () => {
 
   const getGemsDisplay = () => {
     if (loading) return <LoadingSpinner size="sm" />;
-    if (authError || userDataError) return <AlertCircle className="w-2.5 h-2.5 text-red-500" />;
+    if (!userStats && (authError || userDataError)) return <AlertCircle className="w-2.5 h-2.5 text-red-500" />;
     return <span className="text-xs font-medium text-foreground">{userStats?.gems || 0}</span>;
   };
 
