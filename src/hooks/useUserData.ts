@@ -18,6 +18,7 @@ export const useUserData = () => {
 
       // Use dev data in development mode
       if (isDevMode && devUser) {
+        console.log('[USER_DATA] Using dev user:', devUser);
         setUserStats({
           gems: devUser.gems,
           total_messages: devUser.total_messages,
@@ -32,18 +33,32 @@ export const useUserData = () => {
 
       // Fetch real user data via telegram_id instead of user.id due to RLS policies
       if (user?.id) {
+        console.log('[USER_DATA] Fetching data for telegram_id:', parseInt(user.id));
         const { data, error } = await supabase
           .from('users')
           .select('gems, total_messages, messages_today, subscription_type, subscription_end, tier')
           .eq('telegram_id', parseInt(user.id))
-          .single();
+          .maybeSingle();
 
-        if (error) throw error;
+        if (error) {
+          console.error('[USER_DATA] Supabase error:', error);
+          throw error;
+        }
 
+        if (!data) {
+          console.log('[USER_DATA] No user found with telegram_id:', parseInt(user.id));
+          setError('User not found in database');
+          setLoading(false);
+          return;
+        }
+
+        console.log('[USER_DATA] Successfully fetched user data:', data);
         setUserStats(data);
+      } else {
+        console.log('[USER_DATA] No user.id available');
       }
     } catch (err) {
-      console.error('Failed to fetch user data:', err);
+      console.error('[USER_DATA] Failed to fetch user data:', err);
       setError('Failed to load user data');
     } finally {
       setLoading(false);
