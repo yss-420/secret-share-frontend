@@ -16,8 +16,8 @@ export const useUserData = () => {
       setLoading(true);
       setError(null);
 
-      // Only use dev data in actual development (not production)
-      if (isDevMode && devUser && window.location.hostname === 'localhost') {
+      // Use dev data in development environment
+      if (isDevMode && devUser) {
         console.log('[USER_DATA] Using dev user:', devUser);
         setUserStats({
           gems: devUser.gems,
