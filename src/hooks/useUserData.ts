@@ -32,9 +32,11 @@ export const useUserData = () => {
 
       // Prefer backend for authoritative stats (gems/messages)
       const telegramId = telegramUser?.id;
+      let backendSucceeded = false;
       if (telegramId) {
         const backend = await apiService.getUserStatus(telegramId);
         if (backend) {
+          backendSucceeded = true;
           setUserStats(prev => ({
             gems: backend.gems,
             messages_today: backend.messages_today,
@@ -47,8 +49,26 @@ export const useUserData = () => {
         }
       }
 
-      // Fetch remaining fields from Supabase as fallback/augment
-      if (user?.id) {
+      // If backend succeeded, only supplement missing fields from Supabase (do not overwrite gems/messages)
+      if (user?.id && backendSucceeded) {
+        const { data, error } = await supabase
+          .from('users')
+          .select('total_messages, subscription_end, tier')
+          .eq('id', user.id)
+          .single();
+
+        if (!error && data) {
+          setUserStats(prev => prev ? ({
+            ...prev,
+            total_messages: data.total_messages ?? prev.total_messages,
+            subscription_end: data.subscription_end ?? prev.subscription_end,
+            tier: data.tier ?? prev.tier
+          }) : prev);
+        }
+      }
+
+      // If backend failed, fall back entirely to Supabase
+      if (user?.id && !backendSucceeded) {
         const { data, error } = await supabase
           .from('users')
           .select('gems, total_messages, messages_today, subscription_type, subscription_end, tier')
@@ -57,14 +77,14 @@ export const useUserData = () => {
 
         if (error) throw error;
 
-        setUserStats(prev => ({
+        setUserStats({
           gems: data.gems,
           total_messages: data.total_messages,
           messages_today: data.messages_today,
           subscription_type: data.subscription_type,
           subscription_end: data.subscription_end,
           tier: data.tier
-        }));
+        });
       }
     } catch (err) {
       console.error('Failed to fetch user data:', err);
