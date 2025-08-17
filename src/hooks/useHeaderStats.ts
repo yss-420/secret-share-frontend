@@ -22,14 +22,33 @@ export const useHeaderStats = () => {
       }
 
       try {
+        console.log('🔍 Fetching header stats for telegram_id:', telegramUser.id);
+        
         const { data, error } = await supabase
           .from('users')
           .select('gems, messages_today, tier, subscription_end')
           .eq('telegram_id', telegramUser.id)
           .single();
 
-        if (error) throw error;
+        console.log('📊 Supabase response:', { data, error });
 
+        if (error) {
+          console.error('🚨 Supabase error details:', error);
+          throw error;
+        }
+
+        if (!data) {
+          console.log('⚠️ No user data found for telegram_id:', telegramUser.id);
+          setStats({
+            gems: 0,
+            messages_today: 0,
+            tier: 'free',
+            subscription_end: null
+          });
+          return;
+        }
+
+        console.log('✅ Successfully fetched user stats:', data);
         setStats({
           gems: data.gems || 0,
           messages_today: data.messages_today || 0,
@@ -37,7 +56,10 @@ export const useHeaderStats = () => {
           subscription_end: data.subscription_end
         });
       } catch (error) {
-        console.error('Failed to fetch header stats:', error);
+        console.error('💥 Failed to fetch header stats:', error);
+        console.error('Error name:', error.name);
+        console.error('Error message:', error.message);
+        console.error('Error code:', error.code);
         // Set default values on error
         setStats({
           gems: 0,
