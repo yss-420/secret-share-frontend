@@ -11,6 +11,48 @@ export const useUserData = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const waitForTelegramReady = async (): Promise<number | null> => {
+    return new Promise((resolve) => {
+      console.log('[USER_DATA] Waiting for Telegram WebApp to initialize...');
+      
+      // Call Telegram.WebApp.ready() to ensure proper initialization
+      if (window.Telegram?.WebApp) {
+        window.Telegram.WebApp.ready();
+        console.log('[USER_DATA] Called Telegram.WebApp.ready()');
+      }
+
+      let attempts = 0;
+      const maxAttempts = 20; // 2 seconds with 100ms intervals
+      
+      const checkTelegram = () => {
+        attempts++;
+        console.log(`[USER_DATA] Attempt ${attempts}/${maxAttempts} - Checking Telegram WebApp...`);
+        console.log('[USER_DATA] WebApp available:', !!window.Telegram?.WebApp);
+        console.log('[USER_DATA] initDataUnsafe:', window.Telegram?.WebApp?.initDataUnsafe);
+        console.log('[USER_DATA] user object:', window.Telegram?.WebApp?.initDataUnsafe?.user);
+        
+        const telegramId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+        console.log('[USER_DATA] telegramId:', telegramId, 'type:', typeof telegramId);
+        
+        if (telegramId && typeof telegramId === 'number') {
+          console.log('[USER_DATA] ✅ Found valid telegramId:', telegramId);
+          resolve(telegramId);
+          return;
+        }
+        
+        if (attempts >= maxAttempts) {
+          console.log('[USER_DATA] ❌ Timeout waiting for Telegram WebApp initialization');
+          resolve(null);
+          return;
+        }
+        
+        setTimeout(checkTelegram, 100);
+      };
+      
+      checkTelegram();
+    });
+  };
+
   const fetchUserData = async () => {
     try {
       setLoading(true);
@@ -31,16 +73,11 @@ export const useUserData = () => {
         return;
       }
 
-      // Get telegramId directly from Telegram WebApp
-      console.log('[USER_DATA] Telegram WebApp available:', !!window.Telegram?.WebApp);
-      console.log('[USER_DATA] initDataUnsafe:', window.Telegram?.WebApp?.initDataUnsafe);
-      console.log('[USER_DATA] user object:', window.Telegram?.WebApp?.initDataUnsafe?.user);
+      // Wait for Telegram WebApp to be ready and get telegramId
+      const telegramId = await waitForTelegramReady();
       
-      const telegramId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
-      console.log('[USER_DATA] Raw telegramId:', telegramId, 'type:', typeof telegramId);
-      
-      if (!telegramId || typeof telegramId !== 'number') {
-        console.log('[USER_DATA] No valid telegram user found - telegramId:', telegramId);
+      if (!telegramId) {
+        console.log('[USER_DATA] No valid telegram user found after waiting');
         setError('No Telegram user found');
         setLoading(false);
         return;
