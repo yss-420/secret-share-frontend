@@ -92,45 +92,14 @@ export const useUserData = () => {
         return;
       }
 
-      console.log('[USER_DATA] Fetching data from user_status_public for telegram_id (string):', telegramId, 'length:', telegramId.length);
+      console.log('[USER_DATA] Fetching data from user_status_public for telegram_id (raw string):', telegramId);
 
-      // Convert to number using Number() instead of parseInt to preserve precision
-      const telegramIdNumber = Number(telegramId);
-      console.log('[USER_DATA] Converting telegram_id:', telegramId, '-> Number:', telegramIdNumber);
-
-      // Retry logic for timing issues - 5 tries × 300ms
-      let data = null;
-      let error = null;
-      
-      for (let attempt = 1; attempt <= 5; attempt++) {
-        console.log(`[USER_DATA] Query attempt ${attempt}/5 for telegram_id:`, telegramIdNumber);
-        
-        const result = await supabase
-          .from('user_status_public')
-          .select('gems, messages_today, subscription_type')
-          .eq('telegram_id', telegramIdNumber)  // Use Number() converted value
-          .maybeSingle();
-          
-        data = result.data;
-        error = result.error;
-        
-        if (error) {
-          console.error(`[USER_DATA] Attempt ${attempt} failed:`, error);
-          if (attempt < 5) {
-            await new Promise(resolve => setTimeout(resolve, 300));
-            continue;
-          }
-        } else if (data) {
-          console.log(`[USER_DATA] Success on attempt ${attempt}:`, data);
-          break;
-        } else {
-          console.log(`[USER_DATA] No data found on attempt ${attempt}`);
-          if (attempt < 5) {
-            await new Promise(resolve => setTimeout(resolve, 300));
-            continue;
-          }
-        }
-      }
+      // Use raw string directly - no conversions as per backend dev instructions
+      const { data, error } = await supabase
+        .from('user_status_public')
+        .select('gems, messages_today, subscription_type')
+        .filter('telegram_id', 'eq', telegramId)  // Pass raw string directly
+        .maybeSingle();
 
       if (error) {
         console.error('[USER_DATA] Supabase error:', error);
