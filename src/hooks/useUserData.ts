@@ -48,11 +48,11 @@ export const useUserData = () => {
       }
 
       // Fetch remaining fields from Supabase as fallback/augment
-      if (user?.id) {
+      if (telegramUser?.id) {
         const { data, error } = await supabase
           .from('users')
           .select('gems, total_messages, messages_today, subscription_type, subscription_end, tier')
-          .eq('id', user.id)
+          .eq('telegram_id', telegramUser.id)
           .single();
 
         if (error) throw error;
@@ -86,7 +86,7 @@ export const useUserData = () => {
 
   // Set up real-time subscription for gem updates
   useEffect(() => {
-    if (!user?.id || isDevMode) return;
+    if (!telegramUser?.id || isDevMode) return;
 
     const channel = supabase
       .channel('user-data-updates')
@@ -96,7 +96,7 @@ export const useUserData = () => {
           event: 'UPDATE',
           schema: 'public',
           table: 'users',
-          filter: `id=eq.${user.id}`
+          filter: `telegram_id=eq.${telegramUser.id}`
         },
         (payload) => {
           if (payload.new) {
@@ -117,7 +117,7 @@ export const useUserData = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [user?.id, isDevMode]);
+  }, [telegramUser?.id, isDevMode]);
 
   return {
     userStats,
