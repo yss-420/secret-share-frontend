@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useDevMode } from './useDevMode';
-import { UserStats } from '@/services/api';
+import { UserStats, apiService } from '@/services/api';
 
 export const useUserData = () => {
   const { user, isAuthenticated } = useAuth();
@@ -11,55 +10,21 @@ export const useUserData = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const waitForTelegramReady = async (): Promise<string | null> => {
-    return new Promise((resolve) => {
-      console.log('[USER_DATA] Waiting for Telegram WebApp to initialize...');
-      
-      // Call Telegram.WebApp.ready() to ensure proper initialization
-      if (window.Telegram?.WebApp) {
-        window.Telegram.WebApp.ready();
-        console.log('[USER_DATA] Called Telegram.WebApp.ready()');
-      }
+  const getTelegramId = (): string | null => {
+    // Call Telegram.WebApp.ready() to ensure proper initialization
+    if (window.Telegram?.WebApp) {
+      window.Telegram.WebApp.ready();
+    }
 
-      let attempts = 0;
-      const maxAttempts = 20; // 2 seconds with 100ms intervals
-      
-      const checkTelegram = () => {
-        attempts++;
-        console.log(`[USER_DATA] Attempt ${attempts}/${maxAttempts} - Checking Telegram WebApp...`);
-        console.log('[USER_DATA] WebApp available:', !!window.Telegram?.WebApp);
-        console.log('[USER_DATA] initDataUnsafe:', window.Telegram?.WebApp?.initDataUnsafe);
-        console.log('[USER_DATA] user object:', window.Telegram?.WebApp?.initDataUnsafe?.user);
-        
-        const telegramIdRaw = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
-        console.log('[USER_DATA] Raw telegramId:', telegramIdRaw, 'type:', typeof telegramIdRaw);
-        
-        if (telegramIdRaw) {
-          // Convert to string immediately to avoid precision loss
-          const telegramId = String(telegramIdRaw);
-          console.log('[USER_DATA] ✅ Found valid telegramId (as string):', telegramId);
-          
-          // Validate it's a numeric string
-          if (/^\d+$/.test(telegramId)) {
-            console.log('[USER_DATA] ✅ Telegram ID is valid numeric string:', telegramId);
-            resolve(telegramId);
-            return;
-          } else {
-            console.log('[USER_DATA] ❌ Telegram ID is not a valid numeric string:', telegramId);
-          }
-        }
-        
-        if (attempts >= maxAttempts) {
-          console.log('[USER_DATA] ❌ Timeout waiting for Telegram WebApp initialization');
-          resolve(null);
-          return;
-        }
-        
-        setTimeout(checkTelegram, 100);
-      };
-      
-      checkTelegram();
-    });
+    const telegramIdRaw = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+    if (telegramIdRaw) {
+      const telegramId = String(telegramIdRaw);
+      console.log('[USER_DATA] Found telegram_id:', telegramId);
+      return telegramId;
+    }
+    
+    console.log('[USER_DATA] No telegram_id found');
+    return null;
   };
 
   const fetchUserData = async () => {
@@ -82,33 +47,24 @@ export const useUserData = () => {
         return;
       }
 
-      // Wait for Telegram WebApp to be ready and get telegramId
-      const telegramId = await waitForTelegramReady();
+      // Get telegram ID
+      const telegramId = getTelegramId();
       
       if (!telegramId) {
-        console.log('[USER_DATA] No valid telegram user found after waiting');
+        console.log('[USER_DATA] No telegram user found');
         setError('No Telegram user found');
         setLoading(false);
         return;
       }
 
-      console.log('[USER_DATA] Fetching data from user_status_public for telegram_id (raw string):', telegramId);
+      console.log('[USER_DATA] Fetching data from backend API for telegram_id:', telegramId);
 
-      // Use raw string directly - no conversions as per backend dev instructions
-      const { data, error } = await supabase
-        .from('user_status_public')
-        .select('gems, messages_today, subscription_type')
-        .filter('telegram_id', 'eq', telegramId)  // Pass raw string directly
-        .maybeSingle();
-
-      if (error) {
-        console.error('[USER_DATA] Supabase error:', error);
-        throw error;
-      }
+      // Use backend API instead of direct Supabase query
+      const data = await apiService.getUserStatus(telegramId);
 
       if (!data) {
         console.log('[USER_DATA] No user found with telegram_id:', telegramId);
-        setError('User not found in database');
+        setError('User not found. Please hit /start in the bot first.');
         setLoading(false);
         return;
       }
