@@ -30,7 +30,12 @@ class ApiService {
       const backendUrl = import.meta.env.VITE_BACKEND_URL;
       const frontendSecretKey = import.meta.env.VITE_FRONTEND_SECRET_KEY;
 
-      console.log('[API_SERVICE] Fetching user status for telegram_id:', telegramId);
+      console.log('[API_SERVICE] Environment check:', {
+        hasBackendUrl: !!backendUrl,
+        hasFrontendSecret: !!frontendSecretKey,
+        telegramId: telegramId
+      });
+      console.log('[API_SERVICE] Calling URL:', `${backendUrl}/api/user-status`);
 
       const response = await fetch(`${backendUrl}/api/user-status`, {
         method: 'POST',

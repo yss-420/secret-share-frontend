@@ -16,14 +16,22 @@ export const useUserData = () => {
       window.Telegram.WebApp.ready();
     }
 
+    console.log('[USER_DATA] Telegram WebApp state:', {
+      telegramExists: !!window.Telegram,
+      webAppExists: !!window.Telegram?.WebApp,
+      initDataExists: !!window.Telegram?.WebApp?.initDataUnsafe,
+      userExists: !!window.Telegram?.WebApp?.initDataUnsafe?.user,
+      userId: window.Telegram?.WebApp?.initDataUnsafe?.user?.id
+    });
+
     const telegramIdRaw = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
     if (telegramIdRaw) {
       const telegramId = String(telegramIdRaw);
-      console.log('[USER_DATA] Found telegram_id:', telegramId);
+      console.log('[USER_DATA] ✅ Found telegram_id:', telegramId);
       return telegramId;
     }
     
-    console.log('[USER_DATA] No telegram_id found');
+    console.log('[USER_DATA] ❌ No telegram_id found - user may not be in Telegram WebView');
     return null;
   };
 
