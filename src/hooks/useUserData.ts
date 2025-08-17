@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useDevMode } from './useDevMode';
-import { UserStats } from '@/services/api';
+import { UserStats, apiService } from '@/services/api';
 
 export const useUserData = () => {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, telegramUser } = useAuth();
   const { isDevMode, devUser } = useDevMode();
   const [userStats, setUserStats] = useState<UserStats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -30,7 +30,24 @@ export const useUserData = () => {
         return;
       }
 
-      // Fetch real user data
+      // Prefer backend for authoritative stats (gems/messages)
+      const telegramId = telegramUser?.id;
+      if (telegramId) {
+        const backend = await apiService.getUserStatus(telegramId);
+        if (backend) {
+          setUserStats(prev => ({
+            gems: backend.gems,
+            messages_today: backend.messages_today,
+            subscription_type: backend.subscription_type,
+            // Keep existing fields if we have them; otherwise default
+            total_messages: prev?.total_messages ?? 0,
+            subscription_end: prev?.subscription_end ?? null,
+            tier: prev?.tier ?? (user as any)?.tier ?? 'free'
+          }));
+        }
+      }
+
+      // Fetch remaining fields from Supabase as fallback/augment
       if (user?.id) {
         const { data, error } = await supabase
           .from('users')
@@ -40,7 +57,14 @@ export const useUserData = () => {
 
         if (error) throw error;
 
-        setUserStats(data);
+        setUserStats(prev => ({
+          gems: data.gems,
+          total_messages: data.total_messages,
+          messages_today: data.messages_today,
+          subscription_type: data.subscription_type,
+          subscription_end: data.subscription_end,
+          tier: data.tier
+        }));
       }
     } catch (err) {
       console.error('Failed to fetch user data:', err);
