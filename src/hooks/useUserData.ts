@@ -30,12 +30,12 @@ export const useUserData = () => {
         return;
       }
 
-      // Fetch real user data
+      // Fetch real user data via telegram_id instead of user.id due to RLS policies
       if (user?.id) {
         const { data, error } = await supabase
           .from('users')
           .select('gems, total_messages, messages_today, subscription_type, subscription_end, tier')
-          .eq('id', user.id)
+          .eq('telegram_id', parseInt(user.id))
           .single();
 
         if (error) throw error;
@@ -72,7 +72,7 @@ export const useUserData = () => {
           event: 'UPDATE',
           schema: 'public',
           table: 'users',
-          filter: `id=eq.${user.id}`
+          filter: `telegram_id=eq.${parseInt(user.id)}`
         },
         (payload) => {
           if (payload.new) {
