@@ -20,11 +20,25 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const { user: telegramUser, isLoading: telegramLoading, isAuthenticated: telegramAuthenticated, error: telegramError } = useTelegramAuth();
   const { isDevMode, devUser } = useDevMode();
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Safely initialize Telegram auth only when not in dev mode
+  let telegramAuth = { user: null, isLoading: true, isAuthenticated: false, error: null };
+  try {
+    if (!isDevMode) {
+      telegramAuth = useTelegramAuth();
+    } else {
+      telegramAuth = { user: null, isLoading: false, isAuthenticated: false, error: null };
+    }
+  } catch (error) {
+    console.error('Failed to initialize Telegram auth:', error);
+    telegramAuth = { user: null, isLoading: false, isAuthenticated: false, error: 'Telegram auth failed' };
+  }
+
+  const { user: telegramUser, isLoading: telegramLoading, isAuthenticated: telegramAuthenticated, error: telegramError } = telegramAuth;
 
   // Determine if user is authenticated (either via Telegram or dev mode)
   const isAuthenticated = telegramAuthenticated || isDevMode;
@@ -108,7 +122,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setError(telegramError);
       }
     }
-  }, [telegramUser, telegramAuthenticated, telegramLoading, telegramError, isDevMode]);
+  }, [telegramUser, isAuthenticated, telegramLoading, telegramError, isDevMode]);
 
   // Set up real-time subscription for user data (only in production)
   useEffect(() => {
