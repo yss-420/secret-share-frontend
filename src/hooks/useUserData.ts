@@ -94,15 +94,16 @@ export const useUserData = () => {
 
       console.log('[USER_DATA] Fetching data from user_status_public for telegram_id (string):', telegramId, 'length:', telegramId.length);
 
-      // Convert string back to number for Supabase query (using BigInt to avoid precision loss)
-      const telegramIdNumber = Number(telegramId);
-      console.log('[USER_DATA] Converted to number for query:', telegramIdNumber);
+      // Use BigInt to safely convert large number without precision loss, then convert to number for Supabase
+      const telegramIdBigInt = BigInt(telegramId);
+      const telegramIdForQuery = Number(telegramIdBigInt);
+      console.log('[USER_DATA] Using BigInt conversion to preserve precision. Original:', telegramId, 'BigInt:', telegramIdBigInt.toString(), 'Final:', telegramIdForQuery);
 
       // Fetch from user_status_public view 
       const { data, error } = await supabase
         .from('user_status_public')
         .select('gems, messages_today, subscription_type')
-        .eq('telegram_id', telegramIdNumber)
+        .eq('telegram_id', telegramIdForQuery)
         .maybeSingle();
 
       if (error) {
