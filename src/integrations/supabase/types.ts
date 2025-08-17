@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
+  // Allows to automatically instanciate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
@@ -47,13 +47,6 @@ export type Database = {
             foreignKeyName: "chats_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "user_counters_mv"
-            referencedColumns: ["user_uuid"]
-          },
-          {
-            foreignKeyName: "chats_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
           },
@@ -85,62 +78,6 @@ export type Database = {
           user_message?: string
         }
         Relationships: []
-      }
-      daily_claims: {
-        Row: {
-          amount: number
-          claim_date: string
-          created_at: string
-          id: number
-          reward_type: string
-          user_id: number
-        }
-        Insert: {
-          amount: number
-          claim_date: string
-          created_at?: string
-          id?: number
-          reward_type: string
-          user_id: number
-        }
-        Update: {
-          amount?: number
-          claim_date?: string
-          created_at?: string
-          id?: number
-          reward_type?: string
-          user_id?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "fk_daily_claims_user"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "top_customers"
-            referencedColumns: ["telegram_id"]
-          },
-          {
-            foreignKeyName: "fk_daily_claims_user"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user_counters_mv"
-            referencedColumns: ["telegram_id"]
-          },
-          {
-            foreignKeyName: "fk_daily_claims_user"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user_status_public"
-            referencedColumns: ["telegram_id"]
-          },
-          {
-            foreignKeyName: "fk_daily_claims_user"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["telegram_id"]
-          },
-        ]
       }
       gem_packages: {
         Row: {
@@ -205,13 +142,6 @@ export type Database = {
             foreignKeyName: "images_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "user_counters_mv"
-            referencedColumns: ["user_uuid"]
-          },
-          {
-            foreignKeyName: "images_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
           },
@@ -234,7 +164,6 @@ export type Database = {
           refunded_at: string | null
           status: string
           telegram_charge_id: string
-          updated_at: string | null
           user_id: number
         }
         Insert: {
@@ -253,7 +182,6 @@ export type Database = {
           refunded_at?: string | null
           status?: string
           telegram_charge_id: string
-          updated_at?: string | null
           user_id: number
         }
         Update: {
@@ -272,7 +200,6 @@ export type Database = {
           refunded_at?: string | null
           status?: string
           telegram_charge_id?: string
-          updated_at?: string | null
           user_id?: number
         }
         Relationships: [
@@ -281,20 +208,6 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "top_customers"
-            referencedColumns: ["telegram_id"]
-          },
-          {
-            foreignKeyName: "processed_payments_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user_counters_mv"
-            referencedColumns: ["telegram_id"]
-          },
-          {
-            foreignKeyName: "processed_payments_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user_status_public"
             referencedColumns: ["telegram_id"]
           },
           {
@@ -345,13 +258,6 @@ export type Database = {
             foreignKeyName: "relationships_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "user_counters_mv"
-            referencedColumns: ["user_uuid"]
-          },
-          {
-            foreignKeyName: "relationships_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
           },
@@ -368,7 +274,6 @@ export type Database = {
           stars_amount: number
           subscription_tier: string | null
           telegram_charge_id: string
-          updated_at: string | null
           user_id: number
         }
         Insert: {
@@ -381,7 +286,6 @@ export type Database = {
           stars_amount: number
           subscription_tier?: string | null
           telegram_charge_id: string
-          updated_at?: string | null
           user_id: number
         }
         Update: {
@@ -394,7 +298,6 @@ export type Database = {
           stars_amount?: number
           subscription_tier?: string | null
           telegram_charge_id?: string
-          updated_at?: string | null
           user_id?: number
         }
         Relationships: [
@@ -403,20 +306,6 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "top_customers"
-            referencedColumns: ["telegram_id"]
-          },
-          {
-            foreignKeyName: "star_earnings_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user_counters_mv"
-            referencedColumns: ["telegram_id"]
-          },
-          {
-            foreignKeyName: "star_earnings_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user_status_public"
             referencedColumns: ["telegram_id"]
           },
           {
@@ -465,20 +354,6 @@ export type Database = {
             foreignKeyName: "subscriptions_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "user_counters_mv"
-            referencedColumns: ["telegram_id"]
-          },
-          {
-            foreignKeyName: "subscriptions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user_status_public"
-            referencedColumns: ["telegram_id"]
-          },
-          {
-            foreignKeyName: "subscriptions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["telegram_id"]
           },
@@ -514,13 +389,6 @@ export type Database = {
             foreignKeyName: "transactions_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "user_counters_mv"
-            referencedColumns: ["user_uuid"]
-          },
-          {
-            foreignKeyName: "transactions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
           },
@@ -529,19 +397,16 @@ export type Database = {
       users: {
         Row: {
           age_verified: boolean | null
-          bemob_cid: string | null
           created_at: string | null
           gems: number | null
           id: string
           last_active: string | null
-          last_daily_claim_at: string | null
           last_message_date: string | null
           last_seen: string | null
           messages_today: number | null
           nickname: string | null
           pending_gem_refund: number | null
           session_data: Json | null
-          streak_count: number
           subscription_end: string | null
           subscription_type: string | null
           telegram_id: number
@@ -549,26 +414,22 @@ export type Database = {
           total_gems_spent: number | null
           total_messages: number | null
           total_spent: number | null
-          updated_at: string | null
           user_name: string | null
           username: string | null
           videos_generated: number | null
         }
         Insert: {
           age_verified?: boolean | null
-          bemob_cid?: string | null
           created_at?: string | null
           gems?: number | null
           id?: string
           last_active?: string | null
-          last_daily_claim_at?: string | null
           last_message_date?: string | null
           last_seen?: string | null
           messages_today?: number | null
           nickname?: string | null
           pending_gem_refund?: number | null
           session_data?: Json | null
-          streak_count?: number
           subscription_end?: string | null
           subscription_type?: string | null
           telegram_id: number
@@ -576,26 +437,22 @@ export type Database = {
           total_gems_spent?: number | null
           total_messages?: number | null
           total_spent?: number | null
-          updated_at?: string | null
           user_name?: string | null
           username?: string | null
           videos_generated?: number | null
         }
         Update: {
           age_verified?: boolean | null
-          bemob_cid?: string | null
           created_at?: string | null
           gems?: number | null
           id?: string
           last_active?: string | null
-          last_daily_claim_at?: string | null
           last_message_date?: string | null
           last_seen?: string | null
           messages_today?: number | null
           nickname?: string | null
           pending_gem_refund?: number | null
           session_data?: Json | null
-          streak_count?: number
           subscription_end?: string | null
           subscription_type?: string | null
           telegram_id?: number
@@ -603,7 +460,6 @@ export type Database = {
           total_gems_spent?: number | null
           total_messages?: number | null
           total_spent?: number | null
-          updated_at?: string | null
           user_name?: string | null
           username?: string | null
           videos_generated?: number | null
@@ -648,13 +504,6 @@ export type Database = {
           video_url?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "videos_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user_counters_mv"
-            referencedColumns: ["user_uuid"]
-          },
           {
             foreignKeyName: "videos_user_id_fkey"
             columns: ["user_id"]
@@ -713,20 +562,6 @@ export type Database = {
             foreignKeyName: "fk_voice_calls_user_id"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "user_counters_mv"
-            referencedColumns: ["telegram_id"]
-          },
-          {
-            foreignKeyName: "fk_voice_calls_user_id"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user_status_public"
-            referencedColumns: ["telegram_id"]
-          },
-          {
-            foreignKeyName: "fk_voice_calls_user_id"
-            columns: ["user_id"]
-            isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["telegram_id"]
           },
@@ -764,7 +599,9 @@ export type Database = {
       earnings_analytics: {
         Row: {
           date: string | null
+          gems_revenue: number | null
           stars_earned: number | null
+          subscription_revenue: number | null
           total_transactions: number | null
           unique_customers: number | null
         }
@@ -802,41 +639,12 @@ export type Database = {
       }
       top_customers: {
         Row: {
+          last_purchase_date: string | null
           telegram_id: number | null
           total_purchases: number | null
           total_stars_spent: number | null
+          user_name: string | null
           username: string | null
-        }
-        Relationships: []
-      }
-      user_counters_mv: {
-        Row: {
-          images_generated: number | null
-          telegram_id: number | null
-          total_stars_spent: number | null
-          user_uuid: string | null
-          videos_generated: number | null
-        }
-        Relationships: []
-      }
-      user_status_public: {
-        Row: {
-          gems: number | null
-          messages_today: number | null
-          subscription_type: string | null
-          telegram_id: number | null
-        }
-        Insert: {
-          gems?: number | null
-          messages_today?: number | null
-          subscription_type?: string | null
-          telegram_id?: number | null
-        }
-        Update: {
-          gems?: number | null
-          messages_today?: number | null
-          subscription_type?: string | null
-          telegram_id?: number | null
         }
         Relationships: []
       }
@@ -863,20 +671,6 @@ export type Database = {
             foreignKeyName: "fk_voice_calls_user_id"
             columns: ["telegram_id"]
             isOneToOne: false
-            referencedRelation: "user_counters_mv"
-            referencedColumns: ["telegram_id"]
-          },
-          {
-            foreignKeyName: "fk_voice_calls_user_id"
-            columns: ["telegram_id"]
-            isOneToOne: false
-            referencedRelation: "user_status_public"
-            referencedColumns: ["telegram_id"]
-          },
-          {
-            foreignKeyName: "fk_voice_calls_user_id"
-            columns: ["telegram_id"]
-            isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["telegram_id"]
           },
@@ -889,34 +683,34 @@ export type Database = {
         Returns: undefined
       }
       get_earnings_period: {
-        Args: { period_days: number }
+        Args: { period_days?: number }
         Returns: {
-          avg_transaction_value: number
           total_stars: number
           total_transactions: number
           unique_customers: number
+          avg_transaction_value: number
         }[]
       }
       get_payment_analytics: {
         Args: { p_days?: number }
         Returns: {
-          avg_payment_amount: number
-          failed_payments: number
-          refunded_payments: number
-          successful_payments: number
-          top_products: Json
           total_payments: number
           total_revenue_stars: number
+          successful_payments: number
+          failed_payments: number
+          refunded_payments: number
+          avg_payment_amount: number
+          top_products: Json
         }[]
       }
       get_total_earnings: {
         Args: Record<PropertyKey, never>
         Returns: {
-          gems_revenue: number
-          subscription_revenue: number
-          total_customers: number
           total_stars: number
           total_transactions: number
+          total_customers: number
+          gems_revenue: number
+          subscription_revenue: number
         }[]
       }
       increment_user_messages: {
@@ -925,27 +719,23 @@ export type Database = {
       }
       log_voice_call: {
         Args: {
-          p_agent_id: string
-          p_call_id: string
-          p_gem_cost?: number
-          p_phone_number: string
           p_user_id: number
+          p_call_id: string
+          p_agent_id: string
+          p_phone_number: string
+          p_gem_cost?: number
         }
         Returns: undefined
       }
-      process_daily_return_bonus: {
-        Args: { p_user_id: number }
-        Returns: Json
-      }
       process_payment_safely: {
         Args: {
-          p_amount: number
-          p_gems_to_add?: number
-          p_payload: string
-          p_subscription_days?: number
-          p_subscription_tier?: string
           p_telegram_charge_id: string
           p_user_id: number
+          p_payload: string
+          p_amount: number
+          p_gems_to_add?: number
+          p_subscription_tier?: string
+          p_subscription_days?: number
         }
         Returns: Json
       }

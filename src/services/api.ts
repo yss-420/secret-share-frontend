@@ -25,46 +25,6 @@ export interface GemPurchase {
 }
 
 class ApiService {
-  async getUserStatus(telegramId: string): Promise<{ gems: number; messages_today: number; subscription_type: string | null; } | null> {
-    try {
-      const backendUrl = import.meta.env.VITE_BACKEND_URL;
-      const frontendSecretKey = import.meta.env.VITE_FRONTEND_SECRET_KEY;
-
-      console.log('[API_SERVICE] Environment check:', {
-        hasBackendUrl: !!backendUrl,
-        hasFrontendSecret: !!frontendSecretKey,
-        telegramId: telegramId
-      });
-      console.log('[API_SERVICE] Calling URL:', `${backendUrl}/api/user-status`);
-
-      const response = await fetch(`${backendUrl}/api/user-status`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${frontendSecretKey}`
-        },
-        body: JSON.stringify({ telegram_id: telegramId })
-      });
-
-      if (!response.ok) {
-        console.error('[API_SERVICE] Backend API error:', response.status, response.statusText);
-        return null;
-      }
-
-      const data = await response.json();
-      console.log('[API_SERVICE] Backend API response:', data);
-
-      return {
-        gems: data.gems || 0,
-        messages_today: data.messages_today || 0,
-        subscription_type: data.subscription_type || null
-      };
-    } catch (error) {
-      console.error('[API_SERVICE] Failed to fetch user status:', error);
-      return null;
-    }
-  }
-
   async purchaseGems(purchase: GemPurchase): Promise<boolean> {
     try {
       // In development, simulate successful purchase

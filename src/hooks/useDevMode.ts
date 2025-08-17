@@ -31,17 +31,15 @@ export const useDevMode = () => {
   const [isDevMode, setIsDevMode] = useState(false);
 
   useEffect(() => {
-    // Only enable dev mode with explicit ?dev=true parameter
-    const hasDevParam = new URLSearchParams(window.location.search).get('dev') === 'true';
+    // Check multiple conditions for dev mode
+    const isDev = import.meta.env.DEV;
+    const isLocalhost = window.location.hostname === 'localhost';
+    const hasDevParam = new URLSearchParams(window.location.search).has('dev');
+    const isDevEnvironment = isDev || isLocalhost || hasDevParam;
     
-    console.log('[DEV_MODE] Check:', { 
-      hasDevParam, 
-      hostname: window.location.hostname,
-      isDev: import.meta.env.DEV,
-      finalDevMode: hasDevParam
-    });
+    console.log('Dev mode check:', { isDev, isLocalhost, hasDevParam, isDevEnvironment });
     
-    setIsDevMode(hasDevParam);
+    setIsDevMode(isDevEnvironment);
   }, []);
 
   const getDevUser = () => isDevMode ? DEV_USER : null;
