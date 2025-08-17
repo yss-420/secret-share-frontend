@@ -116,15 +116,9 @@ const Store = () => {
     try {
       console.log('🛒 Starting gem purchase:', gemPackage);
       
-      // Extract stars from price string
-      const stars = parseInt(gemPackage.price.replace(/[^\d,]/g, '').replace(',', ''));
-      const packageType = `gems_${gemPackage.gems}`;
-      const bemobCid = getCurrentBemobCid();
-
-      // Use invoice creation API that was working before
-      console.log('🔄 Using invoice creation API');
-      
-      if (!telegramUser?.id) {
+      // Get telegramId directly from Telegram WebApp
+      const telegramId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+      if (!telegramId || typeof telegramId !== 'number') {
         toast({
           title: "Authentication Required", 
           description: "Please open this store from the Telegram bot.",
@@ -134,13 +128,16 @@ const Store = () => {
         return;
       }
 
+      const packageType = `gems_${gemPackage.gems}`;
+      console.log('🔄 Creating invoice for:', { telegramId, packageType });
+
       const response = await fetch('https://secret-share-backend-production.up.railway.app/api/create-invoice', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          user_id: telegramUser.id,
+          user_id: telegramId,
           package_type: packageType
         })
       });
@@ -150,9 +147,11 @@ const Store = () => {
       if (data.success && data.invoice_url && window.Telegram?.WebApp?.openInvoice) {
         window.Telegram.WebApp.openInvoice(data.invoice_url, (status) => {
           if (status === "paid") {
+            const stars = parseInt(gemPackage.price.replace(/[^\d,]/g, '').replace(',', ''));
             trackGemPurchase(gemPackage.gems, stars, data.invoice_url);
             toast({ title: "Payment Successful! 🎉", description: "Your gems have been added." });
-            window.location.reload();
+            // Refresh user data after payment
+            updateGems(0); // Trigger refresh
           } else if (status === "cancelled") {
             toast({ title: "Payment Cancelled", description: "You cancelled the payment." });
           } else {
@@ -181,13 +180,9 @@ const Store = () => {
     try {
       console.log('📋 Starting subscription:', planName);
       
-      const packageType = `sub_${planName.toLowerCase()}`;
-      const bemobCid = getCurrentBemobCid();
-
-      // Use invoice creation API that was working before
-      console.log('🔄 Using subscription invoice creation API');
-      
-      if (!telegramUser?.id) {
+      // Get telegramId directly from Telegram WebApp
+      const telegramId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+      if (!telegramId || typeof telegramId !== 'number') {
         toast({
           title: "Authentication Required",
           description: "Please open this store from the Telegram bot.",
@@ -197,13 +192,16 @@ const Store = () => {
         return;
       }
 
+      const packageType = `sub_${planName.toLowerCase()}`;
+      console.log('🔄 Creating subscription invoice for:', { telegramId, packageType });
+
       const response = await fetch('https://secret-share-backend-production.up.railway.app/api/create-invoice', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          user_id: telegramUser.id,
+          user_id: telegramId,
           package_type: packageType
         })
       });
@@ -216,7 +214,8 @@ const Store = () => {
             const subStars = planName === 'Essential' ? 500 : planName === 'Plus' ? 1000 : 2000;
             trackSubscriptionPurchase(planName, subStars, data.invoice_url);
             toast({ title: "Subscription Activated! 🎉", description: "Your subscription is now active." });
-            window.location.reload();
+            // Refresh user data after payment
+            updateGems(0); // Trigger refresh
           } else if (status === "cancelled") {
             toast({ title: "Payment Cancelled", description: "You cancelled the payment." });
           } else {

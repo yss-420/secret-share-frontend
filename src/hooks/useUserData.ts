@@ -31,48 +31,45 @@ export const useUserData = () => {
         return;
       }
 
-      // Fetch real user data from Supabase
-      if (user?.id) {
-        const telegramId = parseInt(user.id);
-        console.log('[USER_DATA] Fetching data for telegram_id:', telegramId);
-        
-        if (isNaN(telegramId)) {
-          console.error('[USER_DATA] Invalid telegram_id:', user.id);
-          setError('Invalid user ID');
-          setLoading(false);
-          return;
-        }
-
-        const { data, error } = await supabase
-          .from('users')
-          .select('gems, messages_today, subscription_type')
-          .eq('telegram_id', telegramId)
-          .maybeSingle();
-
-        if (error) {
-          console.error('[USER_DATA] Supabase error:', error);
-          throw error;
-        }
-
-        if (!data) {
-          console.log('[USER_DATA] No user found with telegram_id:', telegramId);
-          setError('User not found in database');
-          setLoading(false);
-          return;
-        }
-
-        console.log('[USER_DATA] Successfully fetched user data:', data);
-        setUserStats({
-          gems: data.gems || 0,
-          total_messages: 0,
-          messages_today: data.messages_today || 0,
-          subscription_type: data.subscription_type,
-          subscription_end: null,
-          tier: 'free'
-        });
-      } else {
-        console.log('[USER_DATA] No user.id available');
+      // Get telegramId directly from Telegram WebApp
+      const telegramId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+      if (!telegramId || typeof telegramId !== 'number') {
+        console.log('[USER_DATA] No telegram user found');
+        setError('No Telegram user found');
+        setLoading(false);
+        return;
       }
+
+      console.log('[USER_DATA] Fetching data from user_status_public for telegram_id:', telegramId);
+
+      // Fetch from user_status_public view instead of users table
+      const { data, error } = await supabase
+        .from('user_status_public')
+        .select('gems, messages_today, subscription_type')
+        .eq('telegram_id', telegramId)
+        .maybeSingle();
+
+      if (error) {
+        console.error('[USER_DATA] Supabase error:', error);
+        throw error;
+      }
+
+      if (!data) {
+        console.log('[USER_DATA] No user found with telegram_id:', telegramId);
+        setError('User not found in database');
+        setLoading(false);
+        return;
+      }
+
+      console.log('[USER_DATA] Successfully fetched user data:', data);
+      setUserStats({
+        gems: data.gems || 0,
+        total_messages: 0,
+        messages_today: data.messages_today || 0,
+        subscription_type: data.subscription_type,
+        subscription_end: null,
+        tier: 'free'
+      });
     } catch (err) {
       console.error('[USER_DATA] Failed to fetch user data:', err);
       setError('Failed to load user data');
@@ -81,50 +78,17 @@ export const useUserData = () => {
     }
   };
 
+
+  useEffect(() => {
+    // Always try to fetch data if Telegram is available or in dev mode
+    fetchUserData();
+  }, [isDevMode]);
+
+  // Update gems function now refetches data instead of using realtime
   const updateGems = (amount: number) => {
-    setUserStats(prev => prev ? { ...prev, gems: prev.gems + amount } : null);
+    // Refetch data after payment instead of relying on realtime
+    fetchUserData();
   };
-
-  useEffect(() => {
-    if (isAuthenticated || isDevMode) {
-      fetchUserData();
-    }
-  }, [isAuthenticated, user, isDevMode]);
-
-  // Set up real-time subscription for gem updates
-  useEffect(() => {
-    if (!user?.id || isDevMode) return;
-
-    const telegramId = parseInt(user.id);
-    if (isNaN(telegramId)) return;
-
-    const channel = supabase
-      .channel('user-data-updates')
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'users',
-          filter: `telegram_id=eq.${telegramId}`
-        },
-        (payload) => {
-          if (payload.new) {
-            setUserStats(prev => prev ? {
-              ...prev,
-              gems: payload.new.gems || 0,
-              messages_today: payload.new.messages_today || 0,
-              subscription_type: payload.new.subscription_type
-            } : null);
-          }
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [user?.id, isDevMode]);
 
   return {
     userStats,
