@@ -50,11 +50,11 @@ export const useUserData = () => {
       }
 
       // If backend succeeded, only supplement missing fields from Supabase (do not overwrite gems/messages)
-      if (user?.id && backendSucceeded) {
+      if ((user?.id || telegramUser?.id) && backendSucceeded) {
         const { data, error } = await supabase
           .from('users')
           .select('total_messages, subscription_end, tier')
-          .eq('id', user.id)
+          .eq('telegram_id', telegramUser?.id as number)
           .single();
 
         if (!error && data) {
@@ -68,11 +68,11 @@ export const useUserData = () => {
       }
 
       // If backend failed, fall back entirely to Supabase
-      if (user?.id && !backendSucceeded) {
+      if ((user?.id || telegramUser?.id) && !backendSucceeded) {
         const { data, error } = await supabase
           .from('users')
           .select('gems, total_messages, messages_today, subscription_type, subscription_end, tier')
-          .eq('id', user.id)
+          .eq('telegram_id', telegramUser?.id as number)
           .single();
 
         if (error) throw error;
