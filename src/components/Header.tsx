@@ -2,33 +2,33 @@
 import { Gem, Zap, Plus, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
-import { useUserData } from "@/hooks/useUserData";
+import { useHeaderStats } from "@/hooks/useHeaderStats";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { useNavigate } from "react-router-dom";
 
 export const Header = () => {
-  const { user, telegramUser, error: authError } = useAuth();
-  const { userStats, loading, error: userDataError } = useUserData();
+  const { telegramUser, error: authError } = useAuth();
+  const { stats, loading } = useHeaderStats();
   const navigate = useNavigate();
 
   // Check if user has an active subscription
   const hasActiveSubscription = () => {
-    if (!userStats?.subscription_end || !userStats?.tier) return false;
+    if (!stats?.subscription_end || !stats?.tier) return false;
     
-    const subscriptionEnd = new Date(userStats.subscription_end);
+    const subscriptionEnd = new Date(stats.subscription_end);
     const now = new Date();
     
     // User has active subscription if:
     // 1. Subscription hasn't expired AND
     // 2. Tier is not 'free'
-    return subscriptionEnd > now && userStats.tier !== 'free';
+    return subscriptionEnd > now && stats.tier !== 'free';
   };
 
   const getMessageDisplay = () => {
     if (loading) return <LoadingSpinner size="sm" />;
-    if (authError || userDataError) return <AlertCircle className="w-2.5 h-2.5 text-red-500" />;
+    if (authError) return <AlertCircle className="w-2.5 h-2.5 text-red-500" />;
     
-    const messagesUsed = userStats?.messages_today || 0;
+    const messagesUsed = stats?.messages_today || 0;
     
     if (hasActiveSubscription()) {
       return <span className="text-xs font-medium text-foreground">∞</span>;
@@ -39,8 +39,8 @@ export const Header = () => {
 
   const getGemsDisplay = () => {
     if (loading) return <LoadingSpinner size="sm" />;
-    if (authError || userDataError) return <AlertCircle className="w-2.5 h-2.5 text-red-500" />;
-    return <span className="text-xs font-medium text-foreground">{userStats?.gems || 0}</span>;
+    if (authError) return <AlertCircle className="w-2.5 h-2.5 text-red-500" />;
+    return <span className="text-xs font-medium text-foreground">{stats?.gems || 0}</span>;
   };
 
   return (
