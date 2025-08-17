@@ -120,25 +120,38 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     if (!user?.telegram_id || isDevMode) return;
 
-    const channel = supabase
-      .channel('user_updates')
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'users',
-          filter: `telegram_id=eq.${user.telegram_id}`
-        },
-        (payload) => {
-          setUser(payload.new as User);
-        }
-      )
-      .subscribe();
+    let channel: any = null;
+    
+    try {
+      channel = supabase
+        .channel('user_updates')
+        .on(
+          'postgres_changes',
+          {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'users',
+            filter: `telegram_id=eq.${user.telegram_id}`
+          },
+          (payload) => {
+            setUser(payload.new as User);
+          }
+        )
+        .subscribe();
+    } catch (error) {
+      console.error('Failed to create Supabase channel:', error);
+    }
 
     return () => {
-      if (channel) {
-        supabase.removeChannel(channel);
+      try {
+        if (channel && typeof channel.unsubscribe === 'function') {
+          channel.unsubscribe();
+        }
+        if (channel) {
+          supabase.removeChannel(channel);
+        }
+      } catch (error) {
+        console.error('Error cleaning up Supabase channel:', error);
       }
     };
   }, [user?.telegram_id, isDevMode]);
