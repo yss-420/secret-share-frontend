@@ -158,7 +158,8 @@ const Store = () => {
         const payload = {
           action: 'buy_gems',
           package: packageType,
-          bemob_cid: bemobCid
+          bemob_cid: bemobCid,
+          init_data: window.Telegram.WebApp.initData
         };
         
         console.log('[STORE] Sending WebApp payload:', payload);
@@ -304,7 +305,8 @@ const Store = () => {
         const payload = {
           action: 'buy_gems',
           package: packageType,
-          bemob_cid: bemobCid
+          bemob_cid: bemobCid,
+          init_data: window.Telegram.WebApp.initData
         };
         
         console.log('[STORE] Sending WebApp payload:', payload);
