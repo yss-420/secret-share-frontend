@@ -130,6 +130,13 @@ export type Database = {
             foreignKeyName: "fk_daily_claims_user"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "user_status_public"
+            referencedColumns: ["telegram_id"]
+          },
+          {
+            foreignKeyName: "fk_daily_claims_user"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["telegram_id"]
           },
@@ -287,6 +294,13 @@ export type Database = {
             foreignKeyName: "processed_payments_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "user_status_public"
+            referencedColumns: ["telegram_id"]
+          },
+          {
+            foreignKeyName: "processed_payments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["telegram_id"]
           },
@@ -402,6 +416,13 @@ export type Database = {
             foreignKeyName: "star_earnings_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "user_status_public"
+            referencedColumns: ["telegram_id"]
+          },
+          {
+            foreignKeyName: "star_earnings_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["telegram_id"]
           },
@@ -445,6 +466,13 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "user_counters_mv"
+            referencedColumns: ["telegram_id"]
+          },
+          {
+            foreignKeyName: "subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_status_public"
             referencedColumns: ["telegram_id"]
           },
           {
@@ -692,6 +720,13 @@ export type Database = {
             foreignKeyName: "fk_voice_calls_user_id"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "user_status_public"
+            referencedColumns: ["telegram_id"]
+          },
+          {
+            foreignKeyName: "fk_voice_calls_user_id"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["telegram_id"]
           },
@@ -784,6 +819,27 @@ export type Database = {
         }
         Relationships: []
       }
+      user_status_public: {
+        Row: {
+          gems: number | null
+          messages_today: number | null
+          subscription_type: string | null
+          telegram_id: number | null
+        }
+        Insert: {
+          gems?: number | null
+          messages_today?: number | null
+          subscription_type?: string | null
+          telegram_id?: number | null
+        }
+        Update: {
+          gems?: number | null
+          messages_today?: number | null
+          subscription_type?: string | null
+          telegram_id?: number | null
+        }
+        Relationships: []
+      }
       voice_call_analytics: {
         Row: {
           avg_call_duration: number | null
@@ -808,6 +864,13 @@ export type Database = {
             columns: ["telegram_id"]
             isOneToOne: false
             referencedRelation: "user_counters_mv"
+            referencedColumns: ["telegram_id"]
+          },
+          {
+            foreignKeyName: "fk_voice_calls_user_id"
+            columns: ["telegram_id"]
+            isOneToOne: false
+            referencedRelation: "user_status_public"
             referencedColumns: ["telegram_id"]
           },
           {

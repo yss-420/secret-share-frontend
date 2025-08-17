@@ -116,33 +116,13 @@ const Store = () => {
     try {
       console.log('🛒 Starting gem purchase:', gemPackage);
       
-      // Extract stars from price string and track conversion
+      // Extract stars from price string
       const stars = parseInt(gemPackage.price.replace(/[^\d,]/g, '').replace(',', ''));
       const packageType = `gems_${gemPackage.gems}`;
       const bemobCid = getCurrentBemobCid();
 
-      // Check if we have valid Telegram WebApp context and user
-      const hasValidTelegram = window.Telegram?.WebApp && telegramUser?.id && window.Telegram.WebApp.initData;
-      
-      if (hasValidTelegram) {
-        console.log('💎 Using WebApp.sendData for Telegram Mini App');
-        
-        const payload = {
-          action: 'buy_gems',
-          package: packageType,
-          bemob_cid: bemobCid,
-          init_data: window.Telegram.WebApp.initData
-        };
-        
-        console.log('[STORE] Sending WebApp payload:', payload);
-        window.Telegram.WebApp.sendData(JSON.stringify(payload));
-        trackGemPurchase(gemPackage.gems, stars);
-        setLoading(false);
-        return;
-      }
-
-      // Fallback to invoice creation when WebApp.sendData isn't available
-      console.log('🔄 Falling back to invoice creation - no valid Telegram context');
+      // Use invoice creation API that was working before
+      console.log('🔄 Using invoice creation API');
       
       if (!telegramUser?.id) {
         toast({
@@ -204,29 +184,8 @@ const Store = () => {
       const packageType = `sub_${planName.toLowerCase()}`;
       const bemobCid = getCurrentBemobCid();
 
-      // Check if we have valid Telegram WebApp context and user
-      const hasValidTelegram = window.Telegram?.WebApp && telegramUser?.id && window.Telegram.WebApp.initData;
-      
-      if (hasValidTelegram) {
-        console.log('⭐ Using WebApp.sendData for Telegram Mini App subscription');
-        
-        const payload = {
-          action: 'buy_gems',
-          package: packageType,
-          bemob_cid: bemobCid,
-          init_data: window.Telegram.WebApp.initData
-        };
-        
-        console.log('[STORE] Sending subscription payload:', payload);
-        window.Telegram.WebApp.sendData(JSON.stringify(payload));
-        
-        toast({ title: "Subscription Initiated", description: `Processing ${planName} subscription...` });
-        setLoading(false);
-        return;
-      }
-
-      // Fallback to invoice creation when WebApp.sendData isn't available
-      console.log('🔄 Falling back to subscription invoice creation - no valid Telegram context');
+      // Use invoice creation API that was working before
+      console.log('🔄 Using subscription invoice creation API');
       
       if (!telegramUser?.id) {
         toast({
