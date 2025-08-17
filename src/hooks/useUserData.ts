@@ -11,7 +11,7 @@ export const useUserData = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const waitForTelegramReady = async (): Promise<number | null> => {
+  const waitForTelegramReady = async (): Promise<string | null> => {
     return new Promise((resolve) => {
       console.log('[USER_DATA] Waiting for Telegram WebApp to initialize...');
       
@@ -31,13 +31,22 @@ export const useUserData = () => {
         console.log('[USER_DATA] initDataUnsafe:', window.Telegram?.WebApp?.initDataUnsafe);
         console.log('[USER_DATA] user object:', window.Telegram?.WebApp?.initDataUnsafe?.user);
         
-        const telegramId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
-        console.log('[USER_DATA] telegramId:', telegramId, 'type:', typeof telegramId);
+        const telegramIdRaw = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+        console.log('[USER_DATA] Raw telegramId:', telegramIdRaw, 'type:', typeof telegramIdRaw);
         
-        if (telegramId && typeof telegramId === 'number') {
-          console.log('[USER_DATA] ✅ Found valid telegramId:', telegramId);
-          resolve(telegramId);
-          return;
+        if (telegramIdRaw) {
+          // Convert to string immediately to avoid precision loss
+          const telegramId = String(telegramIdRaw);
+          console.log('[USER_DATA] ✅ Found valid telegramId (as string):', telegramId);
+          
+          // Validate it's a numeric string
+          if (/^\d+$/.test(telegramId)) {
+            console.log('[USER_DATA] ✅ Telegram ID is valid numeric string:', telegramId);
+            resolve(telegramId);
+            return;
+          } else {
+            console.log('[USER_DATA] ❌ Telegram ID is not a valid numeric string:', telegramId);
+          }
         }
         
         if (attempts >= maxAttempts) {
@@ -83,13 +92,17 @@ export const useUserData = () => {
         return;
       }
 
-      console.log('[USER_DATA] Fetching data from user_status_public for telegram_id:', telegramId);
+      console.log('[USER_DATA] Fetching data from user_status_public for telegram_id (string):', telegramId, 'length:', telegramId.length);
 
-      // Fetch from user_status_public view instead of users table
+      // Convert string back to number for Supabase query (using BigInt to avoid precision loss)
+      const telegramIdNumber = Number(telegramId);
+      console.log('[USER_DATA] Converted to number for query:', telegramIdNumber);
+
+      // Fetch from user_status_public view 
       const { data, error } = await supabase
         .from('user_status_public')
         .select('gems, messages_today, subscription_type')
-        .eq('telegram_id', telegramId)
+        .eq('telegram_id', telegramIdNumber)
         .maybeSingle();
 
       if (error) {
