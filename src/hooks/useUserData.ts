@@ -4,34 +4,45 @@ import { useDevMode } from './useDevMode';
 import { UserStats, apiService } from '@/services/api';
 
 export const useUserData = () => {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, telegramUser } = useAuth();
   const { isDevMode, devUser } = useDevMode();
   const [userStats, setUserStats] = useState<UserStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const getTelegramId = (): string | null => {
-    // Call Telegram.WebApp.ready() to ensure proper initialization
-    if (window.Telegram?.WebApp) {
-      window.Telegram.WebApp.ready();
-    }
-
-    console.log('[USER_DATA] Telegram WebApp state:', {
-      telegramExists: !!window.Telegram,
-      webAppExists: !!window.Telegram?.WebApp,
-      initDataExists: !!window.Telegram?.WebApp?.initDataUnsafe,
-      userExists: !!window.Telegram?.WebApp?.initDataUnsafe?.user,
-      userId: window.Telegram?.WebApp?.initDataUnsafe?.user?.id
+    console.log('[USER_DATA] Debugging Telegram access sources:', {
+      // Auth context data (from @twa-dev/sdk)
+      authTelegramUser: telegramUser,
+      authTelegramUserId: telegramUser?.id,
+      
+      // Direct window access
+      windowTelegramExists: !!window.Telegram,
+      windowWebAppExists: !!window.Telegram?.WebApp,
+      windowInitDataExists: !!window.Telegram?.WebApp?.initDataUnsafe,
+      windowUserExists: !!window.Telegram?.WebApp?.initDataUnsafe?.user,
+      windowUserId: window.Telegram?.WebApp?.initDataUnsafe?.user?.id
     });
 
-    const telegramIdRaw = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
-    if (telegramIdRaw) {
-      const telegramId = String(telegramIdRaw);
-      console.log('[USER_DATA] ✅ Found telegram_id:', telegramId);
+    // Primary: Use telegram user from auth context (@twa-dev/sdk)
+    if (telegramUser?.id) {
+      const telegramId = String(telegramUser.id);
+      console.log('[USER_DATA] ✅ Using telegram_id from auth context:', telegramId);
       return telegramId;
     }
+
+    // Fallback: Direct window access
+    if (window.Telegram?.WebApp) {
+      window.Telegram.WebApp.ready();
+      const telegramIdRaw = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+      if (telegramIdRaw) {
+        const telegramId = String(telegramIdRaw);
+        console.log('[USER_DATA] ✅ Using telegram_id from window fallback:', telegramId);
+        return telegramId;
+      }
+    }
     
-    console.log('[USER_DATA] ❌ No telegram_id found - user may not be in Telegram WebView');
+    console.log('[USER_DATA] ❌ No telegram_id found from any source');
     return null;
   };
 
@@ -96,9 +107,17 @@ export const useUserData = () => {
 
 
   useEffect(() => {
-    // Always try to fetch data if Telegram is available or in dev mode
-    fetchUserData();
-  }, [isDevMode]);
+    console.log('[USER_DATA] useEffect triggered, dependencies:', { 
+      isDevMode, 
+      hasTelegramUser: !!telegramUser,
+      telegramUserId: telegramUser?.id 
+    });
+    
+    // Wait for auth context to initialize or use dev mode
+    if (isDevMode || telegramUser) {
+      fetchUserData();
+    }
+  }, [isDevMode, telegramUser]);
 
   // Update gems function now refetches data instead of using realtime
   const updateGems = (amount: number) => {
