@@ -314,7 +314,7 @@ const Store = () => {
               const firedTxids = JSON.parse(sessionStorage.getItem('bemob_fired_txids') || '[]');
               if (!firedTxids.includes(txid)) {
                 // Get subscription price in stars
-                const subscriptionPrices = { 'Essential': 500, 'Plus': 1000, 'Premium': 2000 };
+                const subscriptionPrices = { 'Essential': 300, 'Plus': 700, 'Premium': 1400 };
                 const payout = subscriptionPrices[planName as keyof typeof subscriptionPrices] || 0;
                 
                 console.log('Firing BeMob pixel for subscription:', { cid, txid, payout, planName });
@@ -403,13 +403,14 @@ const Store = () => {
   const subscriptionPlans = [
     {
       name: "Essential",
-      price: "⭐️ 500",
-      period: "Stars / month",
+      oldPrice: "⭐️ 400",
+      price: "⭐️ 300",
+      period: "Stars / month", 
       icon: Star,
       color: "from-blue-500 to-blue-600",
       features: [
-        "**450 Monthly Gems**",
-        "Est. Value: 🎙️ 15+ Voice Notes or 📞 10+ Call Mins or 🎬 5+ Videos",
+        "**500 Monthly Gems**",
+        "No Blurred Images",
         "Unlimited Conversations",
         "Ad-Free Experience",
         "Priority Support"
@@ -417,14 +418,16 @@ const Store = () => {
     },
     {
       name: "Plus",
-      price: "⭐️ 1,000",
+      oldPrice: "⭐️ 800",
+      price: "⭐️ 700",
       period: "Stars / month",
       icon: Crown,
       color: "from-purple-500 to-purple-600",
       popular: true,
       features: [
         "**1,200 Monthly Gems**",
-        "Est. Value: 🎙️ 40+ Voice Notes or 📞 25+ Call Mins or 🎬 15+ Videos",
+        "Faster Rendering Speed",
+        "Skip Chat Queue",
         "Everything in Essential",
         "Media Priority Queue",
         "Enhanced Media Quality"
@@ -432,13 +435,15 @@ const Store = () => {
     },
     {
       name: "Premium",
-      price: "⭐️ 2,000",
+      oldPrice: "⭐️ 1,600",
+      price: "⭐️ 1,400",
       period: "Stars / month",
       icon: Sparkles,
       color: "from-yellow-500 to-yellow-600",
       features: [
         "**2,500 Monthly Gems**",
-        "Est. Value: 🎙️ 85+ Voice Notes or 📞 50+ Call Mins or 🎬 30+ Videos",
+        "Advanced AI Engines",
+        "Extended Chat History",
         "Everything in Plus",
         "Ultimate Priority Queue",
         "Early Access to New Characters",
@@ -471,6 +476,13 @@ const Store = () => {
               const IconComponent = plan.icon;
               return (
                 <Card key={plan.name} className="card-premium transition-smooth group p-6 relative">
+                  {/* Launch Offer Pill */}
+                  <div className="absolute -top-2 -right-2 z-10">
+                    <div className="bg-gradient-to-r from-primary/20 to-accent/20 backdrop-blur-sm border border-primary/30 px-3 py-1 rounded-full text-xs font-medium text-primary">
+                      Launch Offer
+                    </div>
+                  </div>
+
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center space-x-3">
                       <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${plan.color} flex items-center justify-center`}>
@@ -485,7 +497,8 @@ const Store = () => {
                             </div>
                           )}
                         </div>
-                        <div className="flex items-baseline">
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-sm text-muted-foreground/60 line-through">{plan.oldPrice}</span>
                           <span className="text-2xl font-bold text-foreground">{plan.price}</span>
                           <span className="text-sm text-muted-foreground ml-1">{plan.period}</span>
                         </div>
@@ -494,20 +507,25 @@ const Store = () => {
                   </div>
 
                   <div className="space-y-2 mb-6">
-                    {plan.features.map((feature, index) => (
-                      <div key={index} className="flex items-center space-x-2">
-                        <Check className="w-4 h-4 text-primary flex-shrink-0" />
-                        <span className="text-sm text-foreground">
-                          {feature.includes('**') ? (
-                            <span dangerouslySetInnerHTML={{
-                              __html: feature.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                            }} />
-                          ) : (
-                            feature
-                          )}
-                        </span>
-                      </div>
-                    ))}
+                    {plan.features.map((feature, index) => {
+                      const isMonthlyGems = feature.includes('Monthly Gems');
+                      const IconToUse = isMonthlyGems ? Gem : Check;
+                      
+                      return (
+                        <div key={index} className="flex items-center space-x-2">
+                          <IconToUse className={`w-4 h-4 flex-shrink-0 ${isMonthlyGems ? 'text-emerald-400' : 'text-primary'}`} />
+                          <span className="text-sm text-foreground">
+                            {feature.includes('**') ? (
+                              <span dangerouslySetInnerHTML={{
+                                __html: feature.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                              }} />
+                            ) : (
+                              feature
+                            )}
+                          </span>
+                        </div>
+                      );
+                    })}
                   </div>
 
                   <Button 
