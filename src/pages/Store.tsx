@@ -405,7 +405,7 @@ const Store = () => {
       name: "Essential",
       oldPrice: "⭐️ 400",
       price: "⭐️ 300",
-      period: "Stars / month", 
+      period: "/ month", 
       icon: Star,
       color: "from-blue-500 to-blue-600",
       features: [
@@ -420,7 +420,7 @@ const Store = () => {
       name: "Plus",
       oldPrice: "⭐️ 800",
       price: "⭐️ 700",
-      period: "Stars / month",
+      period: "/ month",
       icon: Crown,
       color: "from-purple-500 to-purple-600",
       popular: true,
@@ -437,7 +437,7 @@ const Store = () => {
       name: "Premium",
       oldPrice: "⭐️ 1,600",
       price: "⭐️ 1,400",
-      period: "Stars / month",
+      period: "/ month",
       icon: Sparkles,
       color: "from-yellow-500 to-yellow-600",
       features: [
@@ -478,7 +478,7 @@ const Store = () => {
                 <Card key={plan.name} className="card-premium transition-smooth group p-6 relative">
                   {/* Launch Offer Pill */}
                   <div className="absolute top-3 right-3 z-10">
-                    <div className="bg-gradient-to-r from-primary/20 to-accent/20 backdrop-blur-sm border border-primary/30 px-3 py-1.5 rounded-full text-xs font-medium text-primary shadow-sm">
+                    <div className="bg-gradient-to-r from-primary/20 to-accent/20 backdrop-blur-sm border border-primary/30 px-2 py-1 rounded-full text-xs font-medium text-primary shadow-sm">
                       Launch Offer
                     </div>
                   </div>
