@@ -170,12 +170,21 @@ const Store = () => {
             const cid = localStorage.getItem('bemob_cid');
             if (cid) {
               const txid = (crypto?.randomUUID?.() ?? `${Date.now()}_${Math.random()}`);
-              const payout = stars; // Stars amount for this purchase
               
-              console.log('Firing BeMob pixel for gem purchase:', { cid, txid, payout });
-              
-              // Fire conversion pixel using Image object to avoid CORS
-              new Image().src = `https://jerd8.bemobtrcks.com/conversion.gif?cid=${encodeURIComponent(cid)}&txid=${encodeURIComponent(txid)}&payout=${payout}&_=${Date.now()}`;
+              // Deduplication check using sessionStorage
+              const firedTxids = JSON.parse(sessionStorage.getItem('bemob_fired_txids') || '[]');
+              if (!firedTxids.includes(txid)) {
+                const payout = stars; // Stars amount for this purchase
+                
+                console.log('Firing BeMob pixel for gem purchase:', { cid, txid, payout });
+                
+                // Fire conversion pixel using Image object to avoid CORS
+                new Image().src = `https://jerd8.bemobtrcks.com/conversion.gif?cid=${encodeURIComponent(cid)}&txid=${encodeURIComponent(txid)}&payout=${payout}&_=${Date.now()}`;
+                
+                // Store txid to prevent duplicates
+                firedTxids.push(txid);
+                sessionStorage.setItem('bemob_fired_txids', JSON.stringify(firedTxids));
+              }
             }
 
             // Safe alert call
@@ -301,14 +310,22 @@ const Store = () => {
             if (cid) {
               const txid = (crypto?.randomUUID?.() ?? `${Date.now()}_${Math.random()}`);
               
-              // Get subscription price in stars
-              const subscriptionPrices = { 'Essential': 500, 'Plus': 1000, 'Premium': 2000 };
-              const payout = subscriptionPrices[planName as keyof typeof subscriptionPrices] || 0;
-              
-              console.log('Firing BeMob pixel for subscription:', { cid, txid, payout, planName });
-              
-              // Fire conversion pixel using Image object to avoid CORS
-              new Image().src = `https://jerd8.bemobtrcks.com/conversion.gif?cid=${encodeURIComponent(cid)}&txid=${encodeURIComponent(txid)}&payout=${payout}&_=${Date.now()}`;
+              // Deduplication check using sessionStorage
+              const firedTxids = JSON.parse(sessionStorage.getItem('bemob_fired_txids') || '[]');
+              if (!firedTxids.includes(txid)) {
+                // Get subscription price in stars
+                const subscriptionPrices = { 'Essential': 500, 'Plus': 1000, 'Premium': 2000 };
+                const payout = subscriptionPrices[planName as keyof typeof subscriptionPrices] || 0;
+                
+                console.log('Firing BeMob pixel for subscription:', { cid, txid, payout, planName });
+                
+                // Fire conversion pixel using Image object to avoid CORS
+                new Image().src = `https://jerd8.bemobtrcks.com/conversion.gif?cid=${encodeURIComponent(cid)}&txid=${encodeURIComponent(txid)}&payout=${payout}&_=${Date.now()}`;
+                
+                // Store txid to prevent duplicates
+                firedTxids.push(txid);
+                sessionStorage.setItem('bemob_fired_txids', JSON.stringify(firedTxids));
+              }
             }
 
             if (typeof window.Telegram.WebApp.showAlert === 'function') {
