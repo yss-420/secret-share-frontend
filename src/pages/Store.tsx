@@ -426,9 +426,9 @@ const Store = () => {
       popular: true,
       features: [
         "**1,200 Monthly Gems**",
+        "Everything in Essential",
         "Faster Rendering Speed",
         "Skip Chat Queue",
-        "Everything in Essential",
         "Media Priority Queue",
         "Enhanced Media Quality"
       ]
@@ -442,9 +442,9 @@ const Store = () => {
       color: "from-yellow-500 to-yellow-600",
       features: [
         "**2,500 Monthly Gems**",
+        "Everything in Plus",
         "Advanced AI Engines",
         "Extended Chat History",
-        "Everything in Plus",
         "Ultimate Priority Queue",
         "Early Access to New Characters",
         "Priority Access to New Features"
@@ -477,8 +477,8 @@ const Store = () => {
               return (
                 <Card key={plan.name} className="card-premium transition-smooth group p-6 relative">
                   {/* Launch Offer Pill */}
-                  <div className="absolute -top-2 -right-2 z-10">
-                    <div className="bg-gradient-to-r from-primary/20 to-accent/20 backdrop-blur-sm border border-primary/30 px-3 py-1 rounded-full text-xs font-medium text-primary">
+                  <div className="absolute -top-3 -right-3 sm:-top-2 sm:-right-2 z-10">
+                    <div className="bg-gradient-to-r from-primary/20 to-accent/20 backdrop-blur-sm border border-primary/30 px-2.5 py-1 sm:px-3 sm:py-1 rounded-full text-xs font-medium text-primary shadow-sm">
                       Launch Offer
                     </div>
                   </div>
