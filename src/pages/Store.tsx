@@ -477,8 +477,8 @@ const Store = () => {
               return (
                 <Card key={plan.name} className="card-premium transition-smooth group p-6 relative">
                   {/* Launch Offer Pill */}
-                  <div className="absolute -top-3 -right-3 sm:-top-2 sm:-right-2 z-10">
-                    <div className="bg-gradient-to-r from-primary/20 to-accent/20 backdrop-blur-sm border border-primary/30 px-2.5 py-1 sm:px-3 sm:py-1 rounded-full text-xs font-medium text-primary shadow-sm">
+                  <div className="absolute top-3 right-3 z-10">
+                    <div className="bg-gradient-to-r from-primary/20 to-accent/20 backdrop-blur-sm border border-primary/30 px-3 py-1.5 rounded-full text-xs font-medium text-primary shadow-sm">
                       Launch Offer
                     </div>
                   </div>
@@ -497,10 +497,10 @@ const Store = () => {
                             </div>
                           )}
                         </div>
-                        <div className="flex items-baseline gap-2">
-                          <span className="text-sm text-muted-foreground/60 line-through">{plan.oldPrice}</span>
-                          <span className="text-2xl font-bold text-foreground">{plan.price}</span>
-                          <span className="text-sm text-muted-foreground ml-1">{plan.period}</span>
+                        <div className="flex items-baseline gap-2 flex-wrap sm:flex-nowrap">
+                          <span className="text-sm text-muted-foreground/60 line-through whitespace-nowrap">{plan.oldPrice}</span>
+                          <span className="text-2xl font-bold text-foreground whitespace-nowrap">{plan.price}</span>
+                          <span className="text-sm text-muted-foreground ml-1 whitespace-nowrap">{plan.period}</span>
                         </div>
                       </div>
                     </div>
