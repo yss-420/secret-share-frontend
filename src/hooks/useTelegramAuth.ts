@@ -73,6 +73,20 @@ export const useTelegramAuth = (): TelegramAuthData => {
         const telegramInitData = WebApp.initData;
         setInitData(telegramInitData);
         
+        // BeMob tracking - capture CID from start_param
+        const startParam = WebApp.initDataUnsafe?.start_param || '';
+        const cid = startParam.startsWith('cid-') ? startParam.slice(4) : null;
+        if (cid) {
+          console.log('BeMob CID captured:', cid);
+          localStorage.setItem('bemob_cid', cid);
+          
+          // Send CID to backend for tracking
+          try {
+            WebApp.sendData(JSON.stringify({ action: 'init', cid }));
+          } catch (error) {
+            console.warn('Failed to send CID to backend:', error);
+          }
+        }
 
         // Configure WebApp appearance
         WebApp.expand();
