@@ -132,4 +132,16 @@
   .transition-smooth {
     transition: all 0.3s cubic-bezier(0.23, 1, 0.320, 1);
   }
+
+  /* Flickering animation */
+  .flicker {
+    animation: flicker 2s infinite ease-in-out;
+  }
+
+  @keyframes flicker {
+    0%, 100% { opacity: 1; }
+    25% { opacity: 0.7; }
+    50% { opacity: 1; }
+    75% { opacity: 0.8; }
+  }
 }

@@ -14,14 +14,14 @@ import { supabase } from "@/integrations/supabase/client";
 
 // Package mapping constants
 const GEM_PACKAGE_MAP: Record<number, string> = {
-  100: 'gems_50',     // 100 Stars → 50 Gems
-  200: 'gems_100',    // 200 Stars → 100 Gems
-  400: 'gems_250',    // 400 Stars → 250 Gems
-  750: 'gems_500',    // 750 Stars → 500 Gems
-  1500: 'gems_1000', // 1500 Stars → 1000 Gems
-  4000: 'gems_2500', // 4000 Stars → 2500 Gems
-  7500: 'gems_5000', // 7500 Stars → 5000 Gems
-  10000: 'gems_10000' // 10000 Stars → 10000 Gems
+  100: 'gems_100',     // 100 Stars → 100 Gems
+  200: 'gems_220',     // 200 Stars → 220 Gems
+  400: 'gems_450',     // 400 Stars → 450 Gems
+  750: 'gems_850',     // 750 Stars → 850 Gems
+  1000: 'gems_1200',   // 1000 Stars → 1200 Gems
+  2000: 'gems_2500',   // 2000 Stars → 2500 Gems
+  4000: 'gems_5500',   // 4000 Stars → 5500 Gems
+  7500: 'gems_10000'   // 7500 Stars → 10000 Gems
 };
 
 const SUBSCRIPTION_MAP: Record<string, string> = {
@@ -390,14 +390,14 @@ const Store = () => {
   };
 
   const gemPackages = [
-    { gems: 50, price: "⭐️ 100", color: "from-blue-500 to-blue-600", popular: false },
-    { gems: 100, price: "⭐️ 200", color: "from-green-500 to-green-600", popular: false },
-    { gems: 250, price: "⭐️ 400", color: "from-purple-500 to-purple-600", popular: false },
-    { gems: 500, price: "⭐️ 750", color: "from-orange-500 to-orange-600", popular: false },
-    { gems: 1000, price: "⭐️ 1,500", color: "from-pink-500 to-pink-600", popular: true },
-    { gems: 2500, price: "⭐️ 4,000", color: "from-red-500 to-red-600", popular: false },
-    { gems: 5000, price: "⭐️ 7,500", color: "from-yellow-500 to-yellow-600", popular: false },
-    { gems: 10000, price: "⭐️ 10,000", color: "from-indigo-500 to-indigo-600", popular: false },
+    { gems: 100, price: "⭐️ 100", color: "from-blue-500 to-blue-600", popular: false },
+    { gems: 220, price: "⭐️ 200", color: "from-green-500 to-green-600", popular: false },
+    { gems: 450, price: "⭐️ 400", color: "from-purple-500 to-purple-600", popular: false },
+    { gems: 850, price: "⭐️ 750", color: "from-orange-500 to-orange-600", popular: false },
+    { gems: 1200, price: "⭐️ 1,000", color: "from-pink-500 to-pink-600", popular: true },
+    { gems: 2500, price: "⭐️ 2,000", color: "from-red-500 to-red-600", popular: false },
+    { gems: 5500, price: "⭐️ 4,000", color: "from-yellow-500 to-yellow-600", popular: false },
+    { gems: 10000, price: "⭐️ 7,500", color: "from-indigo-500 to-indigo-600", popular: false },
   ];
 
   const subscriptionPlans = [
@@ -478,7 +478,7 @@ const Store = () => {
                 <Card key={plan.name} className="card-premium transition-smooth group p-6 relative">
                   {/* Launch Offer Pill */}
                   <div className="absolute top-3 right-3 z-10">
-                    <div className="bg-gradient-to-r from-primary/20 to-accent/20 backdrop-blur-sm border border-primary/30 px-2 py-1 rounded-full text-xs font-medium text-primary shadow-sm">
+                    <div className="bg-gradient-to-r from-primary/20 to-accent/20 backdrop-blur-sm border border-primary/30 px-2 py-1 rounded-full text-xs font-medium text-primary shadow-sm flicker">
                       Launch Offer
                     </div>
                   </div>
@@ -499,8 +499,10 @@ const Store = () => {
                         </div>
                         <div className="flex items-baseline gap-2 flex-wrap sm:flex-nowrap">
                           <span className="text-sm text-muted-foreground/60 line-through whitespace-nowrap">{plan.oldPrice}</span>
-                          <span className="text-2xl font-bold text-foreground whitespace-nowrap">{plan.price}</span>
-                          <span className="text-sm text-muted-foreground ml-1 whitespace-nowrap">{plan.period}</span>
+                          <div className="flex items-baseline gap-1">
+                            <span className="text-2xl font-bold text-foreground whitespace-nowrap">{plan.price}</span>
+                            <span className="text-sm text-muted-foreground whitespace-nowrap">{plan.period}</span>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -513,8 +515,8 @@ const Store = () => {
                       
                       return (
                         <div key={index} className="flex items-center space-x-2">
-                          <IconToUse className={`w-4 h-4 flex-shrink-0 ${isMonthlyGems ? 'text-emerald-400' : 'text-primary'}`} />
-                          <span className="text-sm text-foreground">
+                          <IconToUse className={`${isMonthlyGems ? 'w-5 h-5' : 'w-4 h-4'} flex-shrink-0 ${isMonthlyGems ? 'text-emerald-400' : 'text-primary'}`} />
+                          <span className={`${isMonthlyGems ? 'text-base' : 'text-sm'} text-foreground`}>
                             {feature.includes('**') ? (
                               <span dangerouslySetInnerHTML={{
                                 __html: feature.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
