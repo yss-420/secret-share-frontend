@@ -21,7 +21,7 @@ const GEM_PACKAGE_MAP: Record<number, string> = {
   750: 'gems_850',     // 750 Stars → 850 Gems
   1000: 'gems_1200',   // 1000 Stars → 1200 Gems
   2000: 'gems_2500',   // 2000 Stars → 2500 Gems
-  4000: 'gems_5500',   // 4000 Stars → 5500 Gems
+  4000: 'gems_5200',   // 4000 Stars → 5200 Gems
   7500: 'gems_10000'   // 7500 Stars → 10000 Gems
 };
 
@@ -398,7 +398,7 @@ const Store = () => {
     { gems: 850, price: "⭐️ 750", color: "from-orange-500 to-orange-600", popular: false },
     { gems: 1200, price: "⭐️ 1,000", color: "from-pink-500 to-pink-600", popular: true },
     { gems: 2500, price: "⭐️ 2,000", color: "from-red-500 to-red-600", popular: false },
-    { gems: 5500, price: "⭐️ 4,000", color: "from-yellow-500 to-yellow-600", popular: false },
+    { gems: 5200, price: "⭐️ 4,000", color: "from-yellow-500 to-yellow-600", popular: false },
     { gems: 10000, price: "⭐️ 7,500", color: "from-indigo-500 to-indigo-600", popular: false },
   ];
 
@@ -407,49 +407,49 @@ const Store = () => {
       name: "Essential",
       oldPrice: "⭐️ 400",
       price: "⭐️ 300",
-      period: "/ month", 
+      period: t('store.month'), 
       icon: Star,
       color: "from-blue-500 to-blue-600",
       features: [
-        "**500 Monthly Gems**",
-        "No Blurred Images",
-        "Unlimited Conversations",
-        "Ad-Free Experience",
-        "Priority Support"
+        `**500 ${t('store.monthlyGems')}**`,
+        t('store.features.noBlurredImages'),
+        t('store.features.unlimitedConversations'),
+        t('store.features.adFreeExperience'),
+        t('store.features.prioritySupport')
       ]
     },
     {
       name: "Plus",
       oldPrice: "⭐️ 800",
       price: "⭐️ 700",
-      period: "/ month",
+      period: t('store.month'),
       icon: Crown,
       color: "from-purple-500 to-purple-600",
       popular: true,
       features: [
-        "**1,200 Monthly Gems**",
-        "Everything in Essential",
-        "Faster Rendering Speed",
-        "Skip Chat Queue",
-        "Media Priority Queue",
-        "Enhanced Media Quality"
+        `**1,200 ${t('store.monthlyGems')}**`,
+        t('store.features.everythingInEssential'),
+        t('store.features.fasterRenderingSpeed'),
+        t('store.features.skipChatQueue'),
+        t('store.features.mediaPriorityQueue'),
+        t('store.features.enhancedMediaQuality')
       ]
     },
     {
       name: "Premium",
       oldPrice: "⭐️ 1,600",
       price: "⭐️ 1,400",
-      period: "/ month",
+      period: t('store.month'),
       icon: Sparkles,
       color: "from-yellow-500 to-yellow-600",
       features: [
-        "**2,500 Monthly Gems**",
-        "Everything in Plus",
-        "Advanced AI Engines",
-        "Extended Chat History",
-        "Ultimate Priority Queue",
-        "Early Access to New Characters",
-        "Priority Access to New Features"
+        `**2,500 ${t('store.monthlyGems')}**`,
+        t('store.features.everythingInPlus'),
+        t('store.features.advancedAIEngines'),
+        t('store.features.extendedChatHistory'),
+        t('store.features.ultimatePriorityQueue'),
+        t('store.features.earlyAccessNewCharacters'),
+        t('store.features.priorityAccessNewFeatures')
       ]
     }
   ];
