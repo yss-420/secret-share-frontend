@@ -24,7 +24,7 @@ const Index = () => {
     },
     {
       name: "Kiara", 
-      description: t('characters.eva.description'),
+      description: t('characters.kiara.description'),
       points: 980,
       image: "/lovable-uploads/fb446c37-8762-4d69-9f23-3a78cc53c8e9.png"
     },
@@ -36,31 +36,31 @@ const Index = () => {
     },
     {
       name: "Valentina",
-      description: t('characters.sophie.description'),
+      description: t('characters.valentina.description'),
       points: 1850,
       image: "/lovable-uploads/5d917985-c59f-4815-9c31-fbc3bb34a88d.png"
     },
     {
       name: "Scarlett",
-      description: t('characters.maya.description'),
+      description: t('characters.scarlett.description'),
       points: 1650,
       image: "/lovable-uploads/ff507a9a-caa3-4185-b987-c793493f0fbe.png"
     },
     {
       name: "Natasha",
-      description: t('characters.zara.description'),
+      description: t('characters.natasha.description'),
       points: 1420,
       image: "/lovable-uploads/a966a842-02ab-4922-a9dd-8ea904e06504.png"
     },
     {
       name: "Isabella",
-      description: t('characters.aria.description'),
+      description: t('characters.isabella.description'),
       points: 1320,
       image: "/lovable-uploads/cf3cd7ac-d0a8-4d28-8cee-c3f7b9207c26.png"
     },
     {
       name: "Priyanka",
-      description: t('characters.eva.description'),
+      description: t('characters.priyanka.description'),
       points: 1150,
       image: "/lovable-uploads/0c5dca49-a71d-43d9-a495-c79a2079aab2.png"
     }
