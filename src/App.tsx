@@ -10,6 +10,7 @@ import Index from "./pages/Index";
 import ScenarioSelection from "./pages/ScenarioSelection";
 import Store from "./pages/Store";
 import Settings from "./pages/Settings";
+import LanguageSelection from "./pages/LanguageSelection";
 import HelpCenter from "./pages/HelpCenter";
 import ContactSupport from "./pages/ContactSupport";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
@@ -30,6 +31,7 @@ const App = () => (
             <Route path="/character/:name" element={<ScenarioSelection />} />
             <Route path="/store" element={<Store />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/language-selection" element={<LanguageSelection />} />
             <Route path="/help-center" element={<HelpCenter />} />
             <Route path="/contact-support" element={<ContactSupport />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
