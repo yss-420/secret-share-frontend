@@ -3,10 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Check, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const LanguageSelection = () => {
   const { currentLanguage, changeLanguage, availableLanguages } = useLanguage();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleLanguageChange = async (langCode: string) => {
     await changeLanguage(langCode);
@@ -25,7 +27,7 @@ const LanguageSelection = () => {
           >
             <ArrowLeft className="w-5 h-5" />
           </Button>
-          <h1 className="text-2xl font-bold">Select Language</h1>
+          <h1 className="text-2xl font-bold">{t('settings.appLanguage')}</h1>
         </div>
 
         <div className="space-y-3">
@@ -37,8 +39,8 @@ const LanguageSelection = () => {
             >
               <CardContent className="flex items-center justify-between p-4">
                 <div>
-                  <div className="font-medium">{language.name}</div>
-                  <div className="text-sm text-muted-foreground">{language.nativeName}</div>
+                  <div className="font-medium">{language.nativeName}</div>
+                  <div className="text-sm text-muted-foreground">{language.name}</div>
                 </div>
                 {currentLanguage === language.code && (
                   <Check className="w-5 h-5 text-primary" />
