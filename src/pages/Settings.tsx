@@ -77,7 +77,7 @@ const Settings = () => {
         {/* App Settings */}
         <div>
           <h2 className="text-lg font-semibold text-foreground mb-3">{t('settings.appSettings')}</h2>
-          <Card className="card-premium transition-smooth p-4 cursor-pointer">
+          <Card className="card-premium transition-smooth p-4 cursor-pointer" onClick={() => navigate('/language-selection')}>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <Globe className="w-5 h-5 text-primary" />
@@ -89,23 +89,6 @@ const Settings = () => {
                 </div>
               </div>
               <ChevronRight className="w-4 h-4 text-muted-foreground" />
-            </div>
-            
-            {/* Language Selection Menu */}
-            <div className="mt-3 pt-3 border-t border-border/50">
-              <div className="grid grid-cols-2 gap-2">
-                {availableLanguages.map((language) => (
-                  <Button
-                    key={language.code}
-                    variant={currentLanguage === language.code ? "default" : "ghost"}
-                    size="sm"
-                    className="justify-start text-xs"
-                    onClick={() => changeLanguage(language.code)}
-                  >
-                    <span className="truncate">{language.nativeName}</span>
-                  </Button>
-                ))}
-              </div>
             </div>
           </Card>
         </div>
