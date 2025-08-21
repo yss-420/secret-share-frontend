@@ -1,0 +1,82 @@
+{
+  "navigation": {
+    "characters": "Personajes",
+    "upgrade": "Actualizar",
+    "settings": "Configuración"
+  },
+  "home": {
+    "chooseCompanion": "Elige tu compañero",
+    "experienceNoLimits": "Una experiencia sin límites te espera",
+    "selectCharacter": "Selecciona un personaje para empezar a chatear"
+  },
+  "characters": {
+    "aria": {
+      "description": "Una mujer apasionada y misteriosa que ama las conversaciones profundas y explorar fantasías."
+    },
+    "eva": {
+      "description": "Dulce y juguetona, Eva aporta alegría y emoción a cada conversación."
+    },
+    "sophie": {
+      "description": "Inteligente y sofisticada, Sophie disfruta de las discusiones intelectuales y los momentos románticos."
+    },
+    "maya": {
+      "description": "Audaz y aventurera, Maya siempre está lista para nuevas experiencias emocionantes."
+    },
+    "luna": {
+      "description": "Gentil y cariñosa, Luna crea conexiones íntimas y significativas."
+    },
+    "zara": {
+      "description": "Confiada y seductora, Zara aporta pasión e intensidad a cada chat."
+    }
+  },
+  "settings": {
+    "title": "Configuración",
+    "myPlan": "Mi Plan",
+    "freePlan": "Plan Gratuito",
+    "limitedConversations": "Conversaciones limitadas",
+    "unlimitedConversations": "Conversaciones ilimitadas",
+    "upgrade": "Actualizar",
+    "appSettings": "Configuración de la App",
+    "appLanguage": "Idioma de la aplicación",
+    "helpSupport": "Ayuda y Soporte",
+    "helpCenter": "Centro de Ayuda",
+    "contactSupport": "Contactar Soporte",
+    "privacyPolicy": "Política de Privacidad"
+  },
+  "store": {
+    "getGems": "Obtener Gemas",
+    "subscriptions": "Suscripciones",
+    "launchOffer": "Oferta de Lanzamiento",
+    "monthlyGems": "Gemas Mensuales",
+    "month": "/ mes",
+    "features": {
+      "monthlyGems": "Gemas Mensuales",
+      "noBlurredImages": "Imágenes Nítidas",
+      "unlimitedConversations": "Conversaciones Ilimitadas",
+      "adFreeExperience": "Experiencia Sin Anuncios",
+      "prioritySupport": "Soporte Prioritario",
+      "everythingInEssential": "Todo de Essential",
+      "fasterRenderingSpeed": "Velocidad de Renderizado Más Rápida",
+      "skipChatQueue": "Saltarse Cola de Chat",
+      "mediaPriorityQueue": "Cola Prioritaria de Medios",
+      "enhancedMediaQuality": "Calidad de Medios Mejorada",
+      "everythingInPlus": "Todo de Plus",
+      "advancedAIEngines": "Motores de IA Avanzados",
+      "extendedChatHistory": "Historial de Chat Extendido",
+      "ultimatePriorityQueue": "Cola de Prioridad Máxima",
+      "earlyAccessNewCharacters": "Acceso Temprano a Nuevos Personajes",
+      "priorityAccessNewFeatures": "Acceso Prioritario a Nuevas Funciones"
+    },
+    "subscribe": "Suscribirse",
+    "buyGems": "Comprar Gemas",
+    "popular": "Más Popular"
+  },
+  "languages": {
+    "en": "Inglés",
+    "ru": "Ruso",
+    "pt": "Portugués",
+    "es": "Español",
+    "it": "Italiano",
+    "de": "Alemán"
+  }
+}

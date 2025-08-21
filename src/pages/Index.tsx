@@ -6,59 +6,61 @@ import { NavigationBar } from "@/components/NavigationBar";
 import { Header } from "@/components/Header";
 import { useAuth } from "@/contexts/AuthContext";
 import { useDevMode } from "@/hooks/useDevMode";
+import { useTranslation } from 'react-i18next';
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState('characters');
   const navigate = useNavigate();
   const { user, telegramUser, isLoading, isAuthenticated } = useAuth();
   const { isDevMode } = useDevMode();
+  const { t } = useTranslation();
 
   const companions = [
     {
       name: "Aria",
-      description: "Shy yet obedient college roommate",
+      description: t('characters.aria.description'),
       points: 1250,
       image: "/lovable-uploads/ed5f65c3-2811-4c61-95f0-bb60d3e98f47.png"
     },
     {
-      name: "Kiara",
-      description: "Competitive and slutty gamer e-girl",
+      name: "Kiara", 
+      description: t('characters.eva.description'),
       points: 980,
       image: "/lovable-uploads/fb446c37-8762-4d69-9f23-3a78cc53c8e9.png"
     },
     {
       name: "Luna",
-      description: "Mysterious Psychic with fate between her legs",
+      description: t('characters.luna.description'),
       points: 2100,
       image: "/lovable-uploads/f4cb3191-0f77-4b97-9c96-65a954a5dec7.png"
     },
     {
       name: "Valentina",
-      description: "Passionate and flexible Spanish dancer",
+      description: t('characters.sophie.description'),
       points: 1850,
       image: "/lovable-uploads/5d917985-c59f-4815-9c31-fbc3bb34a88d.png"
     },
     {
       name: "Scarlett",
-      description: "Dominant CEO who needs servicing",
+      description: t('characters.maya.description'),
       points: 1650,
       image: "/lovable-uploads/ff507a9a-caa3-4185-b987-c793493f0fbe.png"
     },
     {
       name: "Natasha",
-      description: "Demanding yet submissive fitness freak",
+      description: t('characters.zara.description'),
       points: 1420,
       image: "/lovable-uploads/a966a842-02ab-4922-a9dd-8ea904e06504.png"
     },
     {
       name: "Isabella",
-      description: "Tasty and sensual Italian MILF chef",
+      description: t('characters.aria.description'),
       points: 1320,
       image: "/lovable-uploads/cf3cd7ac-d0a8-4d28-8cee-c3f7b9207c26.png"
     },
     {
       name: "Priyanka",
-      description: "Witty, wild, and waiting Desi girl",
+      description: t('characters.eva.description'),
       points: 1150,
       image: "/lovable-uploads/0c5dca49-a71d-43d9-a495-c79a2079aab2.png"
     }
@@ -98,10 +100,10 @@ const Index = () => {
           </div>
 
           <h1 className="text-xl font-bold text-white mb-2 leading-tight">
-            Choose Your Companion
+            {t('home.chooseCompanion')}
           </h1>
           <p className="text-muted-foreground text-sm">
-            An experience with no limits awaits for you
+            {t('home.experienceNoLimits')}
           </p>
         </div>
       </div>

@@ -1,0 +1,82 @@
+{
+  "navigation": {
+    "characters": "Personaggi",
+    "upgrade": "Aggiorna",
+    "settings": "Impostazioni"
+  },
+  "home": {
+    "chooseCompanion": "Scegli il tuo compagno",
+    "experienceNoLimits": "Ti aspetta un'esperienza senza limiti",
+    "selectCharacter": "Seleziona un personaggio per iniziare a chattare"
+  },
+  "characters": {
+    "aria": {
+      "description": "Una donna appassionata e misteriosa che ama le conversazioni profonde ed esplorare le fantasie."
+    },
+    "eva": {
+      "description": "Dolce e giocosa, Eva porta gioia ed emozione in ogni conversazione."
+    },
+    "sophie": {
+      "description": "Intelligente e sofisticata, Sophie ama le discussioni intellettuali e i momenti romantici."
+    },
+    "maya": {
+      "description": "Audace e avventurosa, Maya è sempre pronta per nuove esperienze emozionanti."
+    },
+    "luna": {
+      "description": "Gentile e premurosa, Luna crea connessioni intime e significative."
+    },
+    "zara": {
+      "description": "Sicura e seducente, Zara porta passione e intensità in ogni chat."
+    }
+  },
+  "settings": {
+    "title": "Impostazioni",
+    "myPlan": "Il Mio Piano",
+    "freePlan": "Piano Gratuito",
+    "limitedConversations": "Conversazioni limitate",
+    "unlimitedConversations": "Conversazioni illimitate",
+    "upgrade": "Aggiorna",
+    "appSettings": "Impostazioni App",
+    "appLanguage": "Lingua dell'applicazione",
+    "helpSupport": "Aiuto e Supporto",
+    "helpCenter": "Centro Aiuto",
+    "contactSupport": "Contatta il Supporto",
+    "privacyPolicy": "Informativa sulla Privacy"
+  },
+  "store": {
+    "getGems": "Ottieni Gemme",
+    "subscriptions": "Abbonamenti",
+    "launchOffer": "Offerta di Lancio",
+    "monthlyGems": "Gemme Mensili",
+    "month": "/ mese",
+    "features": {
+      "monthlyGems": "Gemme Mensili",
+      "noBlurredImages": "Immagini Nitide",
+      "unlimitedConversations": "Conversazioni Illimitate",
+      "adFreeExperience": "Esperienza Senza Pubblicità",
+      "prioritySupport": "Supporto Prioritario",
+      "everythingInEssential": "Tutto da Essential",
+      "fasterRenderingSpeed": "Velocità di Rendering Più Veloce",
+      "skipChatQueue": "Salta Coda Chat",
+      "mediaPriorityQueue": "Coda Prioritaria Media",
+      "enhancedMediaQuality": "Qualità Media Migliorata",
+      "everythingInPlus": "Tutto da Plus",
+      "advancedAIEngines": "Motori IA Avanzati",
+      "extendedChatHistory": "Cronologia Chat Estesa",
+      "ultimatePriorityQueue": "Coda Priorità Massima",
+      "earlyAccessNewCharacters": "Accesso Anticipato Nuovi Personaggi",
+      "priorityAccessNewFeatures": "Accesso Prioritario Nuove Funzioni"
+    },
+    "subscribe": "Abbonati",
+    "buyGems": "Compra Gemme",
+    "popular": "Più Popolare"
+  },
+  "languages": {
+    "en": "Inglese",
+    "ru": "Russo",
+    "pt": "Portoghese",
+    "es": "Spagnolo",
+    "it": "Italiano",
+    "de": "Tedesco"
+  }
+}

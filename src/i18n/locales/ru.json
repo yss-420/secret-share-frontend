@@ -1,0 +1,82 @@
+{
+  "navigation": {
+    "characters": "Персонажи",
+    "upgrade": "Обновить",
+    "settings": "Настройки"
+  },
+  "home": {
+    "chooseCompanion": "Выберите своего компаньона",
+    "experienceNoLimits": "Вас ждет опыт без ограничений",
+    "selectCharacter": "Выберите персонажа, чтобы начать общение"
+  },
+  "characters": {
+    "aria": {
+      "description": "Страстная и загадочная женщина, которая любит глубокие беседы и исследование фантазий."
+    },
+    "eva": {
+      "description": "Милая и игривая, Ева привносит радость и волнение в каждый разговор."
+    },
+    "sophie": {
+      "description": "Умная и утонченная, София наслаждается интеллектуальными дискуссиями и романтическими моментами."
+    },
+    "maya": {
+      "description": "Смелая и авантюрная, Майя всегда готова к захватывающим новым приключениям."
+    },
+    "luna": {
+      "description": "Нежная и заботливая, Луна создает интимные и значимые связи."
+    },
+    "zara": {
+      "description": "Уверенная и соблазнительная, Зара привносит страсть и интенсивность в каждый чат."
+    }
+  },
+  "settings": {
+    "title": "Настройки",
+    "myPlan": "Мой план",
+    "freePlan": "Бесплатный план",
+    "limitedConversations": "Ограниченные разговоры",
+    "unlimitedConversations": "Неограниченные разговоры",
+    "upgrade": "Обновить",
+    "appSettings": "Настройки приложения",
+    "appLanguage": "Язык приложения",
+    "helpSupport": "Помощь и поддержка",
+    "helpCenter": "Центр помощи",
+    "contactSupport": "Связаться с поддержкой",
+    "privacyPolicy": "Политика конфиденциальности"
+  },
+  "store": {
+    "getGems": "Получить гемы",
+    "subscriptions": "Подписки",
+    "launchOffer": "Стартовое предложение",
+    "monthlyGems": "Ежемесячные гемы",
+    "month": "/ месяц",
+    "features": {
+      "monthlyGems": "Ежемесячные гемы",
+      "noBlurredImages": "Четкие изображения",
+      "unlimitedConversations": "Неограниченные разговоры",
+      "adFreeExperience": "Без рекламы",
+      "prioritySupport": "Приоритетная поддержка",
+      "everythingInEssential": "Все из Essential",
+      "fasterRenderingSpeed": "Быстрая обработка",
+      "skipChatQueue": "Минуем очередь чата",
+      "mediaPriorityQueue": "Приоритет медиа",
+      "enhancedMediaQuality": "Улучшенное качество медиа",
+      "everythingInPlus": "Все из Plus",
+      "advancedAIEngines": "Продвинутый ИИ",
+      "extendedChatHistory": "Расширенная история чатов",
+      "ultimatePriorityQueue": "Максимальный приоритет",
+      "earlyAccessNewCharacters": "Ранний доступ к персонажам",
+      "priorityAccessNewFeatures": "Приоритет новых функций"
+    },
+    "subscribe": "Подписаться",
+    "buyGems": "Купить гемы",
+    "popular": "Самый популярный"
+  },
+  "languages": {
+    "en": "Английский",
+    "ru": "Русский",
+    "pt": "Португальский",
+    "es": "Испанский",
+    "it": "Итальянский",
+    "de": "Немецкий"
+  }
+}

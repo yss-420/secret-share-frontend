@@ -1,0 +1,82 @@
+{
+  "navigation": {
+    "characters": "Charaktere",
+    "upgrade": "Upgrade",
+    "settings": "Einstellungen"
+  },
+  "home": {
+    "chooseCompanion": "Wähle deinen Begleiter",
+    "experienceNoLimits": "Ein Erlebnis ohne Grenzen wartet auf dich",
+    "selectCharacter": "Wähle einen Charakter zum Chatten"
+  },
+  "characters": {
+    "aria": {
+      "description": "Eine leidenschaftliche und geheimnisvolle Frau, die tiefe Gespräche liebt und Fantasien erkundet."
+    },
+    "eva": {
+      "description": "Süß und verspielt, Eva bringt Freude und Aufregung in jedes Gespräch."
+    },
+    "sophie": {
+      "description": "Intelligent und raffiniert, Sophie genießt intellektuelle Diskussionen und romantische Momente."
+    },
+    "maya": {
+      "description": "Mutig und abenteuerlustig, Maya ist immer bereit für aufregende neue Erfahrungen."
+    },
+    "luna": {
+      "description": "Sanft und fürsorglich, Luna schafft intime und bedeutungsvolle Verbindungen."
+    },
+    "zara": {
+      "description": "Selbstbewusst und verführerisch, Zara bringt Leidenschaft und Intensität in jeden Chat."
+    }
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "myPlan": "Mein Plan",
+    "freePlan": "Kostenloser Plan",
+    "limitedConversations": "Begrenzte Gespräche",
+    "unlimitedConversations": "Unbegrenzte Gespräche",
+    "upgrade": "Upgrade",
+    "appSettings": "App-Einstellungen",
+    "appLanguage": "App-Sprache",
+    "helpSupport": "Hilfe & Support",
+    "helpCenter": "Hilfezentrum",
+    "contactSupport": "Support kontaktieren",
+    "privacyPolicy": "Datenschutzrichtlinie"
+  },
+  "store": {
+    "getGems": "Edelsteine Erhalten",
+    "subscriptions": "Abonnements",
+    "launchOffer": "Launch-Angebot",
+    "monthlyGems": "Monatliche Edelsteine",
+    "month": "/ Monat",
+    "features": {
+      "monthlyGems": "Monatliche Edelsteine",
+      "noBlurredImages": "Scharfe Bilder",
+      "unlimitedConversations": "Unbegrenzte Gespräche",
+      "adFreeExperience": "Werbefreie Erfahrung",
+      "prioritySupport": "Prioritärer Support",
+      "everythingInEssential": "Alles aus Essential",
+      "fasterRenderingSpeed": "Schnellere Rendergeschwindigkeit",
+      "skipChatQueue": "Chat-Warteschlange überspringen",
+      "mediaPriorityQueue": "Media-Prioritätswarteschlange",
+      "enhancedMediaQuality": "Verbesserte Medienqualität",
+      "everythingInPlus": "Alles aus Plus",
+      "advancedAIEngines": "Erweiterte KI-Engines",
+      "extendedChatHistory": "Erweiterte Chat-Historie",
+      "ultimatePriorityQueue": "Ultimate Prioritätswarteschlange",
+      "earlyAccessNewCharacters": "Früher Zugang zu neuen Charakteren",
+      "priorityAccessNewFeatures": "Prioritärer Zugang zu neuen Features"
+    },
+    "subscribe": "Abonnieren",
+    "buyGems": "Edelsteine Kaufen",
+    "popular": "Am Beliebtesten"
+  },
+  "languages": {
+    "en": "Englisch",
+    "ru": "Russisch",
+    "pt": "Portugiesisch",
+    "es": "Spanisch",
+    "it": "Italienisch",
+    "de": "Deutsch"
+  }
+}

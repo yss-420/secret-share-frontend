@@ -7,12 +7,16 @@ import { ArrowLeft, ChevronRight, Crown, Globe, HelpCircle, Phone, Shield } from
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserData } from "@/hooks/useUserData";
+import { useTranslation } from 'react-i18next';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const Settings = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuth();
   const { userStats } = useUserData();
+  const { t } = useTranslation();
+  const { availableLanguages, currentLanguage, changeLanguage } = useLanguage();
 
   // Determine active tab based on current route
   const getActiveTab = () => {
@@ -41,13 +45,13 @@ const Settings = () => {
         <Button variant="ghost" size="sm" onClick={() => navigate('/')}>
           <ArrowLeft className="w-4 h-4" />
         </Button>
-        <h1 className="text-base font-semibold text-gradient ml-3">Settings</h1>
+        <h1 className="text-base font-semibold text-gradient ml-3">{t('settings.title')}</h1>
       </div>
 
       <div className="px-4 py-3 space-y-6">
         {/* My Plan */}
         <div>
-          <h2 className="text-lg font-semibold text-foreground mb-3">My Plan</h2>
+          <h2 className="text-lg font-semibold text-foreground mb-3">{t('settings.myPlan')}</h2>
           <Card className="card-premium transition-smooth p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
@@ -56,15 +60,15 @@ const Settings = () => {
                 </div>
                 <div>
                   <div className="text-sm font-semibold text-foreground">
-                    {userStats?.subscription_type || 'Free Plan'}
+                    {userStats?.subscription_type || t('settings.freePlan')}
                   </div>
                   <div className="text-xs text-muted-foreground">
-                    {userStats?.tier === 'premium' ? 'Unlimited conversations' : 'Limited conversations'}
+                    {userStats?.tier === 'premium' ? t('settings.unlimitedConversations') : t('settings.limitedConversations')}
                   </div>
                 </div>
               </div>
               <Button variant="premium" size="sm" onClick={() => navigate('/store')}>
-                Upgrade
+                {t('settings.upgrade')}
               </Button>
             </div>
           </Card>
@@ -72,30 +76,49 @@ const Settings = () => {
 
         {/* App Settings */}
         <div>
-          <h2 className="text-lg font-semibold text-foreground mb-3">App Settings</h2>
-          <Card className="card-premium transition-smooth p-4">
+          <h2 className="text-lg font-semibold text-foreground mb-3">{t('settings.appSettings')}</h2>
+          <Card className="card-premium transition-smooth p-4 cursor-pointer">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <Globe className="w-5 h-5 text-primary" />
                 <div>
-                  <div className="text-sm font-semibold text-foreground">English</div>
-                  <div className="text-xs text-muted-foreground">App language</div>
+                  <div className="text-sm font-semibold text-foreground">
+                    {availableLanguages.find(lang => lang.code === currentLanguage)?.nativeName || 'English'}
+                  </div>
+                  <div className="text-xs text-muted-foreground">{t('settings.appLanguage')}</div>
                 </div>
               </div>
               <ChevronRight className="w-4 h-4 text-muted-foreground" />
+            </div>
+            
+            {/* Language Selection Menu */}
+            <div className="mt-3 pt-3 border-t border-border/50">
+              <div className="grid grid-cols-2 gap-2">
+                {availableLanguages.map((language) => (
+                  <Button
+                    key={language.code}
+                    variant={currentLanguage === language.code ? "default" : "ghost"}
+                    size="sm"
+                    className="justify-start text-xs"
+                    onClick={() => changeLanguage(language.code)}
+                  >
+                    <span className="truncate">{language.nativeName}</span>
+                  </Button>
+                ))}
+              </div>
             </div>
           </Card>
         </div>
 
         {/* Help & Support */}
         <div>
-          <h2 className="text-lg font-semibold text-foreground mb-3">Help & Support</h2>
+          <h2 className="text-lg font-semibold text-foreground mb-3">{t('settings.helpSupport')}</h2>
           <div className="space-y-3">
             <Card className="card-premium transition-smooth p-4 cursor-pointer" onClick={() => navigate('/help-center')}>
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <HelpCircle className="w-5 h-5 text-primary" />
-                  <div className="text-sm font-semibold text-foreground">Help Center</div>
+                  <div className="text-sm font-semibold text-foreground">{t('settings.helpCenter')}</div>
                 </div>
                 <ChevronRight className="w-4 h-4 text-muted-foreground" />
               </div>
@@ -105,7 +128,7 @@ const Settings = () => {
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <Phone className="w-5 h-5 text-primary" />
-                  <div className="text-sm font-semibold text-foreground">Contact Support</div>
+                  <div className="text-sm font-semibold text-foreground">{t('settings.contactSupport')}</div>
                 </div>
                 <ChevronRight className="w-4 h-4 text-muted-foreground" />
               </div>
@@ -115,7 +138,7 @@ const Settings = () => {
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <Shield className="w-5 h-5 text-primary" />
-                  <div className="text-sm font-semibold text-foreground">Privacy Policy</div>
+                  <div className="text-sm font-semibold text-foreground">{t('settings.privacyPolicy')}</div>
                 </div>
                 <ChevronRight className="w-4 h-4 text-muted-foreground" />
               </div>

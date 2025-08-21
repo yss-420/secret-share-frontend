@@ -11,6 +11,7 @@ import { useUserData } from "@/hooks/useUserData";
 import { useTelegramAuth } from "@/hooks/useTelegramAuth";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useTranslation } from 'react-i18next';
 
 // Package mapping constants
 const GEM_PACKAGE_MAP: Record<number, string> = {
@@ -35,6 +36,7 @@ const Store = () => {
   const navigate = useNavigate();
   const { updateGems, userStats } = useUserData();
   const { user: telegramUser } = useTelegramAuth();
+  const { t } = useTranslation();
 
   // Initialize Telegram WebApp
   useEffect(() => {
@@ -461,14 +463,14 @@ const Store = () => {
         <Button variant="ghost" size="sm" onClick={() => navigate('/')}>
           <ArrowLeft className="w-4 h-4" />
         </Button>
-        <h1 className="text-base font-semibold text-gradient ml-3">Store</h1>
+        <h1 className="text-base font-semibold text-gradient ml-3">{t('store.title', 'Store')}</h1>
       </div>
 
       <div className="px-4 py-3">
         <Tabs defaultValue="subscriptions" className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-4">
-            <TabsTrigger value="subscriptions">Subscriptions</TabsTrigger>
-            <TabsTrigger value="gems">Get Gems</TabsTrigger>
+            <TabsTrigger value="subscriptions">{t('store.subscriptions')}</TabsTrigger>
+            <TabsTrigger value="gems">{t('store.getGems')}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="subscriptions" className="space-y-4">
@@ -478,9 +480,9 @@ const Store = () => {
                 <Card key={plan.name} className="card-premium transition-smooth group p-6 relative">
                   {/* Launch Offer Pill */}
                   <div className="absolute top-3 right-3 z-10">
-                    <div className="bg-gradient-to-r from-primary/20 to-accent/20 backdrop-blur-sm border border-primary/30 px-2 py-1 rounded-full text-xs font-medium text-primary shadow-sm flicker">
-                      Launch Offer
-                    </div>
+                     <div className="bg-gradient-to-r from-primary/20 to-accent/20 backdrop-blur-sm border border-primary/30 px-2 py-1 rounded-full text-xs font-medium text-primary shadow-sm flicker">
+                       {t('store.launchOffer')}
+                     </div>
                   </div>
 
                   <div className="flex items-start justify-between mb-4">
@@ -492,17 +494,17 @@ const Store = () => {
                         <div className="flex items-center gap-2">
                           <h3 className="text-lg font-bold text-gradient">{plan.name}</h3>
                           {plan.popular && (
-                            <div className="bg-primary px-2 py-0.5 rounded-full text-xs font-bold text-primary-foreground">
-                              Most Popular
-                            </div>
+                             <div className="bg-primary px-2 py-0.5 rounded-full text-xs font-bold text-primary-foreground">
+                               {t('store.popular')}
+                             </div>
                           )}
                         </div>
                         <div className="flex items-baseline gap-2 flex-wrap sm:flex-nowrap">
                           <span className="text-sm text-muted-foreground/60 line-through whitespace-nowrap">{plan.oldPrice}</span>
-                          <div className="flex items-baseline gap-1">
-                            <span className="text-2xl font-bold text-foreground whitespace-nowrap">{plan.price}</span>
-                            <span className="text-sm text-muted-foreground whitespace-nowrap">{plan.period}</span>
-                          </div>
+                           <div className="flex items-center gap-1">
+                             <span className="text-2xl font-bold text-foreground whitespace-nowrap">{plan.price}</span>
+                             <span className="text-sm text-muted-foreground whitespace-nowrap">{plan.period}</span>
+                           </div>
                         </div>
                       </div>
                     </div>
@@ -537,7 +539,7 @@ const Store = () => {
                     onClick={() => handleSubscribe(plan.name)}
                     disabled={loading}
                   >
-                    {loading ? <LoadingSpinner size="sm" /> : "Subscribe"}
+                    {loading ? <LoadingSpinner size="sm" /> : t('store.subscribe')}
                   </Button>
                 </Card>
               );
@@ -570,7 +572,7 @@ const Store = () => {
                     onClick={() => handleGemPurchase(pkg)}
                     disabled={loading}
                   >
-                    {loading ? <LoadingSpinner size="sm" /> : "Purchase"}
+                    {loading ? <LoadingSpinner size="sm" /> : t('store.buyGems')}
                   </Button>
                 </Card>
               ))}

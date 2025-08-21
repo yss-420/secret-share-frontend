@@ -1,0 +1,82 @@
+{
+  "navigation": {
+    "characters": "Characters",
+    "upgrade": "Upgrade",
+    "settings": "Settings"
+  },
+  "home": {
+    "chooseCompanion": "Choose your companion",
+    "experienceNoLimits": "An experience with no limits awaits for you",
+    "selectCharacter": "Select a character to start chatting"
+  },
+  "characters": {
+    "aria": {
+      "description": "A passionate and mysterious woman who loves deep conversations and exploring fantasies."
+    },
+    "eva": {
+      "description": "Sweet and playful, Eva brings joy and excitement to every conversation."
+    },
+    "sophie": {
+      "description": "Intelligent and sophisticated, Sophie enjoys intellectual discussions and romantic moments."
+    },
+    "maya": {
+      "description": "Bold and adventurous, Maya is always ready for exciting new experiences."
+    },
+    "luna": {
+      "description": "Gentle and caring, Luna creates intimate and meaningful connections."
+    },
+    "zara": {
+      "description": "Confident and alluring, Zara brings passion and intensity to every chat."
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "myPlan": "My Plan",
+    "freePlan": "Free Plan",
+    "limitedConversations": "Limited conversations",
+    "unlimitedConversations": "Unlimited conversations",
+    "upgrade": "Upgrade",
+    "appSettings": "App Settings",
+    "appLanguage": "App language",
+    "helpSupport": "Help & Support",
+    "helpCenter": "Help Center",
+    "contactSupport": "Contact Support",
+    "privacyPolicy": "Privacy Policy"
+  },
+  "store": {
+    "getGems": "Get Gems",
+    "subscriptions": "Subscriptions",
+    "launchOffer": "Launch Offer",
+    "monthlyGems": "Monthly Gems",
+    "month": "/ month",
+    "features": {
+      "monthlyGems": "Monthly Gems",
+      "noBlurredImages": "No Blurred Images",
+      "unlimitedConversations": "Unlimited Conversations",
+      "adFreeExperience": "Ad-Free Experience",
+      "prioritySupport": "Priority Support",
+      "everythingInEssential": "Everything in Essential",
+      "fasterRenderingSpeed": "Faster Rendering Speed",
+      "skipChatQueue": "Skip Chat Queue",
+      "mediaPriorityQueue": "Media Priority Queue",
+      "enhancedMediaQuality": "Enhanced Media Quality",
+      "everythingInPlus": "Everything in Plus",
+      "advancedAIEngines": "Advanced AI Engines",
+      "extendedChatHistory": "Extended Chat History",
+      "ultimatePriorityQueue": "Ultimate Priority Queue",
+      "earlyAccessNewCharacters": "Early Access to New Characters",
+      "priorityAccessNewFeatures": "Priority Access to New Features"
+    },
+    "subscribe": "Subscribe",
+    "buyGems": "Buy Gems",
+    "popular": "Most Popular"
+  },
+  "languages": {
+    "en": "English",
+    "ru": "Russian",
+    "pt": "Portuguese", 
+    "es": "Spanish",
+    "it": "Italian",
+    "de": "German"
+  }
+}

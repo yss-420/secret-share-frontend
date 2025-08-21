@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Users, TrendingUp, Settings } from "lucide-react";
 import { trackNavigation, trackStoreVisit } from "@/utils/analytics";
+import { useTranslation } from 'react-i18next';
 
 interface NavigationBarProps {
   activeTab: string;
@@ -9,10 +10,12 @@ interface NavigationBarProps {
 }
 
 export const NavigationBar = ({ activeTab, onTabChange }: NavigationBarProps) => {
+  const { t } = useTranslation();
+  
   const tabs = [
-    { id: 'characters', label: 'Characters', icon: Users },
-    { id: 'upgrade', label: 'Upgrade', icon: TrendingUp },
-    { id: 'settings', label: 'Settings', icon: Settings }
+    { id: 'characters', label: t('navigation.characters'), icon: Users },
+    { id: 'upgrade', label: t('navigation.upgrade'), icon: TrendingUp },
+    { id: 'settings', label: t('navigation.settings'), icon: Settings }
   ];
 
   const handleTabClick = (tabId: string) => {
