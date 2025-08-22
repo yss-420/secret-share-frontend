@@ -258,6 +258,8 @@ const Store = () => {
         });
       }
       setLoadingGems(prev => ({ ...prev, [index]: false }));
+    } finally {
+      refreshUser();
     }
   };
 
@@ -404,6 +406,8 @@ const Store = () => {
         });
       }
       setLoadingSubscriptions(prev => ({ ...prev, [planName]: false }));
+    } finally {
+      refreshUser();
     }
   };
 
