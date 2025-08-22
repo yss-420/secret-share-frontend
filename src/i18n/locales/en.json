@@ -50,11 +50,14 @@
     "privacyPolicy": "Privacy Policy"
   },
   "store": {
+    "title": "Store",
     "getGems": "Get Gems",
     "subscriptions": "Subscriptions",
     "launchOffer": "Launch Offer",
     "monthlyGems": "Monthly Gems",
     "month": "/ month",
+    "completePaymentInTelegram": "Complete payment in Telegram",
+    "paymentRedirectMessage": "You will be redirected to Telegram to complete the payment.",
     "features": {
       "monthlyGems": "Monthly Gems",
       "noBlurredImages": "No Blurred Images",

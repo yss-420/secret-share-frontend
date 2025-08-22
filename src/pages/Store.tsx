@@ -32,11 +32,21 @@ const SUBSCRIPTION_MAP: Record<string, string> = {
 };
 
 const Store = () => {
-  const [loading, setLoading] = useState(false);
+  const [loadingGems, setLoadingGems] = useState<{[key: number]: boolean}>({});
+  const [loadingSubscriptions, setLoadingSubscriptions] = useState<{[key: string]: boolean}>({});
   const navigate = useNavigate();
-  const { updateGems, userStats } = useUserData();
+  const { updateGems, userStats, refreshUserData } = useUserData();
   const { user: telegramUser } = useTelegramAuth();
   const { t } = useTranslation();
+
+  // Refresh user function to call after payments
+  const refreshUser = async () => {
+    try {
+      await refreshUserData();
+    } catch (error) {
+      console.error('Failed to refresh user data:', error);
+    }
+  };
 
   // Initialize Telegram WebApp
   useEffect(() => {
@@ -110,7 +120,7 @@ const Store = () => {
     }
   }, []);
 
-  const handleGemPurchase = async (gemPackage: typeof gemPackages[0]) => {
+  const handleGemPurchase = async (gemPackage: typeof gemPackages[0], index: number) => {
     if (!window.Telegram?.WebApp) {
       toast({
         title: "Telegram WebApp Error",
@@ -143,7 +153,7 @@ const Store = () => {
       return;
     }
 
-    setLoading(true);
+    setLoadingGems(prev => ({ ...prev, [index]: true }));
 
     try {
       // Extract stars from price string (e.g., "⭐️ 100" -> 100)
@@ -166,7 +176,7 @@ const Store = () => {
 
       if (data.success && data.invoice_url) {
         // Open Telegram payment using invoice link
-        window.Telegram.WebApp.openInvoice(data.invoice_url, (status) => {
+        window.Telegram.WebApp.openInvoice(data.invoice_url, async (status) => {
           if (status === "paid") {
             // Fire BeMob pixel for successful gem purchase
             const cid = localStorage.getItem('bemob_cid');
@@ -200,7 +210,7 @@ const Store = () => {
             } else {
               toast({ title: "Payment Successful! 🎉", description: "Your gems have been added." });
             }
-            window.location.reload();
+            refreshUser();
           } else if (status === "cancelled") {
             if (typeof window.Telegram.WebApp.showAlert === 'function') {
               try {
@@ -222,7 +232,7 @@ const Store = () => {
               toast({ title: "Payment Failed", description: "Please try again.", variant: "destructive" });
             }
           }
-          setLoading(false);
+          setLoadingGems(prev => ({ ...prev, [index]: false }));
         });
       } else {
         throw new Error(data.error || 'Failed to create invoice');
@@ -247,7 +257,7 @@ const Store = () => {
           variant: "destructive",
         });
       }
-      setLoading(false);
+      setLoadingGems(prev => ({ ...prev, [index]: false }));
     }
   };
 
@@ -284,13 +294,13 @@ const Store = () => {
       return;
     }
 
-    setLoading(true);
+    setLoadingSubscriptions(prev => ({ ...prev, [planName]: true }));
 
     try {
       const packageType = `sub_${planName.toLowerCase()}`;
 
-      // Create invoice via backend using the approved method
-      const response = await fetch('https://secret-share-backend-production.up.railway.app/api/create-invoice', {
+      // Create invoice via backend using the new subscription endpoint
+      const response = await fetch('https://secret-share-backend-production.up.railway.app/create_invoice_link', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -304,8 +314,14 @@ const Store = () => {
       const data = await response.json();
 
       if (data.success && data.invoice_url) {
+        // Show toast for Telegram payment
+        toast({
+          title: t('store.completePaymentInTelegram'),
+          description: t('store.paymentRedirectMessage'),
+        });
+
         // Open Telegram payment using invoice link
-        window.Telegram.WebApp.openInvoice(data.invoice_url, (status) => {
+        window.Telegram.WebApp.openInvoice(data.invoice_url, async (status) => {
           if (status === "paid") {
             // Fire BeMob pixel for successful subscription purchase
             const cid = localStorage.getItem('bemob_cid');
@@ -340,7 +356,7 @@ const Store = () => {
             } else {
               toast({ title: "Subscription Activated! 🎉", description: "Your subscription is now active." });
             }
-            window.location.reload();
+            refreshUser();
           } else if (status === "cancelled") {
             if (typeof window.Telegram.WebApp.showAlert === 'function') {
               try {
@@ -362,7 +378,7 @@ const Store = () => {
               toast({ title: "Payment Failed", description: "Please try again.", variant: "destructive" });
             }
           }
-          setLoading(false);
+          setLoadingSubscriptions(prev => ({ ...prev, [planName]: false }));
         });
       } else {
         throw new Error(data.error || 'Failed to create invoice');
@@ -387,7 +403,7 @@ const Store = () => {
           variant: "destructive",
         });
       }
-      setLoading(false);
+      setLoadingSubscriptions(prev => ({ ...prev, [planName]: false }));
     }
   };
 
@@ -532,23 +548,23 @@ const Store = () => {
                     })}
                   </div>
 
-                  <Button 
-                    variant="premium" 
-                    size="lg" 
-                    className="w-full"
-                    onClick={() => handleSubscribe(plan.name)}
-                    disabled={loading}
-                  >
-                    {loading ? <LoadingSpinner size="sm" /> : t('store.subscribe')}
+                   <Button 
+                     variant="premium" 
+                     size="lg" 
+                     className="w-full"
+                     onClick={() => handleSubscribe(plan.name)}
+                     disabled={loadingSubscriptions[plan.name] || false}
+                   >
+                     {loadingSubscriptions[plan.name] ? <LoadingSpinner size="sm" /> : t('store.subscribe')}
                   </Button>
                 </Card>
               );
             })}
           </TabsContent>
 
-          <TabsContent value="gems" className="space-y-4">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {gemPackages.map((pkg) => (
+           <TabsContent value="gems" className="space-y-4">
+             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+               {gemPackages.map((pkg, index) => (
                 <Card key={pkg.gems} className="card-premium transition-smooth group p-4 text-center relative overflow-visible">
                   {pkg.popular && (
                     <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 z-10">
@@ -566,13 +582,13 @@ const Store = () => {
                   </div>
                   <div className="text-sm text-muted-foreground mb-2">Gems</div>
                   <div className="text-xl font-bold text-green-400 mb-3">{pkg.price}</div>
-                  <Button 
-                    variant="elegant" 
-                    className="w-full bg-slate-600 hover:bg-slate-500 text-white border-none" 
-                    onClick={() => handleGemPurchase(pkg)}
-                    disabled={loading}
-                  >
-                    {loading ? <LoadingSpinner size="sm" /> : t('store.buyGems')}
+                   <Button 
+                     variant="elegant" 
+                     className="w-full bg-slate-600 hover:bg-slate-500 text-white border-none" 
+                     onClick={() => handleGemPurchase(pkg, index)}
+                     disabled={loadingGems[index] || false}
+                   >
+                     {loadingGems[index] ? <LoadingSpinner size="sm" /> : t('store.buyGems')}
                   </Button>
                 </Card>
               ))}
