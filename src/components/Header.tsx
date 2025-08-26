@@ -13,15 +13,8 @@ export const Header = () => {
 
   // Check if user has an active subscription
   const hasActiveSubscription = () => {
-    if (!stats?.subscription_end || !stats?.tier) return false;
-    
-    const subscriptionEnd = new Date(stats.subscription_end);
-    const now = new Date();
-    
-    // User has active subscription if:
-    // 1. Subscription hasn't expired AND
-    // 2. Tier is not 'free'
-    return subscriptionEnd > now && stats.tier !== 'free';
+    if (!stats?.subscription_type) return false;
+    return stats.subscription_type !== 'free' && stats.subscription_type !== null;
   };
 
   const getMessageDisplay = () => {
