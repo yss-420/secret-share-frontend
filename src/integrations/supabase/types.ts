@@ -428,32 +428,84 @@ export type Database = {
           },
         ]
       }
+      subscription_tiers: {
+        Row: {
+          active: boolean
+          display_name: string
+          id: string
+          monthly_gems: number
+          monthly_stars: number
+          price_stars: number
+        }
+        Insert: {
+          active?: boolean
+          display_name: string
+          id: string
+          monthly_gems?: number
+          monthly_stars?: number
+          price_stars?: number
+        }
+        Update: {
+          active?: boolean
+          display_name?: string
+          id?: string
+          monthly_gems?: number
+          monthly_stars?: number
+          price_stars?: number
+        }
+        Relationships: []
+      }
       subscriptions: {
         Row: {
           created_at: string | null
+          current_period_end: string | null
+          current_period_start: string
           expires_at: string
           id: number
+          is_recurring: boolean
+          next_renewal_at: string | null
+          status: Database["public"]["Enums"]["subscription_status"]
           tier: string
+          tier_id: string | null
           updated_at: string | null
           user_id: number
         }
         Insert: {
           created_at?: string | null
+          current_period_end?: string | null
+          current_period_start?: string
           expires_at: string
           id?: number
+          is_recurring?: boolean
+          next_renewal_at?: string | null
+          status?: Database["public"]["Enums"]["subscription_status"]
           tier: string
+          tier_id?: string | null
           updated_at?: string | null
           user_id: number
         }
         Update: {
           created_at?: string | null
+          current_period_end?: string | null
+          current_period_start?: string
           expires_at?: string
           id?: number
+          is_recurring?: boolean
+          next_renewal_at?: string | null
+          status?: Database["public"]["Enums"]["subscription_status"]
           tier?: string
+          tier_id?: string | null
           updated_at?: string | null
           user_id?: number
         }
         Relationships: [
+          {
+            foreignKeyName: "subscriptions_tier_id_fkey"
+            columns: ["tier_id"]
+            isOneToOne: false
+            referencedRelation: "subscription_tiers"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "subscriptions_user_id_fkey"
             columns: ["user_id"]
@@ -526,10 +578,35 @@ export type Database = {
           },
         ]
       }
+      user_events: {
+        Row: {
+          created_at: string
+          event_name: string
+          id: string
+          props: Json | null
+          user_id: number
+        }
+        Insert: {
+          created_at?: string
+          event_name: string
+          id?: string
+          props?: Json | null
+          user_id: number
+        }
+        Update: {
+          created_at?: string
+          event_name?: string
+          id?: string
+          props?: Json | null
+          user_id?: number
+        }
+        Relationships: []
+      }
       users: {
         Row: {
           age_verified: boolean | null
           bemob_cid: string | null
+          blocked_at: string | null
           created_at: string | null
           gems: number | null
           id: string
@@ -537,6 +614,7 @@ export type Database = {
           last_daily_claim_at: string | null
           last_message_date: string | null
           last_seen: string | null
+          launch_promo_seen_at: string | null
           messages_today: number | null
           nickname: string | null
           pending_gem_refund: number | null
@@ -557,6 +635,7 @@ export type Database = {
         Insert: {
           age_verified?: boolean | null
           bemob_cid?: string | null
+          blocked_at?: string | null
           created_at?: string | null
           gems?: number | null
           id?: string
@@ -564,6 +643,7 @@ export type Database = {
           last_daily_claim_at?: string | null
           last_message_date?: string | null
           last_seen?: string | null
+          launch_promo_seen_at?: string | null
           messages_today?: number | null
           nickname?: string | null
           pending_gem_refund?: number | null
@@ -584,6 +664,7 @@ export type Database = {
         Update: {
           age_verified?: boolean | null
           bemob_cid?: string | null
+          blocked_at?: string | null
           created_at?: string | null
           gems?: number | null
           id?: string
@@ -591,6 +672,7 @@ export type Database = {
           last_daily_claim_at?: string | null
           last_message_date?: string | null
           last_seen?: string | null
+          launch_promo_seen_at?: string | null
           messages_today?: number | null
           nickname?: string | null
           pending_gem_refund?: number | null
@@ -840,6 +922,55 @@ export type Database = {
         }
         Relationships: []
       }
+      v_user_active_subscription: {
+        Row: {
+          current_period_end: string | null
+          is_recurring: boolean | null
+          next_renewal_at: string | null
+          status: Database["public"]["Enums"]["subscription_status"] | null
+          subscription_id: number | null
+          tier_id: string | null
+          tier_name: string | null
+          user_id: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_tier_id_fkey"
+            columns: ["tier_id"]
+            isOneToOne: false
+            referencedRelation: "subscription_tiers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "top_customers"
+            referencedColumns: ["telegram_id"]
+          },
+          {
+            foreignKeyName: "subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_counters_mv"
+            referencedColumns: ["telegram_id"]
+          },
+          {
+            foreignKeyName: "subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_status_public"
+            referencedColumns: ["telegram_id"]
+          },
+          {
+            foreignKeyName: "subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["telegram_id"]
+          },
+        ]
+      }
       voice_call_analytics: {
         Row: {
           avg_call_duration: number | null
@@ -884,9 +1015,17 @@ export type Database = {
       }
     }
     Functions: {
+      apply_successful_payment: {
+        Args: { p_invoice_id: string; p_provider_payment_id: string }
+        Returns: boolean
+      }
       cleanup_old_sessions: {
         Args: Record<PropertyKey, never>
         Returns: undefined
+      }
+      create_renewal_invoice: {
+        Args: { p_amount_stars?: number; p_subscription_id: string }
+        Returns: string
       }
       get_earnings_period: {
         Args: { period_days: number }
@@ -955,7 +1094,12 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      subscription_status:
+        | "active"
+        | "in_grace"
+        | "past_due"
+        | "canceled"
+        | "expired"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1082,6 +1226,14 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      subscription_status: [
+        "active",
+        "in_grace",
+        "past_due",
+        "canceled",
+        "expired",
+      ],
+    },
   },
 } as const
