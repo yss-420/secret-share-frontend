@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useDevMode } from '@/hooks/useDevMode';
 
 interface HeaderStats {
   gems: number;
@@ -12,21 +13,37 @@ export const useHeaderStats = () => {
   const [stats, setStats] = useState<HeaderStats | null>(null);
   const [loading, setLoading] = useState(true);
   const { telegramUser } = useAuth();
+  const { isDevMode, devUser } = useDevMode();
 
   useEffect(() => {
     const fetchStats = async () => {
-      if (!telegramUser?.id) {
+      // In dev mode, use dev user data directly
+      if (isDevMode && devUser) {
+        console.log('🔧 Using dev mode stats:', devUser);
+        setStats({
+          gems: devUser.gems,
+          messages_today: devUser.messages_today,
+          subscription_type: devUser.subscription_type || 'free'
+        });
+        setLoading(false);
+        return;
+      }
+
+      // Get the correct telegram_id - use telegram_id field if available (dev mode), otherwise use id
+      const telegramId = telegramUser?.telegram_id || telegramUser?.id;
+      
+      if (!telegramId) {
         setLoading(false);
         return;
       }
 
       try {
-        console.log('🔍 Fetching header stats for telegram_id:', telegramUser.id);
+        console.log('🔍 Fetching header stats for telegram_id:', telegramId);
         
         const { data, error } = await supabase
           .from('user_status_public')
           .select('gems, messages_today, subscription_type')
-          .eq('telegram_id', telegramUser.id)
+          .eq('telegram_id', telegramId)
           .single();
 
         console.log('📊 Supabase response:', { data, error });
@@ -37,7 +54,7 @@ export const useHeaderStats = () => {
         }
 
         if (!data) {
-          console.log('⚠️ No user data found for telegram_id:', telegramUser.id);
+          console.log('⚠️ No user data found for telegram_id:', telegramId);
           setStats({
             gems: 0,
             messages_today: 0,
@@ -70,7 +87,13 @@ export const useHeaderStats = () => {
 
     fetchStats();
 
+    // Skip real-time updates in dev mode
+    if (isDevMode) {
+      return;
+    }
+
     // Set up real-time subscription for updates
+    const telegramId = telegramUser?.telegram_id || telegramUser?.id;
     const channel = supabase
       .channel('header-stats')
       .on(
@@ -79,7 +102,7 @@ export const useHeaderStats = () => {
           event: 'UPDATE',
           schema: 'public',
           table: 'user_status_public',
-          filter: `telegram_id=eq.${telegramUser?.id}`
+          filter: `telegram_id=eq.${telegramId}`
         },
         (payload) => {
           const newData = payload.new as any;
@@ -95,7 +118,7 @@ export const useHeaderStats = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [telegramUser?.id]);
+  }, [telegramUser?.id, telegramUser?.telegram_id, isDevMode, devUser]);
 
   return { stats, loading };
 };
