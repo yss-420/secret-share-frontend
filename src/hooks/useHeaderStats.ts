@@ -12,7 +12,7 @@ interface HeaderStats {
 export const useHeaderStats = () => {
   const [stats, setStats] = useState<HeaderStats | null>(null);
   const [loading, setLoading] = useState(true);
-  const { telegramUser } = useAuth();
+  const { user } = useAuth();
   const { isDevMode, devUser } = useDevMode();
 
   useEffect(() => {
@@ -29,8 +29,8 @@ export const useHeaderStats = () => {
         return;
       }
 
-      // Get the correct telegram_id - use telegram_id field if available (dev mode), otherwise use id
-      const telegramId = telegramUser?.telegram_id || telegramUser?.id;
+      // Get the telegram_id from the authenticated user
+      const telegramId = user?.telegram_id;
       
       if (!telegramId) {
         setLoading(false);
@@ -92,7 +92,7 @@ export const useHeaderStats = () => {
 
     // Note: Real-time updates removed for security - views can't have proper RLS
     // Users will see updates on page refresh or when the hook re-runs
-  }, [telegramUser?.id, telegramUser?.telegram_id, isDevMode, devUser]);
+  }, [user?.telegram_id, isDevMode, devUser]);
 
   return { stats, loading };
 };
