@@ -1036,6 +1036,15 @@ export type Database = {
           unique_customers: number
         }[]
       }
+      get_my_stats: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          gems: number
+          messages_today: number
+          subscription_type: string
+          telegram_id: number
+        }[]
+      }
       get_payment_analytics: {
         Args: { p_days?: number }
         Returns: {
@@ -1056,6 +1065,15 @@ export type Database = {
           total_customers: number
           total_stars: number
           total_transactions: number
+        }[]
+      }
+      get_user_stats_safe: {
+        Args: { p_telegram_id: number }
+        Returns: {
+          gems: number
+          messages_today: number
+          subscription_type: string
+          telegram_id: number
         }[]
       }
       increment_user_messages: {

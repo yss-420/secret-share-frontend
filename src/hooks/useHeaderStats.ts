@@ -41,10 +41,7 @@ export const useHeaderStats = () => {
         console.log('🔍 Fetching header stats for telegram_id:', telegramId);
         
         const { data, error } = await supabase
-          .from('user_status_public')
-          .select('gems, messages_today, subscription_type')
-          .eq('telegram_id', telegramId)
-          .maybeSingle();
+          .rpc('get_user_stats_safe', { p_telegram_id: telegramId });
 
         console.log('📊 Supabase response:', { data, error });
 
@@ -53,7 +50,7 @@ export const useHeaderStats = () => {
           throw error;
         }
 
-        if (!data) {
+        if (!data || data.length === 0) {
           console.log('⚠️ No user data found for telegram_id:', telegramId);
           setStats({
             gems: 0,
@@ -63,11 +60,12 @@ export const useHeaderStats = () => {
           return;
         }
 
-        console.log('✅ Successfully fetched user stats:', data);
+        const userStats = data[0];
+        console.log('✅ Successfully fetched user stats:', userStats);
         setStats({
-          gems: data.gems || 0,
-          messages_today: data.messages_today || 0,
-          subscription_type: data.subscription_type || 'free'
+          gems: userStats.gems || 0,
+          messages_today: userStats.messages_today || 0,
+          subscription_type: userStats.subscription_type || 'free'
         });
       } catch (error) {
         console.error('💥 Failed to fetch header stats:', error);
@@ -92,32 +90,8 @@ export const useHeaderStats = () => {
       return;
     }
 
-    // Set up real-time subscription for updates on the users table since user_status_public is a view
-    const telegramId = telegramUser?.telegram_id || telegramUser?.id;
-    const channel = supabase
-      .channel('header-stats')
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'users',
-          filter: `telegram_id=eq.${telegramId}`
-        },
-        (payload) => {
-          const newData = payload.new as any;
-          setStats({
-            gems: newData.gems || 0,
-            messages_today: newData.messages_today || 0,
-            subscription_type: newData.subscription_type || 'free'
-          });
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
+    // Note: Real-time updates removed for security - views can't have proper RLS
+    // Users will see updates on page refresh or when the hook re-runs
   }, [telegramUser?.id, telegramUser?.telegram_id, isDevMode, devUser]);
 
   return { stats, loading };
