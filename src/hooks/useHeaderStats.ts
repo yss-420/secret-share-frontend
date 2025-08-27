@@ -44,7 +44,7 @@ export const useHeaderStats = () => {
           .from('user_status_public')
           .select('gems, messages_today, subscription_type')
           .eq('telegram_id', telegramId)
-          .single();
+          .maybeSingle();
 
         console.log('📊 Supabase response:', { data, error });
 
@@ -92,7 +92,7 @@ export const useHeaderStats = () => {
       return;
     }
 
-    // Set up real-time subscription for updates
+    // Set up real-time subscription for updates on the users table since user_status_public is a view
     const telegramId = telegramUser?.telegram_id || telegramUser?.id;
     const channel = supabase
       .channel('header-stats')
@@ -101,7 +101,7 @@ export const useHeaderStats = () => {
         {
           event: 'UPDATE',
           schema: 'public',
-          table: 'user_status_public',
+          table: 'users',
           filter: `telegram_id=eq.${telegramId}`
         },
         (payload) => {
