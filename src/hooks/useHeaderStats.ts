@@ -55,13 +55,13 @@ export const useHeaderStats = () => {
       }
 
       try {
-        console.log('🔍 Fetching header stats for telegram_id:', telegramId);
-        
-        // Use the new dedicated header stats function
-        const { data, error } = await supabase
-          .rpc('get_header_stats', { p_telegram_id: telegramId });
+      console.log('🔍 Fetching header stats for telegram_id:', telegramId);
+      
+      // Use the new dedicated header stats function
+      const { data, error } = await supabase
+        .rpc('get_header_stats', { p_telegram_id: telegramId });
 
-        console.log('📊 Header stats response:', { data, error });
+      console.log('📊 Header stats response:', { data, error, telegramId });
 
         if (error) {
           console.error('🚨 Supabase error details:', error);

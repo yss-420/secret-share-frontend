@@ -7,9 +7,11 @@ import { LoadingSpinner } from "./LoadingSpinner";
 import { useNavigate } from "react-router-dom";
 
 export const Header = () => {
-  const { telegramUser, error: authError } = useAuth();
+  const { user, telegramUser, error: authError } = useAuth();
   const { stats, loading } = useHeaderStats();
   const navigate = useNavigate();
+
+  console.log('🔍 Header - Auth state:', { user, telegramUser, authError });
 
   // Check if user has an active subscription
   const hasActiveSubscription = () => {
