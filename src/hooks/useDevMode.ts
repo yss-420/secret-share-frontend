@@ -35,10 +35,9 @@ export const useDevMode = () => {
     const isDev = import.meta.env.DEV;
     const isLocalhost = window.location.hostname === 'localhost';
     const hasDevParam = new URLSearchParams(window.location.search).has('dev');
-    const isLovablePreview = window.location.hostname.includes('lovable.app');
-    const isDevEnvironment = isDev || isLocalhost || hasDevParam || isLovablePreview;
+    const isDevEnvironment = isDev || isLocalhost || hasDevParam;
     
-    console.log('Dev mode check:', { isDev, isLocalhost, hasDevParam, isLovablePreview, isDevEnvironment });
+    console.log('Dev mode check:', { isDev, isLocalhost, hasDevParam, isDevEnvironment });
     
     setIsDevMode(isDevEnvironment);
   }, []);

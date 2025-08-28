@@ -12,7 +12,7 @@ interface HeaderStats {
 export const useHeaderStats = () => {
   const [stats, setStats] = useState<HeaderStats | null>(null);
   const [loading, setLoading] = useState(true);
-  const { user } = useAuth();
+  const { user, telegramUser } = useAuth();
   const { isDevMode, devUser } = useDevMode();
 
   useEffect(() => {
@@ -29,10 +29,22 @@ export const useHeaderStats = () => {
         return;
       }
 
-      // Get the telegram_id from the authenticated user
-      const telegramId = user?.telegram_id;
+      // Get telegram_id from multiple sources - prioritize real Telegram user
+      let telegramId = null;
+      
+      // First try to get from Telegram WebApp user
+      if (telegramUser?.id) {
+        telegramId = telegramUser.id;
+        console.log('🔍 Using Telegram WebApp user ID:', telegramId);
+      }
+      // Fallback to authenticated user telegram_id
+      else if (user?.telegram_id) {
+        telegramId = user.telegram_id;
+        console.log('🔍 Using authenticated user telegram_id:', telegramId);
+      }
       
       if (!telegramId) {
+        console.log('❌ No telegram_id found in user or telegramUser');
         setLoading(false);
         return;
       }
@@ -40,10 +52,11 @@ export const useHeaderStats = () => {
       try {
         console.log('🔍 Fetching header stats for telegram_id:', telegramId);
         
+        // Use the new dedicated header stats function
         const { data, error } = await supabase
-          .rpc('get_user_stats_safe', { p_telegram_id: telegramId });
+          .rpc('get_header_stats', { p_telegram_id: telegramId });
 
-        console.log('📊 Supabase response:', { data, error });
+        console.log('📊 Header stats response:', { data, error });
 
         if (error) {
           console.error('🚨 Supabase error details:', error);
@@ -51,9 +64,9 @@ export const useHeaderStats = () => {
         }
 
         if (!data || data.length === 0) {
-          console.log('⚠️ No user data found for telegram_id:', telegramId);
+          console.log('⚠️ No header stats found for telegram_id:', telegramId);
           setStats({
-            gems: 0,
+            gems: 100,
             messages_today: 0,
             subscription_type: 'free'
           });
@@ -61,20 +74,17 @@ export const useHeaderStats = () => {
         }
 
         const userStats = data[0];
-        console.log('✅ Successfully fetched user stats:', userStats);
+        console.log('✅ Successfully fetched header stats:', userStats);
         setStats({
-          gems: userStats.gems || 0,
+          gems: userStats.gems || 100,
           messages_today: userStats.messages_today || 0,
           subscription_type: userStats.subscription_type || 'free'
         });
       } catch (error) {
         console.error('💥 Failed to fetch header stats:', error);
-        console.error('Error name:', error.name);
-        console.error('Error message:', error.message);
-        console.error('Error code:', error.code);
         // Set default values on error
         setStats({
-          gems: 0,
+          gems: 100,
           messages_today: 0,
           subscription_type: 'free'
         });
@@ -92,7 +102,7 @@ export const useHeaderStats = () => {
 
     // Note: Real-time updates removed for security - views can't have proper RLS
     // Users will see updates on page refresh or when the hook re-runs
-  }, [user?.telegram_id, isDevMode, devUser]);
+  }, [user?.telegram_id, telegramUser?.id, isDevMode, devUser]);
 
   return { stats, loading };
 };

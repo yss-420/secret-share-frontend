@@ -602,6 +602,33 @@ export type Database = {
         }
         Relationships: []
       }
+      user_header_stats: {
+        Row: {
+          created_at: string | null
+          gems: number
+          last_updated: string | null
+          messages_today: number
+          subscription_type: string | null
+          telegram_id: number
+        }
+        Insert: {
+          created_at?: string | null
+          gems?: number
+          last_updated?: string | null
+          messages_today?: number
+          subscription_type?: string | null
+          telegram_id: number
+        }
+        Update: {
+          created_at?: string | null
+          gems?: number
+          last_updated?: string | null
+          messages_today?: number
+          subscription_type?: string | null
+          telegram_id?: number
+        }
+        Relationships: []
+      }
       users: {
         Row: {
           age_verified: boolean | null
@@ -1036,6 +1063,15 @@ export type Database = {
           unique_customers: number
         }[]
       }
+      get_header_stats: {
+        Args: { p_telegram_id: number }
+        Returns: {
+          gems: number
+          messages_today: number
+          subscription_type: string
+          telegram_id: number
+        }[]
+      }
       get_my_stats: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -1105,6 +1141,10 @@ export type Database = {
           p_user_id: number
         }
         Returns: Json
+      }
+      sync_user_header_stats: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
       }
       update_call_duration: {
         Args: { p_call_id: string; p_duration_minutes: number }
