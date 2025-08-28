@@ -33,18 +33,23 @@ export const useHeaderStats = () => {
       let telegramId = null;
       
       // First try to get from Telegram WebApp user
-      if (telegramUser?.id) {
+      if (telegramUser?.id && typeof telegramUser.id === 'number') {
         telegramId = telegramUser.id;
         console.log('🔍 Using Telegram WebApp user ID:', telegramId);
       }
       // Fallback to authenticated user telegram_id
-      else if (user?.telegram_id) {
+      else if (user?.telegram_id && typeof user.telegram_id === 'number') {
         telegramId = user.telegram_id;
         console.log('🔍 Using authenticated user telegram_id:', telegramId);
       }
       
-      if (!telegramId) {
-        console.log('❌ No telegram_id found in user or telegramUser');
+      if (!telegramId || typeof telegramId !== 'number') {
+        console.log('❌ No valid numeric telegram_id found');
+        setStats({
+          gems: 100,
+          messages_today: 0,
+          subscription_type: 'free'
+        });
         setLoading(false);
         return;
       }
