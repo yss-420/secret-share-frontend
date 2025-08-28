@@ -1146,6 +1146,15 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      test_header_stats: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          gems: number
+          messages_today: number
+          subscription_type: string
+          telegram_id: number
+        }[]
+      }
       update_call_duration: {
         Args: { p_call_id: string; p_duration_minutes: number }
         Returns: undefined
