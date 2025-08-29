@@ -14,9 +14,19 @@ async function fetchHeaderStats() {
   const tg = (window as any)?.Telegram?.WebApp?.initDataUnsafe;
   const telegram_id = Number(tg?.user?.id);
   
+  console.log('🔍 Telegram WebApp data:', { 
+    tg, 
+    user: tg?.user, 
+    telegram_id,
+    hasWebApp: !!(window as any)?.Telegram?.WebApp 
+  });
+  
   if (!telegram_id) {
     throw new Error('No telegram_id available');
   }
+
+  console.log('🌐 Making API request to:', `${API_BASE}/api/user-status`);
+  console.log('🔑 Using secret key:', FRONTEND_SECRET_KEY ? 'Present' : 'Missing');
   
   const res = await fetch(`${API_BASE}/api/user-status`, {
     method: 'POST',
@@ -27,8 +37,22 @@ async function fetchHeaderStats() {
     body: JSON.stringify({ telegram_id })
   });
   
-  if (!res.ok) throw new Error('status fetch failed');
-  const { gems, messages_today, subscription_type } = await res.json();
+  console.log('📡 API Response:', { 
+    status: res.status, 
+    statusText: res.statusText, 
+    url: res.url 
+  });
+  
+  if (!res.ok) {
+    const errorText = await res.text();
+    console.error('❌ API Error Response:', errorText);
+    throw new Error(`API request failed: ${res.status} ${res.statusText}`);
+  }
+  
+  const data = await res.json();
+  console.log('✅ API Data received:', data);
+  
+  const { gems, messages_today, subscription_type } = data;
   return { gems, messagesToday: messages_today, tier: subscription_type };
 }
 
