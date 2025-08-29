@@ -21,20 +21,19 @@ export const Header = () => {
 
   const getMessageDisplay = () => {
     if (loading) return <LoadingSpinner size="sm" />;
-    if (authError || !stats) return <span className="text-xs font-medium text-muted-foreground">—</span>;
-    
-    const messagesUsed = stats.messages_today || 0;
+    if (!stats) return <span className="text-xs font-medium text-muted-foreground">—</span>;
     
     if (hasActiveSubscription()) {
       return <span className="text-xs font-medium text-foreground">∞</span>;
-    } else {
-      return <span className="text-xs font-medium text-foreground">{messagesUsed}/50</span>;
     }
+    
+    const cap = stats.daily_limit ?? 50;
+    return <span className="text-xs font-medium text-foreground">{(stats.messages_today||0)}/{cap}</span>;
   };
 
   const getGemsDisplay = () => {
     if (loading) return <LoadingSpinner size="sm" />;
-    if (authError || !stats) return <span className="text-xs font-medium text-muted-foreground">—</span>;
+    if (!stats) return <span className="text-xs font-medium text-muted-foreground">—</span>;
     return <span className="text-xs font-medium text-foreground">{stats.gems}</span>;
   };
 

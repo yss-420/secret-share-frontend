@@ -5,6 +5,7 @@ interface HeaderStats {
   gems: number;
   messages_today: number;
   subscription_type: string;
+  daily_limit: number | null;
 }
 
 const API_BASE = import.meta.env.VITE_BACKEND_URL || 'https://pfuyxdqzbrjrtqlbkbku.supabase.co/functions/v1';
@@ -76,8 +77,8 @@ async function fetchHeaderStats() {
   const data = await res.json();
   console.log('✅ Real user data received:', data);
   
-  const { gems, messages_today, subscription_type } = data;
-  return { gems, messagesToday: messages_today, tier: subscription_type };
+  const { gems, messages_today, subscription_type, daily_limit } = data;
+  return { gems, messagesToday: messages_today, tier: subscription_type, dailyLimit: daily_limit ?? null };
 }
 
 export const useHeaderStats = () => {
@@ -97,7 +98,8 @@ export const useHeaderStats = () => {
         setStats({
           gems: devUser.gems,
           messages_today: devUser.messages_today,
-          subscription_type: devUser.subscription_type || 'free'
+          subscription_type: devUser.subscription_type || 'free',
+          daily_limit: 50
         });
         setLoading(false);
         return;
@@ -112,7 +114,8 @@ export const useHeaderStats = () => {
         setStats({
           gems: 0,
           messages_today: 0,
-          subscription_type: 'free'
+          subscription_type: 'free',
+          daily_limit: 50
         });
         setLoading(false);
         return;
@@ -120,21 +123,23 @@ export const useHeaderStats = () => {
 
       try {
         console.log('🔍 Fetching header stats from API');
-        const { gems, messagesToday, tier } = await fetchHeaderStats();
+        const { gems, messagesToday, tier, dailyLimit } = await fetchHeaderStats();
         
         setStats({
           gems,
           messages_today: messagesToday,
-          subscription_type: tier
+          subscription_type: tier,
+          daily_limit: dailyLimit
         });
-        console.log('✅ Successfully fetched header stats:', { gems, messagesToday, tier });
+        console.log('✅ Successfully fetched header stats:', { gems, messagesToday, tier, dailyLimit });
       } catch (error) {
         console.error('💥 Failed to fetch header stats:', error);
         // Set placeholder values on error (will show as "—" in UI)
         setStats({
           gems: 0,
           messages_today: 0,
-          subscription_type: 'free'
+          subscription_type: 'free',
+          daily_limit: 50
         });
       } finally {
         setLoading(false);
