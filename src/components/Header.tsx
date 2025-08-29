@@ -1,5 +1,5 @@
 
-import { Gem, Zap, Plus, AlertCircle } from "lucide-react";
+import { Gem, Zap, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useHeaderStats } from "@/hooks/useHeaderStats";
