@@ -11,22 +11,50 @@ const API_BASE = import.meta.env.VITE_BACKEND_URL || 'https://pfuyxdqzbrjrtqlbkb
 const FRONTEND_SECRET_KEY = import.meta.env.VITE_FRONTEND_SECRET_KEY;
 
 async function fetchHeaderStats() {
-  const tg = (window as any)?.Telegram?.WebApp?.initDataUnsafe;
-  const telegram_id = Number(tg?.user?.id);
+  // Try multiple methods to get telegram_id for real users
+  const tg = (window as any)?.Telegram?.WebApp;
+  let telegram_id = null;
+
+  // Method 1: From initDataUnsafe (most common)
+  if (tg?.initDataUnsafe?.user?.id) {
+    telegram_id = Number(tg.initDataUnsafe.user.id);
+  }
   
-  console.log('🔍 Telegram WebApp data:', { 
-    tg, 
-    user: tg?.user, 
+  // Method 2: From initData parsed (fallback)
+  if (!telegram_id && tg?.initData) {
+    try {
+      const urlParams = new URLSearchParams(tg.initData);
+      const userParam = urlParams.get('user');
+      if (userParam) {
+        const userData = JSON.parse(decodeURIComponent(userParam));
+        if (userData.id) {
+          telegram_id = Number(userData.id);
+        }
+      }
+    } catch (e) {
+      console.warn('Failed to parse initData:', e);
+    }
+  }
+
+  // Method 3: Direct from WebApp object (last resort)
+  if (!telegram_id && tg?.WebAppUser?.id) {
+    telegram_id = Number(tg.WebAppUser.id);
+  }
+
+  console.log('🔍 Telegram ID extraction:', { 
+    hasWebApp: !!tg,
+    hasInitDataUnsafe: !!tg?.initDataUnsafe,
+    hasInitData: !!tg?.initData,
     telegram_id,
-    hasWebApp: !!(window as any)?.Telegram?.WebApp 
+    initDataUnsafe: tg?.initDataUnsafe,
+    webAppVersion: tg?.version
   });
   
   if (!telegram_id) {
-    throw new Error('No telegram_id available');
+    throw new Error('No telegram_id available from any method');
   }
 
-  console.log('🌐 Making API request to:', `${API_BASE}/api/user-status`);
-  console.log('🔑 Using secret key:', FRONTEND_SECRET_KEY ? 'Present' : 'Missing');
+  console.log('🌐 Making API request for real user:', telegram_id);
   
   const res = await fetch(`${API_BASE}/api/user-status`, {
     method: 'POST',
@@ -37,20 +65,16 @@ async function fetchHeaderStats() {
     body: JSON.stringify({ telegram_id })
   });
   
-  console.log('📡 API Response:', { 
-    status: res.status, 
-    statusText: res.statusText, 
-    url: res.url 
-  });
+  console.log('📡 API Response status:', res.status);
   
   if (!res.ok) {
     const errorText = await res.text();
-    console.error('❌ API Error Response:', errorText);
-    throw new Error(`API request failed: ${res.status} ${res.statusText}`);
+    console.error('❌ API Error:', errorText);
+    throw new Error(`API request failed: ${res.status} - ${errorText}`);
   }
   
   const data = await res.json();
-  console.log('✅ API Data received:', data);
+  console.log('✅ Real user data received:', data);
   
   const { gems, messages_today, subscription_type } = data;
   return { gems, messagesToday: messages_today, tier: subscription_type };
