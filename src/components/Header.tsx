@@ -14,19 +14,14 @@ export const Header = () => {
   console.log('🔍 Header - Auth state:', { user, telegramUser, authError });
 
   // Check if user has an active subscription
-  const hasActiveSubscription = () => {
-    if (!stats?.subscription_type) return false;
-    return stats.subscription_type !== 'free' && stats.subscription_type !== null;
-  };
+  const hasActiveSubscription = () =>
+    (stats?.subscription_type && stats.subscription_type !== 'free') || stats?.daily_limit == null;
 
   const getMessageDisplay = () => {
     if (loading) return <LoadingSpinner size="sm" />;
     if (!stats) return <span className="text-xs font-medium text-muted-foreground">—</span>;
     
-    if (hasActiveSubscription()) {
-      return <span className="text-xs font-medium text-foreground">∞</span>;
-    }
-    
+    if (stats.daily_limit == null) return <span className="text-xs font-medium text-foreground">∞</span>;
     const cap = stats.daily_limit ?? 50;
     return <span className="text-xs font-medium text-foreground">{(stats.messages_today||0)}/{cap}</span>;
   };
