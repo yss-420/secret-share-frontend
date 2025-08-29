@@ -61,8 +61,12 @@ export const useHeaderStats = () => {
   const [loading, setLoading] = useState(true);
   const { isDevMode, devUser } = useDevMode();
 
+  console.log('📊 useHeaderStats render:', { isDevMode, devUser: !!devUser, loading });
+
   useEffect(() => {
     const loadStats = async () => {
+      console.log('🚀 loadStats called with:', { isDevMode, devUser: !!devUser });
+      
       // In dev mode, use dev user data directly
       if (isDevMode && devUser) {
         console.log('🔧 Using dev mode stats:', devUser);
@@ -70,6 +74,21 @@ export const useHeaderStats = () => {
           gems: devUser.gems,
           messages_today: devUser.messages_today,
           subscription_type: devUser.subscription_type || 'free'
+        });
+        setLoading(false);
+        return;
+      }
+
+      // Skip API call if no dev mode but also no Telegram data
+      const tg = (window as any)?.Telegram?.WebApp?.initDataUnsafe;
+      const telegram_id = Number(tg?.user?.id);
+      
+      if (!telegram_id && !isDevMode) {
+        console.log('⚠️ No Telegram ID and not in dev mode - using fallback');
+        setStats({
+          gems: 0,
+          messages_today: 0,
+          subscription_type: 'free'
         });
         setLoading(false);
         return;
