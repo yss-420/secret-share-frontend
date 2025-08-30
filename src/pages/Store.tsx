@@ -447,15 +447,16 @@ const Store = () => {
     setLoadingIntro(true);
 
     try {
-      // Use same flow as gems (one-time payment) instead of subscription
-      const response = await fetch('https://secret-share-backend-production.up.railway.app/api/create-invoice', {
+      // Use correct endpoint and package type for intro subscription
+      const response = await fetch('https://secret-share-backend-production.up.railway.app/create_invoice_link', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           user_id: telegramUser.id,
-          package_type: 'intro_3day'
+          package_type: 'intro_3d',
+          extend_from_end: true
         })
       });
 
