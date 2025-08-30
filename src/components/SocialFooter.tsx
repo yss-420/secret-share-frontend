@@ -32,7 +32,7 @@ export const SocialFooter = ({ className = "" }: SocialFooterProps) => {
     {
       name: "Ko-fi",
       url: "https://ko-fi.com/secretshare",
-      icon: <img src="/lovable-uploads/f57d4e98-b536-4e4c-8dce-9d7265bfca2c.png" alt="Ko-fi" className="w-5 h-5 object-contain" loading="eager" />,
+      icon: <img src="/lovable-uploads/f57d4e98-b536-4e4c-8dce-9d7265bfca2c.png" alt="Ko-fi" className="w-6 h-6 object-contain" loading="eager" />,
     },
   ];
 
