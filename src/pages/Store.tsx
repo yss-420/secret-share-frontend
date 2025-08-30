@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Header } from "@/components/Header";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
-import { Gem, Crown, ArrowLeft, Star, Sparkles, Check } from "lucide-react";
+import { Gem, Crown, ArrowLeft, Star, Sparkles, Check, Gift } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUserData } from "@/hooks/useUserData";
@@ -447,27 +447,21 @@ const Store = () => {
     setLoadingIntro(true);
 
     try {
-      // Create invoice via backend using the intro package type
-      const response = await fetch('https://secret-share-backend-production.up.railway.app/api/create_invoice_link', {
+      // Use same flow as gems (one-time payment) instead of subscription
+      const response = await fetch('https://secret-share-backend-production.up.railway.app/api/create-invoice', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           user_id: telegramUser.id,
-          package_type: 'intro_3d'
+          package_type: 'intro_3day'
         })
       });
 
       const data = await response.json();
 
       if (data.success && data.invoice_url) {
-        // Show toast for Telegram payment
-        toast({
-          title: "Complete Payment in Telegram",
-          description: "You'll be redirected to complete your payment.",
-        });
-
         // Open Telegram payment using invoice link
         window.Telegram.WebApp.openInvoice(data.invoice_url, async (status) => {
           if (status === "paid") {
@@ -479,9 +473,9 @@ const Store = () => {
               // Deduplication check using sessionStorage
               const firedTxids = JSON.parse(sessionStorage.getItem('bemob_fired_txids') || '[]');
               if (!firedTxids.includes(txid)) {
-                const payout = 50; // 50 stars for intro package
+                const payout = 50; // Stars amount for intro
                 
-                console.log('Firing BeMob pixel for intro subscription:', { cid, txid, payout });
+                console.log('Firing BeMob pixel for intro purchase:', { cid, txid, payout });
                 
                 // Fire conversion pixel using Image object to avoid CORS
                 new Image().src = `https://jerd8.bemobtrcks.com/conversion.gif?cid=${encodeURIComponent(cid)}&txid=${encodeURIComponent(txid)}&payout=${payout}&_=${Date.now()}`;
@@ -492,31 +486,18 @@ const Store = () => {
               }
             }
 
-            // Poll user status for 10-15 seconds after payment
-            let pollCount = 0;
-            const maxPolls = 15;
-            const pollInterval = setInterval(async () => {
-              pollCount++;
-              try {
-                await refreshUser();
-                if (pollCount >= maxPolls) {
-                  clearInterval(pollInterval);
-                }
-              } catch (error) {
-                console.error('Error polling user status:', error);
-              }
-            }, 1000);
-
+            // Safe alert call
             if (typeof window.Telegram.WebApp.showAlert === 'function') {
               try {
-                window.Telegram.WebApp.showAlert('Intro subscription activated! 🎉');
+                window.Telegram.WebApp.showAlert('Intro activated! 🎉');
               } catch (error) {
                 console.warn('showAlert not supported:', error);
-                toast({ title: "Intro Activated! 🎉", description: "Your 3-day intro is now active." });
+                toast({ title: "Intro Activated! 🎉", description: "Your 3-day intro access has been granted." });
               }
             } else {
-              toast({ title: "Intro Activated! 🎉", description: "Your 3-day intro is now active." });
+              toast({ title: "Intro Activated! 🎉", description: "Your 3-day intro access has been granted." });
             }
+            refreshUser();
           } else if (status === "cancelled") {
             if (typeof window.Telegram.WebApp.showAlert === 'function') {
               try {
@@ -545,7 +526,7 @@ const Store = () => {
       }
 
     } catch (error) {
-      console.error('Intro subscription error:', error);
+      console.error('Intro payment error:', error);
       if (typeof window.Telegram.WebApp.showAlert === 'function') {
         try {
           window.Telegram.WebApp.showAlert('Error creating payment. Please try again.');
@@ -564,6 +545,8 @@ const Store = () => {
         });
       }
       setLoadingIntro(false);
+    } finally {
+      refreshUser();
     }
   };
 
@@ -583,7 +566,7 @@ const Store = () => {
       name: "Intro",
       price: "⭐️ 50",
       period: "/ 3 days",
-      icon: Star,
+      icon: Gift,
       color: "from-emerald-500 to-emerald-600",
       features: [
         "**80 Gems**",
@@ -696,7 +679,7 @@ const Store = () => {
                            {plan.oldPrice && <span className="text-sm text-muted-foreground/60 line-through whitespace-nowrap">{plan.oldPrice}</span>}
                             <div className="flex items-center gap-1">
                               <span className="text-2xl font-bold text-foreground whitespace-nowrap">{plan.price}</span>
-                              <span className="text-sm text-muted-foreground whitespace-nowrap">{plan.period}</span>
+                              <span className="text-base text-muted-foreground whitespace-nowrap">{plan.period}</span>
                             </div>
                          </div>
                       </div>
