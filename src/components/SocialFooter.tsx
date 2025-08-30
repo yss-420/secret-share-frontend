@@ -15,7 +15,7 @@ export const SocialFooter = ({ className = "" }: SocialFooterProps) => {
       name: "X",
       url: "https://x.com/secret_share0",
       icon: (
-        <svg className="w-5 h-5 text-black dark:text-white" viewBox="0 0 24 24" fill="currentColor">
+        <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
           <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
         </svg>
       ),
@@ -32,7 +32,7 @@ export const SocialFooter = ({ className = "" }: SocialFooterProps) => {
     {
       name: "Ko-fi",
       url: "https://ko-fi.com/secretshare",
-      icon: <img src="/lovable-uploads/f57d4e98-b536-4e4c-8dce-9d7265bfca2c.png" alt="Ko-fi" className="w-5 h-5 object-contain" />,
+      icon: <img src="/lovable-uploads/f57d4e98-b536-4e4c-8dce-9d7265bfca2c.png" alt="Ko-fi" className="w-5 h-5 object-contain" loading="eager" />,
     },
   ];
 
