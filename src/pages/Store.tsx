@@ -582,7 +582,7 @@ const Store = () => {
     {
       name: "Intro",
       price: "⭐️ 50",
-      period: "3 days",
+      period: "/ 3 days",
       icon: Star,
       color: "from-emerald-500 to-emerald-600",
       features: [
@@ -602,6 +602,7 @@ const Store = () => {
       color: "from-blue-500 to-blue-600",
       features: [
         `**500 ${t('store.monthlyGems')}**`,
+        t('store.features.everythingInIntro'),
         t('store.features.noBlurredImages'),
         t('store.features.unlimitedConversations'),
         t('store.features.adFreeExperience'),
@@ -691,26 +692,26 @@ const Store = () => {
                              </div>
                           )}
                         </div>
-                        <div className="flex items-baseline gap-2 flex-wrap sm:flex-nowrap">
-                          {plan.oldPrice && <span className="text-sm text-muted-foreground/60 line-through whitespace-nowrap">{plan.oldPrice}</span>}
-                           <div className="flex items-center gap-1">
-                             <span className="text-2xl font-bold text-foreground whitespace-nowrap">{plan.price}</span>
-                             <span className="text-sm text-muted-foreground whitespace-nowrap">/ {plan.period}</span>
-                           </div>
-                        </div>
+                         <div className="flex items-baseline gap-2 flex-wrap sm:flex-nowrap">
+                           {plan.oldPrice && <span className="text-sm text-muted-foreground/60 line-through whitespace-nowrap">{plan.oldPrice}</span>}
+                            <div className="flex items-center gap-1">
+                              <span className="text-2xl font-bold text-foreground whitespace-nowrap">{plan.price}</span>
+                              <span className="text-sm text-muted-foreground whitespace-nowrap">{plan.period}</span>
+                            </div>
+                         </div>
                       </div>
                     </div>
                   </div>
 
                   <div className="space-y-2 mb-6">
-                    {plan.features.map((feature, index) => {
-                      const isMonthlyGems = feature.includes('Monthly Gems');
-                      const IconToUse = isMonthlyGems ? Gem : Check;
+                     {plan.features.map((feature, index) => {
+                       const isGems = feature.includes('Monthly Gems') || feature.includes('Gems');
+                       const IconToUse = isGems ? Gem : Check;
                       
                       return (
-                        <div key={index} className="flex items-center space-x-2">
-                          <IconToUse className={`${isMonthlyGems ? 'w-5 h-5' : 'w-4 h-4'} flex-shrink-0 ${isMonthlyGems ? 'text-emerald-400' : 'text-primary'}`} />
-                          <span className={`${isMonthlyGems ? 'text-base' : 'text-sm'} text-foreground`}>
+                         <div key={index} className="flex items-center space-x-2">
+                           <IconToUse className={`${isGems ? 'w-5 h-5' : 'w-4 h-4'} flex-shrink-0 ${isGems ? 'text-emerald-400' : 'text-primary'}`} />
+                           <span className={`${isGems ? 'text-base' : 'text-sm'} text-foreground`}>
                             {feature.includes('**') ? (
                               <span dangerouslySetInnerHTML={{
                                 __html: feature.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
