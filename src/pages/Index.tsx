@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { CompanionCard } from "@/components/CompanionCard";
 import { NavigationBar } from "@/components/NavigationBar";
 import { Header } from "@/components/Header";
+import { SocialFooter } from "@/components/SocialFooter";
 import { useAuth } from "@/contexts/AuthContext";
 import { useDevMode } from "@/hooks/useDevMode";
 import { useTranslation } from 'react-i18next';
@@ -123,6 +124,9 @@ const Index = () => {
             ))}
         </div>
       </div>
+
+      {/* Social Footer */}
+      <SocialFooter className="border-t border-border/50" />
 
       {/* Navigation */}
       <NavigationBar 

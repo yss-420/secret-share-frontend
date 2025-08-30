@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Header } from "@/components/Header";
 import { NavigationBar } from "@/components/NavigationBar";
+import { SocialFooter } from "@/components/SocialFooter";
 import { ArrowLeft, ChevronRight, Crown, Globe, HelpCircle, Phone, Shield } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -129,6 +130,9 @@ const Settings = () => {
           </div>
         </div>
       </div>
+
+      {/* Social Footer */}
+      <SocialFooter className="border-t border-border/50" />
 
       <NavigationBar activeTab={getActiveTab()} onTabChange={handleTabChange} />
     </div>
