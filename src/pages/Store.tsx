@@ -34,6 +34,7 @@ const SUBSCRIPTION_MAP: Record<string, string> = {
 const Store = () => {
   const [loadingGems, setLoadingGems] = useState<{[key: number]: boolean}>({});
   const [loadingSubscriptions, setLoadingSubscriptions] = useState<{[key: string]: boolean}>({});
+  const [loadingIntro, setLoadingIntro] = useState(false);
   const navigate = useNavigate();
   const { updateGems, userStats, refreshUserData } = useUserData();
   const { user: telegramUser } = useTelegramAuth();
@@ -411,6 +412,161 @@ const Store = () => {
     }
   };
 
+  const handleIntroSubscribe = async () => {
+    if (!window.Telegram?.WebApp) {
+      toast({
+        title: "Telegram WebApp Error",
+        description: "Telegram WebApp not found. Please ensure you're using the latest Telegram version.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!telegramUser?.id) {
+      if (window.Telegram.WebApp.showAlert && typeof window.Telegram.WebApp.showAlert === 'function') {
+        try {
+          window.Telegram.WebApp.showAlert('User not authenticated!');
+        } catch (error) {
+          console.warn('showAlert not supported:', error);
+          toast({
+            title: "Authentication Required",
+            description: "Please open this store from the Telegram bot.",
+            variant: "destructive",
+          });
+        }
+      } else {
+        toast({
+          title: "Authentication Required", 
+          description: "Please open this store from the Telegram bot.",
+          variant: "destructive",
+        });
+      }
+      return;
+    }
+
+    setLoadingIntro(true);
+
+    try {
+      // Create invoice via backend using the intro package type
+      const response = await fetch('https://secret-share-backend-production.up.railway.app/api/create_invoice_link', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          user_id: telegramUser.id,
+          package_type: 'intro_3d'
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.success && data.invoice_url) {
+        // Show toast for Telegram payment
+        toast({
+          title: "Complete Payment in Telegram",
+          description: "You'll be redirected to complete your payment.",
+        });
+
+        // Open Telegram payment using invoice link
+        window.Telegram.WebApp.openInvoice(data.invoice_url, async (status) => {
+          if (status === "paid") {
+            // Fire BeMob pixel for successful intro purchase
+            const cid = localStorage.getItem('bemob_cid');
+            if (cid) {
+              const txid = (crypto?.randomUUID?.() ?? `${Date.now()}_${Math.random()}`);
+              
+              // Deduplication check using sessionStorage
+              const firedTxids = JSON.parse(sessionStorage.getItem('bemob_fired_txids') || '[]');
+              if (!firedTxids.includes(txid)) {
+                const payout = 50; // 50 stars for intro package
+                
+                console.log('Firing BeMob pixel for intro subscription:', { cid, txid, payout });
+                
+                // Fire conversion pixel using Image object to avoid CORS
+                new Image().src = `https://jerd8.bemobtrcks.com/conversion.gif?cid=${encodeURIComponent(cid)}&txid=${encodeURIComponent(txid)}&payout=${payout}&_=${Date.now()}`;
+                
+                // Store txid to prevent duplicates
+                firedTxids.push(txid);
+                sessionStorage.setItem('bemob_fired_txids', JSON.stringify(firedTxids));
+              }
+            }
+
+            // Poll user status for 10-15 seconds after payment
+            let pollCount = 0;
+            const maxPolls = 15;
+            const pollInterval = setInterval(async () => {
+              pollCount++;
+              try {
+                await refreshUser();
+                if (pollCount >= maxPolls) {
+                  clearInterval(pollInterval);
+                }
+              } catch (error) {
+                console.error('Error polling user status:', error);
+              }
+            }, 1000);
+
+            if (typeof window.Telegram.WebApp.showAlert === 'function') {
+              try {
+                window.Telegram.WebApp.showAlert('Intro subscription activated! 🎉');
+              } catch (error) {
+                console.warn('showAlert not supported:', error);
+                toast({ title: "Intro Activated! 🎉", description: "Your 3-day intro is now active." });
+              }
+            } else {
+              toast({ title: "Intro Activated! 🎉", description: "Your 3-day intro is now active." });
+            }
+          } else if (status === "cancelled") {
+            if (typeof window.Telegram.WebApp.showAlert === 'function') {
+              try {
+                window.Telegram.WebApp.showAlert('Payment cancelled.');
+              } catch (error) {
+                toast({ title: "Payment Cancelled", description: "You cancelled the payment." });
+              }
+            } else {
+              toast({ title: "Payment Cancelled", description: "You cancelled the payment." });
+            }
+          } else {
+            if (typeof window.Telegram.WebApp.showAlert === 'function') {
+              try {
+                window.Telegram.WebApp.showAlert('Payment failed. Please try again.');
+              } catch (error) {
+                toast({ title: "Payment Failed", description: "Please try again.", variant: "destructive" });
+              }
+            } else {
+              toast({ title: "Payment Failed", description: "Please try again.", variant: "destructive" });
+            }
+          }
+          setLoadingIntro(false);
+        });
+      } else {
+        throw new Error(data.error || 'Failed to create invoice');
+      }
+
+    } catch (error) {
+      console.error('Intro subscription error:', error);
+      if (typeof window.Telegram.WebApp.showAlert === 'function') {
+        try {
+          window.Telegram.WebApp.showAlert('Error creating payment. Please try again.');
+        } catch (alertError) {
+          toast({
+            title: "Payment Error",
+            description: "Unable to process payment. Please try again.",
+            variant: "destructive",
+          });
+        }
+      } else {
+        toast({
+          title: "Payment Error",
+          description: "Unable to process payment. Please try again.",
+          variant: "destructive",
+        });
+      }
+      setLoadingIntro(false);
+    }
+  };
+
   const gemPackages = [
     { gems: 100, price: "⭐️ 100", color: "from-blue-500 to-blue-600", popular: false },
     { gems: 220, price: "⭐️ 200", color: "from-green-500 to-green-600", popular: false },
@@ -423,6 +579,20 @@ const Store = () => {
   ];
 
   const subscriptionPlans = [
+    {
+      name: "Intro",
+      price: "⭐️ 50",
+      period: "3 days",
+      icon: Star,
+      color: "from-emerald-500 to-emerald-600",
+      features: [
+        "**80 Gems**",
+        "Multiple Languages",
+        "Access to All Features",
+        "Top-up Messages"
+      ],
+      isIntro: true
+    },
     {
       name: "Essential",
       oldPrice: "⭐️ 400",
@@ -498,12 +668,14 @@ const Store = () => {
               const IconComponent = plan.icon;
               return (
                 <Card key={plan.name} className="card-premium transition-smooth group p-6 relative">
-                  {/* Launch Offer Pill */}
-                  <div className="absolute top-3 right-3 z-10">
-                     <div className="bg-gradient-to-r from-primary/20 to-accent/20 backdrop-blur-sm border border-primary/30 px-2 py-1 rounded-full text-xs font-medium text-primary shadow-sm flicker">
-                       {t('store.launchOffer')}
-                     </div>
-                  </div>
+                  {/* Launch Offer Pill - Don't show for Intro */}
+                  {!plan.isIntro && (
+                    <div className="absolute top-3 right-3 z-10">
+                       <div className="bg-gradient-to-r from-primary/20 to-accent/20 backdrop-blur-sm border border-primary/30 px-2 py-1 rounded-full text-xs font-medium text-white shadow-sm flicker">
+                         {t('store.launchOffer')}
+                       </div>
+                    </div>
+                  )}
 
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center space-x-3">
@@ -520,10 +692,10 @@ const Store = () => {
                           )}
                         </div>
                         <div className="flex items-baseline gap-2 flex-wrap sm:flex-nowrap">
-                          <span className="text-sm text-muted-foreground/60 line-through whitespace-nowrap">{plan.oldPrice}</span>
+                          {plan.oldPrice && <span className="text-sm text-muted-foreground/60 line-through whitespace-nowrap">{plan.oldPrice}</span>}
                            <div className="flex items-center gap-1">
                              <span className="text-2xl font-bold text-foreground whitespace-nowrap">{plan.price}</span>
-                             <span className="text-sm text-muted-foreground whitespace-nowrap">{plan.period}</span>
+                             <span className="text-sm text-muted-foreground whitespace-nowrap">/ {plan.period}</span>
                            </div>
                         </div>
                       </div>
@@ -556,10 +728,13 @@ const Store = () => {
                      variant="premium" 
                      size="lg" 
                      className="w-full"
-                     onClick={() => handleSubscribe(plan.name)}
-                     disabled={loadingSubscriptions[plan.name] || false}
+                     onClick={() => plan.isIntro ? handleIntroSubscribe() : handleSubscribe(plan.name)}
+                     disabled={plan.isIntro ? loadingIntro : (loadingSubscriptions[plan.name] || false)}
                    >
-                     {loadingSubscriptions[plan.name] ? <LoadingSpinner size="sm" /> : t('store.subscribe')}
+                     {plan.isIntro 
+                       ? (loadingIntro ? <LoadingSpinner size="sm" /> : "Pay 50⭐")
+                       : (loadingSubscriptions[plan.name] ? <LoadingSpinner size="sm" /> : t('store.subscribe'))
+                     }
                   </Button>
                 </Card>
               );

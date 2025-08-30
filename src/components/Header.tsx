@@ -15,7 +15,9 @@ export const Header = () => {
 
   // Check if user has an active subscription
   const hasActiveSubscription = () =>
-    (stats?.subscription_type && stats.subscription_type !== 'free') || stats?.daily_limit == null;
+    (stats?.subscription_type && stats.subscription_type !== 'free') || 
+    stats?.daily_limit == null || 
+    (stats?.intro?.is_active === true);
 
   const getMessageDisplay = () => {
     if (loading) return <LoadingSpinner size="sm" />;

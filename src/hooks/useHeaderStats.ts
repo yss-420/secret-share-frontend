@@ -6,6 +6,12 @@ interface HeaderStats {
   messages_today: number;
   subscription_type: string;
   daily_limit: number | null;
+  intro: {
+    is_active: boolean;
+    start_at?: string;
+    end_at?: string;
+    seconds_remaining?: number;
+  } | null;
 }
 
 const API_BASE = import.meta.env.VITE_BACKEND_URL || 'https://pfuyxdqzbrjrtqlbkbku.supabase.co/functions/v1';
@@ -77,8 +83,8 @@ async function fetchHeaderStats() {
   const data = await res.json();
   console.log('✅ Real user data received:', data);
   
-  const { gems, messages_today, subscription_type, daily_limit } = data;
-  return { gems, messagesToday: messages_today, tier: subscription_type, dailyLimit: daily_limit ?? null };
+  const { gems, messages_today, subscription_type, daily_limit, intro } = data;
+  return { gems, messagesToday: messages_today, tier: subscription_type, dailyLimit: daily_limit ?? null, intro: intro ?? null };
 }
 
 export const useHeaderStats = () => {
@@ -99,7 +105,8 @@ export const useHeaderStats = () => {
           gems: devUser.gems,
           messages_today: devUser.messages_today,
           subscription_type: devUser.subscription_type || 'free',
-          daily_limit: 50
+          daily_limit: 50,
+          intro: null
         });
         setLoading(false);
         return;
@@ -115,7 +122,8 @@ export const useHeaderStats = () => {
           gems: 0,
           messages_today: 0,
           subscription_type: 'free',
-          daily_limit: 50
+          daily_limit: 50,
+          intro: null
         });
         setLoading(false);
         return;
@@ -123,15 +131,16 @@ export const useHeaderStats = () => {
 
       try {
         console.log('🔍 Fetching header stats from API');
-        const { gems, messagesToday, tier, dailyLimit } = await fetchHeaderStats();
+        const { gems, messagesToday, tier, dailyLimit, intro } = await fetchHeaderStats();
         
         setStats({
           gems,
           messages_today: messagesToday,
           subscription_type: tier,
-          daily_limit: dailyLimit
+          daily_limit: dailyLimit,
+          intro
         });
-        console.log('✅ Successfully fetched header stats:', { gems, messagesToday, tier, dailyLimit });
+        console.log('✅ Successfully fetched header stats:', { gems, messagesToday, tier, dailyLimit, intro });
       } catch (error) {
         console.error('💥 Failed to fetch header stats:', error);
         // Set placeholder values on error (will show as "—" in UI)
@@ -139,7 +148,8 @@ export const useHeaderStats = () => {
           gems: 0,
           messages_today: 0,
           subscription_type: 'free',
-          daily_limit: 50
+          daily_limit: 50,
+          intro: null
         });
       } finally {
         setLoading(false);
