@@ -641,22 +641,10 @@ const Store = () => {
     }
   ];
 
-  // Ko-fi Widget Effect
-  useEffect(() => {
-    // Create a simple Ko-fi button instead of using the complex widget
-    const kofiContainer = document.querySelector('#kofi-widget-container');
-    if (kofiContainer) {
-      kofiContainer.innerHTML = `
-        <a href="https://ko-fi.com/O4O41KFZKD" target="_blank" rel="noopener noreferrer" 
-           class="flicker"
-           style="display: inline-block; padding: 8px 16px; background: #ff38b8; color: white; 
-                  text-decoration: none; border-radius: 6px; font-size: 14px; font-weight: 500; 
-                  transition: all 0.2s ease;">
-          ☕ Support Us
-        </a>
-      `;
-    }
-  }, []);
+  // Ko-fi Support Button Handler
+  const handleKofiSupport = () => {
+    window.open('https://ko-fi.com/O4O41KFZKD', '_blank', 'noopener,noreferrer');
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -691,9 +679,17 @@ const Store = () => {
                     Love Secret Share? Your support keeps our shared dream alive. ❤️
                   </p>
                   
-                  <div id="kofi-widget-container">
-                    {/* Ko-fi widget will be rendered here */}
-                  </div>
+                  <Button 
+                    onClick={handleKofiSupport}
+                    className="flicker w-full text-sm font-medium px-4 py-2"
+                    style={{ 
+                      background: '#ff38b8', 
+                      color: 'white',
+                      border: 'none'
+                    }}
+                  >
+                    ☕ Support Us
+                  </Button>
                 </div>
               </Card>
 
