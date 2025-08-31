@@ -681,14 +681,19 @@ const Store = () => {
                   
                   <Button 
                     onClick={handleKofiSupport}
-                    className="flicker w-full text-sm font-medium px-4 py-2"
+                    className="flicker text-sm font-medium px-3 py-1.5 h-8 inline-flex items-center gap-1"
                     style={{ 
                       background: '#ff38b8', 
                       color: 'white',
                       border: 'none'
                     }}
                   >
-                    ☕ Support Us
+                    <img 
+                      src="/lovable-uploads/cda871ac-f737-430c-936f-0f6188957017.png" 
+                      alt="Ko-fi" 
+                      className="w-4 h-4"
+                    />
+                    Support Us
                   </Button>
                 </div>
               </Card>
