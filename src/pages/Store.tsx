@@ -643,39 +643,18 @@ const Store = () => {
 
   // Ko-fi Widget Effect
   useEffect(() => {
-    // Load Ko-fi widget script
-    const script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.src = 'https://storage.ko-fi.com/cdn/widget/Widget_2.js';
-    script.onload = () => {
-      // Initialize Ko-fi widget after script loads
-      if (window.kofiwidget2) {
-        window.kofiwidget2.init('Support Us', '#ff38b8', 'O4O41KFZKD');
-        
-        // Small delay to ensure DOM is ready
-        setTimeout(() => {
-          window.kofiwidget2.draw();
-          
-          // Move the generated widget to our container
-          const kofiWidget = document.querySelector('#kofiWidget');
-          const container = document.querySelector('#kofi-widget-container');
-          if (kofiWidget && container) {
-            container.appendChild(kofiWidget);
-          }
-        }, 100);
-      }
-    };
-    document.head.appendChild(script);
-
-    return () => {
-      // Cleanup script when component unmounts
-      try {
-        document.head.removeChild(script);
-      } catch (error) {
-        // Script might already be removed
-        console.warn('Ko-fi script cleanup error:', error);
-      }
-    };
+    // Create a simple Ko-fi button instead of using the complex widget
+    const kofiContainer = document.querySelector('#kofi-widget-container');
+    if (kofiContainer) {
+      kofiContainer.innerHTML = `
+        <a href="https://ko-fi.com/O4O41KFZKD" target="_blank" rel="noopener noreferrer" 
+           style="display: inline-block; padding: 8px 16px; background: #ff38b8; color: white; 
+                  text-decoration: none; border-radius: 6px; font-size: 14px; font-weight: 500; 
+                  transition: all 0.2s ease;">
+          ☕ Support Us
+        </a>
+      `;
+    }
   }, []);
 
   return (
