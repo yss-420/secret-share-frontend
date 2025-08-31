@@ -54,6 +54,13 @@ export type Database = {
             foreignKeyName: "chats_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "user_window_caps"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "chats_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
           },
@@ -212,7 +219,123 @@ export type Database = {
             foreignKeyName: "images_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "user_window_caps"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "images_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      intro_cycles: {
+        Row: {
+          created_at: string
+          end_at: string | null
+          extend_from_end: boolean
+          gems_credited: number
+          id: string
+          invoice_url: string | null
+          payload: string | null
+          payload_hash: string | null
+          previous_cycle_id: string | null
+          start_at: string | null
+          status: string
+          telegram_charge_id: string | null
+          updated_at: string
+          user_id: number
+        }
+        Insert: {
+          created_at?: string
+          end_at?: string | null
+          extend_from_end?: boolean
+          gems_credited?: number
+          id?: string
+          invoice_url?: string | null
+          payload?: string | null
+          payload_hash?: string | null
+          previous_cycle_id?: string | null
+          start_at?: string | null
+          status: string
+          telegram_charge_id?: string | null
+          updated_at?: string
+          user_id: number
+        }
+        Update: {
+          created_at?: string
+          end_at?: string | null
+          extend_from_end?: boolean
+          gems_credited?: number
+          id?: string
+          invoice_url?: string | null
+          payload?: string | null
+          payload_hash?: string | null
+          previous_cycle_id?: string | null
+          start_at?: string | null
+          status?: string
+          telegram_charge_id?: string | null
+          updated_at?: string
+          user_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "intro_cycles_previous_cycle_id_fkey"
+            columns: ["previous_cycle_id"]
+            isOneToOne: false
+            referencedRelation: "intro_cycles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      intro_reminder_jobs: {
+        Row: {
+          created_at: string
+          cycle_id: string
+          error: string | null
+          id: string
+          job_key: string
+          kind: string
+          run_at: string
+          sent_at: string | null
+          status: string
+          updated_at: string
+          user_id: number
+        }
+        Insert: {
+          created_at?: string
+          cycle_id: string
+          error?: string | null
+          id?: string
+          job_key: string
+          kind: string
+          run_at: string
+          sent_at?: string | null
+          status?: string
+          updated_at?: string
+          user_id: number
+        }
+        Update: {
+          created_at?: string
+          cycle_id?: string
+          error?: string | null
+          id?: string
+          job_key?: string
+          kind?: string
+          run_at?: string
+          sent_at?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "intro_reminder_jobs_cycle_id_fkey"
+            columns: ["cycle_id"]
+            isOneToOne: false
+            referencedRelation: "intro_cycles"
             referencedColumns: ["id"]
           },
         ]
@@ -347,6 +470,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "user_counters_mv"
             referencedColumns: ["user_uuid"]
+          },
+          {
+            foreignKeyName: "relationships_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_window_caps"
+            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "relationships_user_id_fkey"
@@ -573,6 +703,13 @@ export type Database = {
             foreignKeyName: "transactions_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "user_window_caps"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "transactions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
           },
@@ -607,6 +744,7 @@ export type Database = {
           age_verified: boolean | null
           bemob_cid: string | null
           blocked_at: string | null
+          bonus_messages_in_window: number
           created_at: string | null
           gems: number | null
           id: string
@@ -615,6 +753,8 @@ export type Database = {
           last_message_date: string | null
           last_seen: string | null
           launch_promo_seen_at: string | null
+          message_window_index: number
+          message_window_started_at: string | null
           messages_today: number | null
           nickname: string | null
           pending_gem_refund: number | null
@@ -636,6 +776,7 @@ export type Database = {
           age_verified?: boolean | null
           bemob_cid?: string | null
           blocked_at?: string | null
+          bonus_messages_in_window?: number
           created_at?: string | null
           gems?: number | null
           id?: string
@@ -644,6 +785,8 @@ export type Database = {
           last_message_date?: string | null
           last_seen?: string | null
           launch_promo_seen_at?: string | null
+          message_window_index?: number
+          message_window_started_at?: string | null
           messages_today?: number | null
           nickname?: string | null
           pending_gem_refund?: number | null
@@ -665,6 +808,7 @@ export type Database = {
           age_verified?: boolean | null
           bemob_cid?: string | null
           blocked_at?: string | null
+          bonus_messages_in_window?: number
           created_at?: string | null
           gems?: number | null
           id?: string
@@ -673,6 +817,8 @@ export type Database = {
           last_message_date?: string | null
           last_seen?: string | null
           launch_promo_seen_at?: string | null
+          message_window_index?: number
+          message_window_started_at?: string | null
           messages_today?: number | null
           nickname?: string | null
           pending_gem_refund?: number | null
@@ -736,6 +882,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "user_counters_mv"
             referencedColumns: ["user_uuid"]
+          },
+          {
+            foreignKeyName: "videos_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_window_caps"
+            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "videos_user_id_fkey"
@@ -919,6 +1072,45 @@ export type Database = {
           messages_today?: number | null
           subscription_type?: string | null
           telegram_id?: number | null
+        }
+        Relationships: []
+      }
+      user_window_caps: {
+        Row: {
+          base_cap: number | null
+          bonus_messages_in_window: number | null
+          effective_cap: number | null
+          hit_cap: boolean | null
+          last_seen: string | null
+          message_window_index: number | null
+          message_window_started_at: string | null
+          messages_today: number | null
+          user_id: string | null
+          username: string | null
+        }
+        Insert: {
+          base_cap?: never
+          bonus_messages_in_window?: never
+          effective_cap?: never
+          hit_cap?: never
+          last_seen?: string | null
+          message_window_index?: never
+          message_window_started_at?: never
+          messages_today?: never
+          user_id?: string | null
+          username?: never
+        }
+        Update: {
+          base_cap?: never
+          bonus_messages_in_window?: never
+          effective_cap?: never
+          hit_cap?: never
+          last_seen?: string | null
+          message_window_index?: never
+          message_window_started_at?: never
+          messages_today?: never
+          user_id?: string | null
+          username?: never
         }
         Relationships: []
       }
