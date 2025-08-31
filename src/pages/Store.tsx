@@ -648,6 +648,7 @@ const Store = () => {
     if (kofiContainer) {
       kofiContainer.innerHTML = `
         <a href="https://ko-fi.com/O4O41KFZKD" target="_blank" rel="noopener noreferrer" 
+           class="flicker"
            style="display: inline-block; padding: 8px 16px; background: #ff38b8; color: white; 
                   text-decoration: none; border-radius: 6px; font-size: 14px; font-weight: 500; 
                   transition: all 0.2s ease;">
@@ -678,9 +679,26 @@ const Store = () => {
 
           <TabsContent value="subscriptions" className="space-y-4">
             {/* Intro + Ko-fi Cards Row */}
-            <div className="flex flex-col sm:flex-row gap-4 mb-4">
-              {/* Intro Card - Reduced Size */}
-              <Card className="card-premium transition-smooth group p-4 relative flex-1">
+            <div className="flex flex-col xs:flex-row gap-4 mb-4">
+              {/* Ko-fi Support Card - First on mobile */}
+              <Card className="card-premium transition-smooth group p-4 relative flex-1 order-1 xs:order-2">
+                <div className="text-center">
+                  <div className="w-10 h-10 mx-auto mb-3 rounded-full bg-gradient-to-br from-pink-500 to-red-500 flex items-center justify-center">
+                    <Heart className="w-5 h-5 text-white" />
+                  </div>
+                  
+                  <p className="text-xs text-white font-bold leading-relaxed mb-4">
+                    Love Secret Share? Your support keeps our shared dream alive. ❤️
+                  </p>
+                  
+                  <div id="kofi-widget-container">
+                    {/* Ko-fi widget will be rendered here */}
+                  </div>
+                </div>
+              </Card>
+
+              {/* Intro Card - Reduced Size - Second on mobile */}
+              <Card className="card-premium transition-smooth group p-4 relative flex-1 order-2 xs:order-1">
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center space-x-2">
                     <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${introSubscription.color} flex items-center justify-center`}>
@@ -729,23 +747,6 @@ const Store = () => {
                 >
                   {loadingIntro ? <LoadingSpinner size="sm" /> : "Pay 50⭐"}
                 </Button>
-              </Card>
-
-              {/* Ko-fi Support Card */}
-              <Card className="card-premium transition-smooth group p-4 relative flex-1">
-                <div className="text-center">
-                  <div className="w-10 h-10 mx-auto mb-3 rounded-full bg-gradient-to-br from-pink-500 to-red-500 flex items-center justify-center">
-                    <Heart className="w-5 h-5 text-white" />
-                  </div>
-                  
-                  <p className="text-xs text-muted-foreground leading-relaxed mb-4">
-                    Love Secret Share? Your support keeps our shared dream alive. ❤️
-                  </p>
-                  
-                  <div id="kofi-widget-container">
-                    {/* Ko-fi widget will be rendered here */}
-                  </div>
-                </div>
               </Card>
             </div>
 
