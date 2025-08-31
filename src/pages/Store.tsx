@@ -12,6 +12,17 @@ import { useTelegramAuth } from "@/hooks/useTelegramAuth";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useTranslation } from 'react-i18next';
+import { Heart } from "lucide-react";
+
+// Declare Ko-fi global types
+declare global {
+  interface Window {
+    kofiwidget2?: {
+      init: (text: string, color: string, id: string) => void;
+      draw: () => void;
+    };
+  }
+}
 
 // Package mapping constants
 const GEM_PACKAGE_MAP: Record<number, string> = {
@@ -562,21 +573,22 @@ const Store = () => {
     { gems: 10000, price: "⭐️ 7,500", color: "from-indigo-500 to-indigo-600", popular: false },
   ];
 
+  const introSubscription = {
+    name: "Intro",
+    price: "⭐️ 50",
+    period: "/ 3 days",
+    icon: Gift,
+    color: "from-emerald-500 to-emerald-600",
+    features: [
+      "**80 Gems**",
+      "Multiple Languages",
+      "Access to All Features",
+      "Top-up Messages"
+    ],
+    isIntro: true
+  };
+
   const subscriptionPlans = [
-    {
-      name: "Intro",
-      price: "⭐️ 50",
-      period: "/ 3 days",
-      icon: Gift,
-      color: "from-emerald-500 to-emerald-600",
-      features: [
-        "**80 Gems**",
-        "Multiple Languages",
-        "Access to All Features",
-        "Top-up Messages"
-      ],
-      isIntro: true
-    },
     {
       name: "Essential",
       oldPrice: "⭐️ 400",
@@ -629,6 +641,43 @@ const Store = () => {
     }
   ];
 
+  // Ko-fi Widget Effect
+  useEffect(() => {
+    // Load Ko-fi widget script
+    const script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.src = 'https://storage.ko-fi.com/cdn/widget/Widget_2.js';
+    script.onload = () => {
+      // Initialize Ko-fi widget after script loads
+      if (window.kofiwidget2) {
+        window.kofiwidget2.init('Support Us', '#ff38b8', 'O4O41KFZKD');
+        
+        // Small delay to ensure DOM is ready
+        setTimeout(() => {
+          window.kofiwidget2.draw();
+          
+          // Move the generated widget to our container
+          const kofiWidget = document.querySelector('#kofiWidget');
+          const container = document.querySelector('#kofi-widget-container');
+          if (kofiWidget && container) {
+            container.appendChild(kofiWidget);
+          }
+        }, 100);
+      }
+    };
+    document.head.appendChild(script);
+
+    return () => {
+      // Cleanup script when component unmounts
+      try {
+        document.head.removeChild(script);
+      } catch (error) {
+        // Script might already be removed
+        console.warn('Ko-fi script cleanup error:', error);
+      }
+    };
+  }, []);
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -649,18 +698,89 @@ const Store = () => {
           </TabsList>
 
           <TabsContent value="subscriptions" className="space-y-4">
+            {/* Intro + Ko-fi Cards Row */}
+            <div className="flex flex-col sm:flex-row gap-4 mb-4">
+              {/* Intro Card - Reduced Size */}
+              <Card className="card-premium transition-smooth group p-4 relative flex-1">
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex items-center space-x-2">
+                    <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${introSubscription.color} flex items-center justify-center`}>
+                      <Gift className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-1">
+                        <h3 className="text-base font-bold text-gradient">{introSubscription.name}</h3>
+                      </div>
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-lg font-bold text-foreground whitespace-nowrap">{introSubscription.price}</span>
+                        <span className="text-sm text-muted-foreground whitespace-nowrap">{introSubscription.period}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-1 mb-4">
+                  {introSubscription.features.map((feature, index) => {
+                    const isGems = feature.includes('Gems');
+                    const IconToUse = isGems ? Gem : Check;
+                    
+                    return (
+                      <div key={index} className="flex items-center space-x-2">
+                        <IconToUse className={`${isGems ? 'w-4 h-4' : 'w-3 h-3'} flex-shrink-0 ${isGems ? 'text-emerald-400' : 'text-primary'}`} />
+                        <span className="text-xs text-foreground">
+                          {feature.includes('**') ? (
+                            <span dangerouslySetInnerHTML={{
+                              __html: feature.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                            }} />
+                          ) : (
+                            feature
+                          )}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <Button 
+                  variant="premium" 
+                  size="sm" 
+                  className="w-full"
+                  onClick={handleIntroSubscribe}
+                  disabled={loadingIntro}
+                >
+                  {loadingIntro ? <LoadingSpinner size="sm" /> : "Pay 50⭐"}
+                </Button>
+              </Card>
+
+              {/* Ko-fi Support Card */}
+              <Card className="card-premium transition-smooth group p-4 relative flex-1">
+                <div className="text-center">
+                  <div className="w-10 h-10 mx-auto mb-3 rounded-full bg-gradient-to-br from-pink-500 to-red-500 flex items-center justify-center">
+                    <Heart className="w-5 h-5 text-white" />
+                  </div>
+                  
+                  <p className="text-xs text-muted-foreground leading-relaxed mb-4">
+                    Love Secret Share? Your support keeps our shared dream alive. ❤️
+                  </p>
+                  
+                  <div id="kofi-widget-container">
+                    {/* Ko-fi widget will be rendered here */}
+                  </div>
+                </div>
+              </Card>
+            </div>
+
+            {/* Regular Subscription Plans */}
             {subscriptionPlans.map((plan) => {
               const IconComponent = plan.icon;
               return (
                 <Card key={plan.name} className="card-premium transition-smooth group p-6 relative">
-                  {/* Launch Offer Pill - Don't show for Intro */}
-                  {!plan.isIntro && (
-                    <div className="absolute top-3 right-3 z-10">
-                       <div className="bg-gradient-to-r from-primary/20 to-accent/20 backdrop-blur-sm border border-primary/30 px-2 py-1 rounded-full text-xs font-medium text-white shadow-sm flicker">
-                         {t('store.launchOffer')}
-                       </div>
-                    </div>
-                  )}
+                  {/* Launch Offer Pill */}
+                  <div className="absolute top-3 right-3 z-10">
+                     <div className="bg-gradient-to-r from-primary/20 to-accent/20 backdrop-blur-sm border border-primary/30 px-2 py-1 rounded-full text-xs font-medium text-white shadow-sm flicker">
+                       {t('store.launchOffer')}
+                     </div>
+                  </div>
 
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center space-x-3">
@@ -713,13 +833,10 @@ const Store = () => {
                      variant="premium" 
                      size="lg" 
                      className="w-full"
-                     onClick={() => plan.isIntro ? handleIntroSubscribe() : handleSubscribe(plan.name)}
-                     disabled={plan.isIntro ? loadingIntro : (loadingSubscriptions[plan.name] || false)}
+                     onClick={() => handleSubscribe(plan.name)}
+                     disabled={loadingSubscriptions[plan.name] || false}
                    >
-                     {plan.isIntro 
-                       ? (loadingIntro ? <LoadingSpinner size="sm" /> : "Pay 50⭐")
-                       : (loadingSubscriptions[plan.name] ? <LoadingSpinner size="sm" /> : t('store.subscribe'))
-                     }
+                     {loadingSubscriptions[plan.name] ? <LoadingSpinner size="sm" /> : t('store.subscribe')}
                   </Button>
                 </Card>
               );
