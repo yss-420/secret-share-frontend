@@ -158,6 +158,6 @@
   }
 
   .animate-gem-pulse {
-    animation: gem-pulse 3s ease-in-out infinite;
+    animation: gem-pulse 6s ease-in-out infinite;
   }
 }
