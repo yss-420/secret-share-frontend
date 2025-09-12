@@ -151,7 +151,7 @@ class AdService {
     });
   }
 
-  // Quick earn rewarded ad (10 gems)
+  // Quick earn rewarded ad (10 gems) - Max 5 per day
   async showQuickEarnAd(userId: number): Promise<{ success: boolean; message: string; gemsAdded?: number }> {
     return this.withAdLock(async () => {
       const eligibility = await this.checkEligibility(userId, 'quick');
@@ -192,7 +192,7 @@ class AdService {
     });
   }
 
-  // Big bonus rewarded popup (50 gems)
+  // Big bonus rewarded popup (50 gems) - Max 1 per week
   async showBigBonusAd(userId: number): Promise<{ success: boolean; message: string; gemsAdded?: number }> {
     return this.withAdLock(async () => {
       const eligibility = await this.checkEligibility(userId, 'bonus');
