@@ -140,7 +140,7 @@ class AdService {
       const session = await this.startAdSession(userId, 'interstitial');
       
       try {
-        await this.showMonetag('inApp');
+        await this.showMonetag('inApp', session.session_id);
         // Always report completion as true for passive ads
         await this.completeAdSession(userId, 'interstitial', session.session_id, true);
         console.log('Passive ad completed successfully');
@@ -166,7 +166,7 @@ class AdService {
       const session = await this.startAdSession(userId, 'quick');
       
       try {
-        await this.showMonetag();
+        await this.showMonetag(undefined, session.session_id);
         const result = await this.completeAdSession(userId, 'quick', session.session_id, true);
         
         if (result.ok) {
@@ -207,7 +207,7 @@ class AdService {
       const session = await this.startAdSession(userId, 'bonus');
       
       try {
-        await this.showMonetag('pop');
+        await this.showMonetag('pop', session.session_id);
         
         // Poll for completion status
         let status = 'started';
@@ -244,7 +244,7 @@ class AdService {
   }
 
   // Monetag SDK wrapper
-  private async showMonetag(type?: 'inApp' | 'pop'): Promise<void> {
+  private async showMonetag(type?: 'inApp' | 'pop', sessionId?: string): Promise<void> {
     return new Promise((resolve, reject) => {
       try {
         // Check if Monetag SDK is available
@@ -254,17 +254,24 @@ class AdService {
 
         const monetag = (window as any).show_9674140;
         
+        // Create options object with session ID for postback tracking
+        const options: any = {};
+        if (sessionId) {
+          options.ymid = sessionId; // Pass session_id as YMID for postback tracking
+        }
+        
         if (type === 'inApp') {
-          monetag({ type: 'inApp' } as any)
+          options.type = 'inApp';
+          monetag(options)
             .then(() => resolve())
             .catch((error: any) => reject(error));
         } else if (type === 'pop') {
-          monetag('pop')
+          monetag('pop', options)
             .then(() => resolve())
             .catch((error: any) => reject(error));
         } else {
           // Default rewarded interstitial
-          monetag()
+          monetag(sessionId ? options : undefined)
             .then(() => resolve())
             .catch((error: any) => reject(error));
         }
