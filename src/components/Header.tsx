@@ -5,16 +5,11 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useHeaderStats } from "@/hooks/useHeaderStats";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { useNavigate } from "react-router-dom";
-import { FreeGemsButton } from "./FreeGemsButton";
-import { EarnModal } from "./EarnModal";
-import { adService } from "@/services/adService";
-import { useState } from "react";
 
 export const Header = () => {
   const { user, telegramUser, error: authError } = useAuth();
   const { stats, loading } = useHeaderStats();
   const navigate = useNavigate();
-  const [earnModalOpen, setEarnModalOpen] = useState(false);
 
   console.log('🔍 Header - Auth state:', { user, telegramUser, authError });
 
@@ -39,13 +34,6 @@ export const Header = () => {
     return <span className="text-xs font-medium text-foreground">{stats.gems}</span>;
   };
 
-  // Check if user should see Free Gems button
-  const shouldShowFreeGems = !adService.isPaidUser(stats?.subscription_type);
-
-  const handleFreeGemsClick = () => {
-    setEarnModalOpen(true);
-  };
-
   return (
     <header className="flex items-center justify-between px-4 py-3 bg-background border-b border-white/20">
       {/* Left side - Profile and Brand */}
@@ -65,15 +53,6 @@ export const Header = () => {
 
       {/* Right side - Combined Stats and Buttons */}
       <div className="flex items-center space-x-2">
-        {/* Free Gems button (shown for Free and Intro users only) */}
-        {shouldShowFreeGems && (
-          <FreeGemsButton 
-            onClick={handleFreeGemsClick}
-            size="sm"
-            variant="icon-only"
-          />
-        )}
-
         {/* Combined Gems + Energy + Plus button pill */}
         <div className="flex items-center space-x-1.5 bg-white/10 px-2 py-1 rounded-full border border-white/20">
           {/* Gems */}
@@ -105,14 +84,6 @@ export const Header = () => {
           </Button>
         </div>
       </div>
-
-      {/* Earn Modal */}
-      <EarnModal 
-        open={earnModalOpen}
-        onOpenChange={setEarnModalOpen}
-        userId={telegramUser?.id}
-        subscriptionType={stats?.subscription_type}
-      />
     </header>
   );
 };

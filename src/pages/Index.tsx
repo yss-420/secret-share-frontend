@@ -10,9 +10,13 @@ import { useDevMode } from "@/hooks/useDevMode";
 import { useTranslation } from 'react-i18next';
 import { usePassiveAd } from '@/hooks/usePassiveAd';
 import { useHeaderStats } from '@/hooks/useHeaderStats';
+import { FreeGemsButton } from '@/components/FreeGemsButton';
+import { EarnModal } from '@/components/EarnModal';
+import { adService } from '@/services/adService';
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState('characters');
+  const [earnModalOpen, setEarnModalOpen] = useState(false);
   const navigate = useNavigate();
   const { user, telegramUser, isLoading, isAuthenticated } = useAuth();
   const { isDevMode } = useDevMode();
@@ -86,6 +90,13 @@ const Index = () => {
     }
   };
 
+  // Check if user should see Free Gems button
+  const shouldShowFreeGems = !adService.isPaidUser(stats?.subscription_type);
+
+  const handleFreeGemsClick = () => {
+    setEarnModalOpen(true);
+  };
+
   return (
     <div className="min-h-screen bg-background pb-24">
       <Header />
@@ -106,9 +117,18 @@ const Index = () => {
             )}
           </div>
 
-          <h1 className="text-xl font-bold text-white mb-2 leading-tight">
-            {t('home.chooseCompanion')}
-          </h1>
+          <div className="flex items-center justify-between mb-2">
+            <h1 className="text-xl font-bold text-white leading-tight">
+              {t('home.chooseCompanion')}
+            </h1>
+            {shouldShowFreeGems && (
+              <FreeGemsButton 
+                onClick={handleFreeGemsClick}
+                size="sm"
+                variant="full"
+              />
+            )}
+          </div>
           <p className="text-muted-foreground text-sm">
             {t('home.experienceNoLimits')}
           </p>
@@ -138,6 +158,14 @@ const Index = () => {
       <NavigationBar 
         activeTab={activeTab}
         onTabChange={handleTabChange}
+      />
+
+      {/* Earn Modal */}
+      <EarnModal 
+        open={earnModalOpen}
+        onOpenChange={setEarnModalOpen}
+        userId={telegramUser?.id}
+        subscriptionType={stats?.subscription_type}
       />
     </div>
   );
