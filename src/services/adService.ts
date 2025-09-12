@@ -258,6 +258,7 @@ class AdService {
         const options: any = {};
         if (sessionId) {
           options.ymid = sessionId; // Pass session_id as YMID for postback tracking
+          options.requestVar = sessionId; // Pass session_id as requestVar for safety
         }
         
         if (type === 'inApp') {
