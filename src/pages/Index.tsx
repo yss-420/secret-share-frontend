@@ -8,6 +8,8 @@ import { SocialFooter } from "@/components/SocialFooter";
 import { useAuth } from "@/contexts/AuthContext";
 import { useDevMode } from "@/hooks/useDevMode";
 import { useTranslation } from 'react-i18next';
+import { usePassiveAd } from '@/hooks/usePassiveAd';
+import { useHeaderStats } from '@/hooks/useHeaderStats';
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState('characters');
@@ -15,6 +17,10 @@ const Index = () => {
   const { user, telegramUser, isLoading, isAuthenticated } = useAuth();
   const { isDevMode } = useDevMode();
   const { t } = useTranslation();
+  const { stats } = useHeaderStats();
+
+  // Initialize passive ad system
+  usePassiveAd(telegramUser?.id, stats?.subscription_type);
 
   const companions = [
     {

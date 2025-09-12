@@ -6,13 +6,16 @@ import { Header } from "@/components/Header";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { Gem, Crown, ArrowLeft, Star, Sparkles, Check, Gift } from "lucide-react";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useUserData } from "@/hooks/useUserData";
 import { useTelegramAuth } from "@/hooks/useTelegramAuth";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useTranslation } from 'react-i18next';
 import { Heart } from "lucide-react";
+import { FreeGemsButton } from "@/components/FreeGemsButton";
+import { EarnModal } from "@/components/EarnModal";
+import { adService } from "@/services/adService";
 
 // Declare Ko-fi global types
 declare global {
@@ -46,10 +49,40 @@ const Store = () => {
   const [loadingGems, setLoadingGems] = useState<{[key: number]: boolean}>({});
   const [loadingSubscriptions, setLoadingSubscriptions] = useState<{[key: string]: boolean}>({});
   const [loadingIntro, setLoadingIntro] = useState(false);
+  const [earnModalOpen, setEarnModalOpen] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const { updateGems, userStats, refreshUserData } = useUserData();
   const { user: telegramUser } = useTelegramAuth();
   const { t } = useTranslation();
+
+  // Handle URL parameters for deep-linking
+  useEffect(() => {
+    const tab = searchParams.get('tab');
+    const tile = searchParams.get('tile');
+    
+    if (tab === 'earn' || tile === 'bonus') {
+      setEarnModalOpen(true);
+    }
+  }, [searchParams]);
+
+  // Check if user should see Free Gems
+  const shouldShowFreeGems = !adService.isPaidUser(userStats?.subscription_type);
+
+  const handleFreeGemsClick = () => {
+    setEarnModalOpen(true);
+  };
+
+  const handleEarnModalClose = (open: boolean) => {
+    setEarnModalOpen(open);
+    if (!open) {
+      // Clear URL parameters when modal closes
+      const newSearchParams = new URLSearchParams(searchParams);
+      newSearchParams.delete('tab');
+      newSearchParams.delete('tile');
+      setSearchParams(newSearchParams);
+    }
+  };
 
   // Refresh user function to call after payments
   const refreshUser = async () => {
@@ -650,12 +683,20 @@ const Store = () => {
     <div className="min-h-screen bg-background">
       <Header />
       
-      {/* Header with back button */}
-      <div className="flex items-center px-4 py-3">
-        <Button variant="ghost" size="sm" onClick={() => navigate('/')}>
-          <ArrowLeft className="w-4 h-4" />
-        </Button>
-        <h1 className="text-base font-semibold text-gradient ml-3">{t('store.title', 'Store')}</h1>
+      {/* Header with back button and Free Gems */}
+      <div className="flex items-center justify-between px-4 py-3">
+        <div className="flex items-center">
+          <Button variant="ghost" size="sm" onClick={() => navigate('/')}>
+            <ArrowLeft className="w-4 h-4" />
+          </Button>
+          <h1 className="text-base font-semibold text-gradient ml-3">{t('store.title', 'Store')}</h1>
+        </div>
+        {shouldShowFreeGems && (
+          <FreeGemsButton 
+            onClick={handleFreeGemsClick}
+            size="sm"
+          />
+        )}
       </div>
 
       <div className="px-4 py-3">
@@ -858,6 +899,15 @@ const Store = () => {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Earn Modal */}
+      <EarnModal 
+        open={earnModalOpen}
+        onOpenChange={handleEarnModalClose}
+        userId={telegramUser?.id}
+        subscriptionType={userStats?.subscription_type}
+        highlightTile={searchParams.get('tile') === 'bonus' ? 'bonus' : undefined}
+      />
     </div>
   );
 };

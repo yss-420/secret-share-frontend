@@ -10,6 +10,11 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useUserData } from "@/hooks/useUserData";
 import { useTranslation } from 'react-i18next';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { FreeGemsButton } from "@/components/FreeGemsButton";
+import { EarnModal } from "@/components/EarnModal";
+import { adService } from "@/services/adService";
+import { useTelegramAuth } from "@/hooks/useTelegramAuth";
+import { useState } from "react";
 
 const Settings = () => {
   const location = useLocation();
@@ -18,6 +23,11 @@ const Settings = () => {
   const { userStats } = useUserData();
   const { t } = useTranslation();
   const { availableLanguages, currentLanguage, changeLanguage } = useLanguage();
+  const { user: telegramUser } = useTelegramAuth();
+  const [earnModalOpen, setEarnModalOpen] = useState(false);
+
+  // Check if user should see Free Gems
+  const shouldShowFreeGems = !adService.isPaidUser(userStats?.subscription_type);
 
   // Determine active tab based on current route
   const getActiveTab = () => {
@@ -41,12 +51,20 @@ const Settings = () => {
     <div className="min-h-screen bg-background pb-24">
       <Header />
       
-      {/* Header with back button */}
-      <div className="flex items-center px-4 py-3">
-        <Button variant="ghost" size="sm" onClick={() => navigate('/')}>
-          <ArrowLeft className="w-4 h-4" />
-        </Button>
-        <h1 className="text-base font-semibold text-gradient ml-3">{t('settings.title')}</h1>
+      {/* Header with back button and Free Gems */}
+      <div className="flex items-center justify-between px-4 py-3">
+        <div className="flex items-center">
+          <Button variant="ghost" size="sm" onClick={() => navigate('/')}>
+            <ArrowLeft className="w-4 h-4" />
+          </Button>
+          <h1 className="text-base font-semibold text-gradient ml-3">{t('settings.title')}</h1>
+        </div>
+        {shouldShowFreeGems && (
+          <FreeGemsButton 
+            onClick={() => setEarnModalOpen(true)}
+            size="sm"
+          />
+        )}
       </div>
 
       <div className="px-4 py-3 space-y-6">
@@ -135,6 +153,14 @@ const Settings = () => {
       <SocialFooter className="border-t border-border/50" />
 
       <NavigationBar activeTab={getActiveTab()} onTabChange={handleTabChange} />
+
+      {/* Earn Modal */}
+      <EarnModal 
+        open={earnModalOpen}
+        onOpenChange={setEarnModalOpen}
+        userId={telegramUser?.id}
+        subscriptionType={userStats?.subscription_type}
+      />
     </div>
   );
 };

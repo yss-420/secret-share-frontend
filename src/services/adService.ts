@@ -1,0 +1,300 @@
+import { supabase } from '@/integrations/supabase/client';
+
+export interface AdEligibilityResponse {
+  allowed: boolean;
+  next_available_at?: string;
+  remaining_today?: number;
+  cooldown_seconds?: number;
+  reason?: string;
+}
+
+export interface AdStartResponse {
+  session_id: string;
+  zone: string;
+}
+
+export interface AdCompleteResponse {
+  ok: boolean;
+  gems_added?: number;
+  message?: string;
+}
+
+export interface AdStatusResponse {
+  status: 'started' | 'completed' | 'failed';
+  gems_added?: number;
+}
+
+export type AdType = 'interstitial' | 'quick' | 'bonus';
+
+class AdService {
+  private baseUrl = 'https://secret-share-backend-production.up.railway.app';
+  private isAdRunning = false;
+
+  // Debounce mechanism to ensure only one ad runs at a time
+  private async withAdLock<T>(fn: () => Promise<T>): Promise<T> {
+    if (this.isAdRunning) {
+      throw new Error('Another ad is already running. Please wait.');
+    }
+    
+    this.isAdRunning = true;
+    try {
+      return await fn();
+    } finally {
+      this.isAdRunning = false;
+    }
+  }
+
+  async checkEligibility(userId: number, type: AdType, firstSession = false): Promise<AdEligibilityResponse> {
+    try {
+      const response = await fetch(
+        `${this.baseUrl}/api/ads/eligibility?user_id=${userId}&type=${type}&first_session=${firstSession ? 1 : 0}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Ad eligibility check failed:', error);
+      return { allowed: false, reason: 'Ad service unavailable' };
+    }
+  }
+
+  async startAdSession(userId: number, type: AdType): Promise<AdStartResponse> {
+    const response = await fetch(`${this.baseUrl}/api/ads/start`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        user_id: userId,
+        type,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to start ad session: ${response.status}`);
+    }
+
+    return await response.json();
+  }
+
+  async completeAdSession(
+    userId: number,
+    type: AdType,
+    sessionId: string,
+    completed: boolean
+  ): Promise<AdCompleteResponse> {
+    const response = await fetch(`${this.baseUrl}/api/ads/complete`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        user_id: userId,
+        type,
+        session_id: sessionId,
+        completed,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to complete ad session: ${response.status}`);
+    }
+
+    return await response.json();
+  }
+
+  async getAdStatus(sessionId: string): Promise<AdStatusResponse> {
+    const response = await fetch(`${this.baseUrl}/api/ads/status?session_id=${sessionId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to get ad status: ${response.status}`);
+    }
+
+    return await response.json();
+  }
+
+  // Passive interstitial ad
+  async showPassiveAd(userId: number, firstSession = false): Promise<void> {
+    return this.withAdLock(async () => {
+      const eligibility = await this.checkEligibility(userId, 'interstitial', firstSession);
+      
+      if (!eligibility.allowed) {
+        console.log('Passive ad not eligible:', eligibility.reason);
+        return;
+      }
+
+      const session = await this.startAdSession(userId, 'interstitial');
+      
+      try {
+        await this.showMonetag('inApp');
+        // Always report completion as true for passive ads
+        await this.completeAdSession(userId, 'interstitial', session.session_id, true);
+        console.log('Passive ad completed successfully');
+      } catch (error) {
+        console.error('Passive ad failed:', error);
+        await this.completeAdSession(userId, 'interstitial', session.session_id, false);
+      }
+    });
+  }
+
+  // Quick earn rewarded ad (10 gems)
+  async showQuickEarnAd(userId: number): Promise<{ success: boolean; message: string; gemsAdded?: number }> {
+    return this.withAdLock(async () => {
+      const eligibility = await this.checkEligibility(userId, 'quick');
+      
+      if (!eligibility.allowed) {
+        return { 
+          success: false, 
+          message: eligibility.reason || 'Ad not available right now'
+        };
+      }
+
+      const session = await this.startAdSession(userId, 'quick');
+      
+      try {
+        await this.showMonetag();
+        const result = await this.completeAdSession(userId, 'quick', session.session_id, true);
+        
+        if (result.ok) {
+          return {
+            success: true,
+            message: `+${result.gems_added || 10} gems`,
+            gemsAdded: result.gems_added || 10
+          };
+        } else {
+          return {
+            success: false,
+            message: result.message || 'Watch the full video to earn gems.'
+          };
+        }
+      } catch (error) {
+        console.error('Quick earn ad failed:', error);
+        await this.completeAdSession(userId, 'quick', session.session_id, false);
+        return {
+          success: false,
+          message: 'Watch the full video to earn gems.'
+        };
+      }
+    });
+  }
+
+  // Big bonus rewarded popup (50 gems)
+  async showBigBonusAd(userId: number): Promise<{ success: boolean; message: string; gemsAdded?: number }> {
+    return this.withAdLock(async () => {
+      const eligibility = await this.checkEligibility(userId, 'bonus');
+      
+      if (!eligibility.allowed) {
+        return { 
+          success: false, 
+          message: eligibility.reason || 'Bonus not available yet'
+        };
+      }
+
+      const session = await this.startAdSession(userId, 'bonus');
+      
+      try {
+        await this.showMonetag('pop');
+        
+        // Poll for completion status
+        let status = 'started';
+        let attempts = 0;
+        const maxAttempts = 30;
+        
+        while (status !== 'completed' && attempts < maxAttempts) {
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          const statusResponse = await this.getAdStatus(session.session_id);
+          status = statusResponse.status;
+          attempts++;
+          
+          if (status === 'completed') {
+            return {
+              success: true,
+              message: `+${statusResponse.gems_added || 50} gems`,
+              gemsAdded: statusResponse.gems_added || 50
+            };
+          }
+        }
+        
+        return {
+          success: false,
+          message: 'Offer not completed yet.'
+        };
+      } catch (error) {
+        console.error('Big bonus ad failed:', error);
+        return {
+          success: false,
+          message: 'Ad unavailable, try again soon.'
+        };
+      }
+    });
+  }
+
+  // Monetag SDK wrapper
+  private async showMonetag(type?: 'inApp' | 'pop'): Promise<void> {
+    return new Promise((resolve, reject) => {
+      try {
+        // Check if Monetag SDK is available
+        if (typeof (window as any).show_9674140 !== 'function') {
+          throw new Error('Monetag SDK not loaded');
+        }
+
+        const monetag = (window as any).show_9674140;
+        
+        if (type === 'inApp') {
+          monetag({ type: 'inApp' } as any)
+            .then(() => resolve())
+            .catch((error: any) => reject(error));
+        } else if (type === 'pop') {
+          monetag('pop')
+            .then(() => resolve())
+            .catch((error: any) => reject(error));
+        } else {
+          // Default rewarded interstitial
+          monetag()
+            .then(() => resolve())
+            .catch((error: any) => reject(error));
+        }
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  // Check if user has paid subscription that should hide ads
+  isPaidUser(subscriptionType?: string): boolean {
+    return subscriptionType !== undefined && 
+           subscriptionType !== 'free' && 
+           subscriptionType !== null;
+  }
+
+  // Check if user is intro tier (gets limited ads)
+  isIntroUser(subscriptionType?: string): boolean {
+    return subscriptionType === 'intro';
+  }
+
+  // Check first session using localStorage
+  isFirstSession(): boolean {
+    const hasOpened = localStorage.getItem('app_first_opened');
+    if (!hasOpened) {
+      localStorage.setItem('app_first_opened', 'true');
+      return true;
+    }
+    return false;
+  }
+}
+
+export const adService = new AdService();
