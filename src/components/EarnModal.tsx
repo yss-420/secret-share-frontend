@@ -135,7 +135,7 @@ export const EarnModal = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="card-premium max-w-md mx-auto sm:max-w-lg">
+      <DialogContent className="card-premium max-w-md mx-auto sm:max-w-lg pointer-events-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Gem className="w-5 h-5 text-primary" />
