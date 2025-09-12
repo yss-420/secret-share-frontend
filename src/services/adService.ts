@@ -15,13 +15,13 @@ export interface AdStartResponse {
 
 export interface AdCompleteResponse {
   ok: boolean;
-  gems_added?: number;
+  gems_awarded?: number;
   message?: string;
 }
 
 export interface AdStatusResponse {
   status: 'started' | 'completed' | 'failed';
-  gems_added?: number;
+  gems_awarded?: number;
 }
 
 export type AdType = 'interstitial' | 'quick' | 'bonus';
@@ -172,8 +172,8 @@ class AdService {
         if (result.ok) {
           return {
             success: true,
-            message: `+${result.gems_added || 10} gems`,
-            gemsAdded: result.gems_added || 10
+            message: `+${result.gems_awarded || 10} gems`,
+            gemsAdded: result.gems_awarded || 10
           };
         } else {
           return {
@@ -223,8 +223,8 @@ class AdService {
           if (status === 'completed') {
             return {
               success: true,
-              message: `+${statusResponse.gems_added || 50} gems`,
-              gemsAdded: statusResponse.gems_added || 50
+              message: `+${statusResponse.gems_awarded || 50} gems`,
+              gemsAdded: statusResponse.gems_awarded || 50
             };
           }
         }
