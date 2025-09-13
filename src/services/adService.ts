@@ -146,11 +146,18 @@ class AdService {
         
         if (type === 'inApp') {
           options.type = 'inApp';
+          options.inAppSettings = {
+            frequency: 2,
+            capping: 0.1,
+            interval: 30,
+            timeout: 5,
+            everyPage: false
+          };
           if (sessionId) {
             options.ymid = sessionId;
             options.requestVar = sessionId;
           }
-          console.log('[AdService] Calling show_9674140 with options:', options);
+          console.log('[AdService] Calling show_9674140 with inApp options:', options);
           monetag(options)
             .then(() => resolve())
             .catch((error: any) => reject(error));

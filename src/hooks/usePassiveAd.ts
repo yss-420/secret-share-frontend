@@ -16,12 +16,9 @@ export const usePassiveAd = (
       
       console.log(`[usePassiveAd] Starting passive ad check for user ${userId}, subscription: ${subscriptionType}`);
       
-      // Check if user should see passive ads - FREE ONLY (not paid, but Intro is OK)
-      const isPaidUser = adService.isPaidUser(subscriptionType);
-      
-      // Only suppress for truly paid users, not Intro
-      if (isPaidUser && subscriptionType !== 'intro') {
-        console.log('[usePassiveAd] Passive ad suppressed - user has paid subscription');
+      // Passive ads are FREE-ONLY - suppress for Intro/Essential/Plus/Premium
+      if (subscriptionType && subscriptionType !== 'free') {
+        console.log(`[usePassiveAd] Passive ad suppressed - user has non-free subscription: ${subscriptionType}`);
         return;
       }
       
@@ -78,9 +75,9 @@ export const usePassiveAd = (
         const session = await startResponse.json();
         console.log('[usePassiveAd] Start session response:', session);
         
-        // Step 3: Show Monetag ad
-        console.log('[usePassiveAd] Step 3: Showing Monetag ad with session_id:', session.session_id);
-        await adService.showMonetag('inApp', session.session_id);
+        // Step 3: Wait for SDK and show Monetag ad
+        console.log('[usePassiveAd] Step 3: Waiting for SDK and showing Monetag ad with session_id:', session.session_id);
+        await waitForSDKAndShowAd(session.session_id);
         
         // Step 4: Complete ad session via HTTP
         console.log('[usePassiveAd] Step 4: Completing ad session via HTTP');
@@ -106,6 +103,44 @@ export const usePassiveAd = (
         console.log('[usePassiveAd] Passive ad flow completed successfully');
       } catch (error) {
         console.error('[usePassiveAd] Passive ad failed:', error);
+      }
+    };
+
+    // Wait for SDK function to be available and show ad with retry logic
+    const waitForSDKAndShowAd = async (sessionId: string) => {
+      let attempts = 0;
+      const maxAttempts = 10; // 2 seconds max wait
+      
+      // Wait for SDK to load
+      while (typeof (window as any).show_9674140 !== 'function' && attempts < maxAttempts) {
+        console.log(`[usePassiveAd] Waiting for SDK... attempt ${attempts + 1}`);
+        await new Promise(resolve => setTimeout(resolve, 200));
+        attempts++;
+      }
+      
+      if (typeof (window as any).show_9674140 !== 'function') {
+        throw new Error('Monetag SDK not available after 2s wait');
+      }
+      
+      console.log('[usePassiveAd] SDK ready, showing ad');
+      
+      try {
+        // First attempt
+        await adService.showMonetag('inApp', sessionId);
+        console.log('[usePassiveAd] Ad shown successfully on first attempt');
+      } catch (error) {
+        console.log('[usePassiveAd] First attempt failed, retrying in 3s:', error);
+        
+        // Wait 3-5s and retry once
+        await new Promise(resolve => setTimeout(resolve, 3000 + Math.random() * 2000));
+        
+        try {
+          await adService.showMonetag('inApp', sessionId);
+          console.log('[usePassiveAd] Ad shown successfully on retry');
+        } catch (retryError) {
+          console.error('[usePassiveAd] Retry also failed:', retryError);
+          throw retryError;
+        }
       }
     };
 
