@@ -155,6 +155,10 @@ class AdService {
             .then(() => resolve())
             .catch((error: any) => reject(error));
         } else if (type === 'pop') {
+          // Set global options as fallback if SDK doesn't carry options properly
+          if (sessionId) {
+            (window as any).monetagOpts = { ymid: sessionId, requestVar: sessionId };
+          }
           monetag('pop', options)
             .then(() => resolve())
             .catch((error: any) => reject(error));
