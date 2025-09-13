@@ -14,26 +14,14 @@ export const usePassiveAd = (
         return;
       }
       
+      // Guard against double-trigger on mount
+      if ((window as any).__passiveShown) {
+        console.log('[usePassiveAd] Already shown in this session, skipping');
+        return;
+      }
+      (window as any).__passiveShown = true;
+      
       console.log(`[usePassiveAd] Starting passive ad check for user ${userId}, subscription: ${subscriptionType}`);
-      
-      // Passive ads are FREE-ONLY - suppress for Intro/Essential/Plus/Premium
-      if (subscriptionType && subscriptionType !== 'free') {
-        console.log(`[usePassiveAd] Passive ad suppressed - user has non-free subscription: ${subscriptionType}`);
-        return;
-      }
-      
-      
-      // Suppress if payment happened recently in this session
-      if (suppressAfterPayment) {
-        console.log('[usePassiveAd] Passive ad suppressed - recent payment in session');
-        return;
-      }
-      
-      // Check if rewarded ad was watched recently (within 2 minutes)
-      if (adService.hasRecentRewardedAd()) {
-        console.log('[usePassiveAd] Passive ad suppressed - recent rewarded ad');
-        return;
-      }
       
       try {
         // Step 1: Check eligibility via HTTP
