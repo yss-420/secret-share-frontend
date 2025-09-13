@@ -45,7 +45,7 @@ export const FreeGemsButton = ({
         "shadow-lg hover:shadow-emerald-500/25",
         
         // Pulse animation
-        !disabled && "animate-gem-pulse hover:animate-none",
+        !disabled && "animate-[pulse_10s_ease-in-out_infinite] hover:animate-none motion-reduce:animate-none",
         
         // Glass effect
         "backdrop-blur-sm bg-emerald-600/90 hover:bg-emerald-700/90",
