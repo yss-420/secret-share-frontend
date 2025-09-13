@@ -25,12 +25,6 @@ export const usePassiveAd = (
         return;
       }
       
-      // Check first session - suppress passive ads on very first session
-      const isFirstSession = adService.isFirstSession(userId);
-      if (isFirstSession) {
-        console.log('[usePassiveAd] Passive ad suppressed - first session');
-        return;
-      }
       
       // Suppress if payment happened recently in this session
       if (suppressAfterPayment) {

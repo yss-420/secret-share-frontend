@@ -146,6 +146,10 @@ class AdService {
         
         if (type === 'inApp') {
           options.type = 'inApp';
+          if (sessionId) {
+            options.ymid = sessionId;
+            options.requestVar = sessionId;
+          }
           console.log('[AdService] Calling show_9674140 with options:', options);
           monetag(options)
             .then(() => resolve())
