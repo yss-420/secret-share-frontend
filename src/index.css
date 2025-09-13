@@ -139,25 +139,31 @@
   }
 
   @keyframes flicker {
-    0%, 100% { opacity: 1; }
-    25% { opacity: 0.7; }
-    50% { opacity: 1; }
-    75% { opacity: 0.8; }
-  }
+  0%, 100% { opacity: 1; }
+  25% { opacity: 0.7; }
+  50% { opacity: 1; }
+  75% { opacity: 0.8; }
+}
 
-  /* Slow pulse animation for Free Gems button */
-  @keyframes gem-pulse {
-    0%, 100% { 
-      transform: scale(1);
-      opacity: 1;
-    }
-    50% { 
-      transform: scale(1.05);
-      opacity: 0.9;
-    }
+/* Slow, non‑flicker pulse (10s) */
+@keyframes gem-pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(16,185,129,.24); /* emerald glow off */
   }
+  50% {
+    transform: scale(1.04);
+    box-shadow: 0 0 24px 6px rgba(16,185,129,.18); /* soft glow on */
+  }
+}
 
-  .animate-gem-pulse {
-    animation: gem-pulse 10s ease-in-out infinite;
-  }
+.animate-gem-pulse {
+  animation: gem-pulse 10s ease-in-out infinite;
+  will-change: transform, box-shadow;
+  transform-origin: center;
+}
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .animate-gem-pulse { animation: none; }
 }
