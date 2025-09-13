@@ -163,7 +163,8 @@
   transform-origin: center;
 }
 
-/* Respect users who prefer reduced motion */
-@media (prefers-reduced-motion: reduce) {
-  .animate-gem-pulse { animation: none; }
+  /* Respect users who prefer reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .animate-gem-pulse { animation: none; }
+  }
 }
