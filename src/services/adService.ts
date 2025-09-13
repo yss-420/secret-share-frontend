@@ -278,13 +278,10 @@ class AdService {
 
   // Check first session using user-specific localStorage key
   isFirstSession(userId: number): boolean {
-    const key = `tma_first_seen_${userId}`;
-    const hasOpened = localStorage.getItem(key);
-    if (!hasOpened) {
-      localStorage.setItem(key, '1');
-      return true;
-    }
-    return false;
+    const k = `tma_first_seen_v1_${userId}`;
+    const first = !localStorage.getItem(k);
+    if (first) localStorage.setItem(k, '1');
+    return first;
   }
 
   // Check if rewarded ad was watched recently (within 2 minutes)
