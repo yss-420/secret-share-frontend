@@ -46,13 +46,12 @@ class AdService {
 
   async checkEligibility(userId: number, type: AdType, firstSession = false): Promise<AdEligibilityResponse> {
     try {
+      console.log(`[AdService] Checking eligibility: user_id=${userId}, type=${type}, first_session=${firstSession ? 1 : 0}`);
       const response = await fetch(
         `${this.baseUrl}/api/ads/eligibility?user_id=${userId}&type=${type}&first_session=${firstSession ? 1 : 0}`,
         {
           method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          // No Content-Type header on GET to avoid preflight
         }
       );
 
@@ -68,6 +67,7 @@ class AdService {
   }
 
   async startAdSession(userId: number, type: AdType): Promise<AdStartResponse> {
+    console.log(`[AdService] Starting ad session: user_id=${userId}, type=${type}`);
     const response = await fetch(`${this.baseUrl}/api/ads/start`, {
       method: 'POST',
       headers: {
@@ -92,6 +92,7 @@ class AdService {
     sessionId: string,
     completed: boolean
   ): Promise<AdCompleteResponse> {
+    console.log(`[AdService] Completing ad session: user_id=${userId}, type=${type}, session_id=${sessionId}, completed=${completed}`);
     const response = await fetch(`${this.baseUrl}/api/ads/complete`, {
       method: 'POST',
       headers: {
@@ -115,9 +116,7 @@ class AdService {
   async getAdStatus(sessionId: string): Promise<AdStatusResponse> {
     const response = await fetch(`${this.baseUrl}/api/ads/status?session_id=${sessionId}`, {
       method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      // No Content-Type header on GET to avoid preflight
     });
 
     if (!response.ok) {
@@ -127,26 +126,42 @@ class AdService {
     return await response.json();
   }
 
-  // Passive interstitial ad
-  async showPassiveAd(userId: number, firstSession = false): Promise<void> {
-    return this.withAdLock(async () => {
-      const eligibility = await this.checkEligibility(userId, 'interstitial', firstSession);
-      
-      if (!eligibility.allowed) {
-        console.log('Passive ad not eligible:', eligibility.reason);
-        return;
-      }
-
-      const session = await this.startAdSession(userId, 'interstitial');
-      
+  // Monetag SDK wrapper - now public for direct use in usePassiveAd
+  async showMonetag(type?: 'inApp' | 'pop', sessionId?: string): Promise<void> {
+    return new Promise((resolve, reject) => {
       try {
-        await this.showMonetag('inApp', session.session_id);
-        // Always report completion as true for passive ads
-        await this.completeAdSession(userId, 'interstitial', session.session_id, true);
-        console.log('Passive ad completed successfully');
+        // Check if Monetag SDK is available
+        if (typeof (window as any).show_9674140 !== 'function') {
+          throw new Error('Monetag SDK not loaded');
+        }
+
+        const monetag = (window as any).show_9674140;
+        
+        // Create options object with session ID for postback tracking
+        const options: any = {};
+        if (sessionId) {
+          options.ymid = sessionId; // Pass session_id as YMID for postback tracking
+          options.requestVar = sessionId; // Pass session_id as requestVar for safety
+        }
+        
+        if (type === 'inApp') {
+          options.type = 'inApp';
+          console.log('[AdService] Calling show_9674140 with options:', options);
+          monetag(options)
+            .then(() => resolve())
+            .catch((error: any) => reject(error));
+        } else if (type === 'pop') {
+          monetag('pop', options)
+            .then(() => resolve())
+            .catch((error: any) => reject(error));
+        } else {
+          // Default rewarded interstitial
+          monetag(sessionId ? options : undefined)
+            .then(() => resolve())
+            .catch((error: any) => reject(error));
+        }
       } catch (error) {
-        console.error('Passive ad failed:', error);
-        await this.completeAdSession(userId, 'interstitial', session.session_id, false);
+        reject(error);
       }
     });
   }
@@ -168,6 +183,9 @@ class AdService {
       try {
         await this.showMonetag(undefined, session.session_id);
         const result = await this.completeAdSession(userId, 'quick', session.session_id, true);
+        
+        // Mark that a rewarded ad was just watched
+        this.markRewardedAdWatched();
         
         if (result.ok) {
           return {
@@ -221,6 +239,8 @@ class AdService {
           attempts++;
           
           if (status === 'completed') {
+            // Mark that a rewarded ad was just watched
+            this.markRewardedAdWatched();
             return {
               success: true,
               message: `+${statusResponse.gems_awarded || 50} gems`,
@@ -243,44 +263,6 @@ class AdService {
     });
   }
 
-  // Monetag SDK wrapper
-  private async showMonetag(type?: 'inApp' | 'pop', sessionId?: string): Promise<void> {
-    return new Promise((resolve, reject) => {
-      try {
-        // Check if Monetag SDK is available
-        if (typeof (window as any).show_9674140 !== 'function') {
-          throw new Error('Monetag SDK not loaded');
-        }
-
-        const monetag = (window as any).show_9674140;
-        
-        // Create options object with session ID for postback tracking
-        const options: any = {};
-        if (sessionId) {
-          options.ymid = sessionId; // Pass session_id as YMID for postback tracking
-          options.requestVar = sessionId; // Pass session_id as requestVar for safety
-        }
-        
-        if (type === 'inApp') {
-          options.type = 'inApp';
-          monetag(options)
-            .then(() => resolve())
-            .catch((error: any) => reject(error));
-        } else if (type === 'pop') {
-          monetag('pop', options)
-            .then(() => resolve())
-            .catch((error: any) => reject(error));
-        } else {
-          // Default rewarded interstitial
-          monetag(sessionId ? options : undefined)
-            .then(() => resolve())
-            .catch((error: any) => reject(error));
-        }
-      } catch (error) {
-        reject(error);
-      }
-    });
-  }
 
   // Check if user has paid subscription that should hide ads
   isPaidUser(subscriptionType?: string): boolean {
@@ -294,14 +276,32 @@ class AdService {
     return subscriptionType === 'intro';
   }
 
-  // Check first session using localStorage
-  isFirstSession(): boolean {
-    const hasOpened = localStorage.getItem('app_first_opened');
+  // Check first session using user-specific localStorage key
+  isFirstSession(userId: number): boolean {
+    const key = `tma_first_seen_${userId}`;
+    const hasOpened = localStorage.getItem(key);
     if (!hasOpened) {
-      localStorage.setItem('app_first_opened', 'true');
+      localStorage.setItem(key, '1');
       return true;
     }
     return false;
+  }
+
+  // Check if rewarded ad was watched recently (within 2 minutes)
+  hasRecentRewardedAd(): boolean {
+    const lastRewarded = localStorage.getItem('last_rewarded_ad');
+    if (!lastRewarded) return false;
+    
+    const lastTime = parseInt(lastRewarded);
+    const now = Date.now();
+    const twoMinutes = 2 * 60 * 1000;
+    
+    return (now - lastTime) < twoMinutes;
+  }
+
+  // Mark that a rewarded ad was just watched
+  markRewardedAdWatched(): void {
+    localStorage.setItem('last_rewarded_ad', Date.now().toString());
   }
 }
 
