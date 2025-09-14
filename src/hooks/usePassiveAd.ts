@@ -132,8 +132,8 @@ export const usePassiveAd = (
       }
     };
 
-    // Run passive ad after 1-2s delay to ensure proper initialization
-    const timer = setTimeout(runPassiveAd, 2000);
+    // Run passive ad after 1s delay to ensure proper initialization
+    const timer = setTimeout(runPassiveAd, 1000);
     
     return () => clearTimeout(timer);
   }, [userId, subscriptionType, suppressAfterPayment]);
