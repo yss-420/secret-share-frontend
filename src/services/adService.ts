@@ -1,5 +1,3 @@
-import { supabase } from '@/integrations/supabase/client';
-
 export interface AdEligibilityResponse {
   allowed: boolean;
   next_available_at?: string;
@@ -171,7 +169,11 @@ class AdService {
           }
           monetag('pop', options)
             .then(() => resolve())
-            .catch((error: any) => reject(error));
+            .catch((error: any) => reject(error))
+            .finally(() => {
+              // Clear global to avoid leaking session
+              delete (window as any).monetagOpts;
+            });
         } else {
           // Default rewarded interstitial
           monetag(sessionId ? options : undefined)
