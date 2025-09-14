@@ -799,7 +799,7 @@ const Store = () => {
                 <Card key={plan.name} className="card-premium transition-smooth group p-6 relative">
                   {/* Launch Offer Pill */}
                   <div className="absolute top-3 right-3 z-10">
-                     <div className="bg-gradient-to-r from-primary/20 to-accent/20 backdrop-blur-sm border border-primary/30 px-2 py-1 rounded-full text-xs font-medium text-white shadow-sm flicker">
+                     <div className="bg-gradient-to-r from-primary/20 to-accent/20 backdrop-blur-sm border border-primary/30 px-2 py-1 rounded-full text-xs font-medium text-white shadow-sm animate-breathing">
                        {t('store.launchOffer')}
                      </div>
                   </div>
