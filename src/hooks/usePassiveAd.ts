@@ -14,30 +14,31 @@ export const usePassiveAd = (
         return;
       }
       
-      // Guard against double-trigger on mount
-      if ((window as any).__passiveShown) {
-        console.log('[usePassiveAd] Already shown in this session, skipping');
+      // Guard against double-trigger with 1-hour reset
+      const now = Date.now();
+      const lastShown = (window as any).__passiveShownTime || 0;
+      const oneHour = 60 * 60 * 1000;
+      
+      if ((window as any).__passiveShown && (now - lastShown) < oneHour) {
+        console.log('[usePassiveAd] Already shown recently, skipping');
         return;
       }
       (window as any).__passiveShown = true;
+      (window as any).__passiveShownTime = now;
       
       console.log(`[usePassiveAd] Starting passive ad check for user ${userId}, subscription: ${subscriptionType}`);
       
       try {
-        // Step 1: Check eligibility via HTTP
-        console.log('[usePassiveAd] Step 1: Checking eligibility via HTTP');
-        const eligibilityResponse = await fetch(
-          `https://secret-share-backend-production.up.railway.app/api/ads/eligibility?user_id=${userId}&type=interstitial&first_session=0`,
-          { method: 'GET' }
-        );
+        // Wait for SDK and check eligibility in parallel
+        const [sdkReady, eligibility] = await Promise.all([
+          waitForSDK(),
+          checkEligibility(userId)
+        ]);
         
-        if (!eligibilityResponse.ok) {
-          console.log('[usePassiveAd] Eligibility check failed:', eligibilityResponse.status);
+        if (!sdkReady) {
+          console.log('[usePassiveAd] SDK not ready after 2s, skipping');
           return;
         }
-        
-        const eligibility = await eligibilityResponse.json();
-        console.log('[usePassiveAd] Eligibility response:', eligibility);
         
         if (!eligibility.allowed) {
           console.log('[usePassiveAd] Passive ad not eligible:', eligibility.reason);
@@ -63,9 +64,9 @@ export const usePassiveAd = (
         const session = await startResponse.json();
         console.log('[usePassiveAd] Start session response:', session);
         
-        // Step 3: Wait for SDK and show Monetag ad
-        console.log('[usePassiveAd] Step 3: Waiting for SDK and showing Monetag ad with session_id:', session.session_id);
-        await waitForSDKAndShowAd(session.session_id);
+        // Step 3: Show Monetag ad with proper API format
+        console.log('[usePassiveAd] Step 3: Showing Monetag ad with session_id:', session.session_id);
+        await showMonetag(session.session_id);
         
         // Step 4: Complete ad session via HTTP
         console.log('[usePassiveAd] Step 4: Completing ad session via HTTP');
@@ -94,28 +95,50 @@ export const usePassiveAd = (
       }
     };
 
-    // Wait for SDK function to be available and show ad with retry logic
-    const waitForSDKAndShowAd = async (sessionId: string) => {
+    // Wait for SDK to be available (poll every 100ms for up to 2s)
+    const waitForSDK = async (): Promise<boolean> => {
       let attempts = 0;
-      const maxAttempts = 10; // 2 seconds max wait
+      const maxAttempts = 20; // 2 seconds max wait (100ms * 20)
       
-      // Wait for SDK to load
       while (typeof (window as any).show_9674140 !== 'function' && attempts < maxAttempts) {
         console.log(`[usePassiveAd] Waiting for SDK... attempt ${attempts + 1}`);
-        await new Promise(resolve => setTimeout(resolve, 200));
+        await new Promise(resolve => setTimeout(resolve, 100));
         attempts++;
       }
       
-      if (typeof (window as any).show_9674140 !== 'function') {
-        throw new Error('Monetag SDK not available after 2s wait');
+      return typeof (window as any).show_9674140 === 'function';
+    };
+
+    // Check eligibility via HTTP
+    const checkEligibility = async (userId: number) => {
+      console.log('[usePassiveAd] Checking eligibility via HTTP');
+      const eligibilityResponse = await fetch(
+        `https://secret-share-backend-production.up.railway.app/api/ads/eligibility?user_id=${userId}&type=interstitial&first_session=0`,
+        { method: 'GET' }
+      );
+      
+      if (!eligibilityResponse.ok) {
+        throw new Error(`Eligibility check failed: ${eligibilityResponse.status}`);
       }
       
-      console.log('[usePassiveAd] SDK ready, showing ad');
+      return await eligibilityResponse.json();
+    };
+
+    // Show Monetag ad with proper API format
+    const showMonetag = async (sessionId: string) => {
+      console.log('[usePassiveAd] Showing Monetag ad');
       
       try {
-        // First attempt
-        await adService.showMonetag('inApp', sessionId);
-        console.log('[usePassiveAd] Ad shown successfully on first attempt');
+        const monetag = (window as any).show_9674140;
+        const options = {
+          type: 'inApp',
+          ymid: sessionId,
+          requestVar: sessionId
+        };
+        
+        console.log('[usePassiveAd] Calling show_9674140 with options:', options);
+        await monetag(options);
+        console.log('[usePassiveAd] Ad shown successfully');
       } catch (error) {
         console.log('[usePassiveAd] First attempt failed, retrying in 3s:', error);
         
@@ -123,7 +146,14 @@ export const usePassiveAd = (
         await new Promise(resolve => setTimeout(resolve, 3000 + Math.random() * 2000));
         
         try {
-          await adService.showMonetag('inApp', sessionId);
+          const monetag = (window as any).show_9674140;
+          const options = {
+            type: 'inApp',
+            ymid: sessionId,
+            requestVar: sessionId
+          };
+          
+          await monetag(options);
           console.log('[usePassiveAd] Ad shown successfully on retry');
         } catch (retryError) {
           console.error('[usePassiveAd] Retry also failed:', retryError);
@@ -132,8 +162,8 @@ export const usePassiveAd = (
       }
     };
 
-    // Run passive ad after 1s delay to ensure proper initialization
-    const timer = setTimeout(runPassiveAd, 1000);
+    // Run passive ad after 2s delay to ensure proper initialization
+    const timer = setTimeout(runPassiveAd, 2000);
     
     return () => clearTimeout(timer);
   }, [userId, subscriptionType, suppressAfterPayment]);
