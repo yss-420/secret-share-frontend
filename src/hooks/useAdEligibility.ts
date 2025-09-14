@@ -63,5 +63,6 @@ export const useAdEligibility = (userId?: number, type?: AdType) => {
     formatCooldown,
     formatNextAvailable,
     refresh: () => checkEligibility(type),
+    setEligibility: (newEligibility: AdEligibilityResponse) => setEligibility(newEligibility),
   };
 };

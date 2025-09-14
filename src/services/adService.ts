@@ -17,6 +17,9 @@ export interface AdCompleteResponse {
   ok: boolean;
   gems_awarded?: number;
   message?: string;
+  remaining_today?: number;
+  next_available_at?: string;
+  cooldown_seconds?: number;
 }
 
 export interface AdStatusResponse {
@@ -182,7 +185,7 @@ class AdService {
   }
 
   // Quick earn rewarded ad (10 gems) - Max 5 per day
-  async showQuickEarnAd(userId: number): Promise<{ success: boolean; message: string; gemsAdded?: number }> {
+  async showQuickEarnAd(userId: number): Promise<{ success: boolean; message: string; gemsAdded?: number; remaining_today?: number; next_available_at?: string; cooldown_seconds?: number }> {
     return this.withAdLock(async () => {
       const eligibility = await this.checkEligibility(userId, 'quick');
       
@@ -206,7 +209,10 @@ class AdService {
           return {
             success: true,
             message: `+${result.gems_awarded || 10} gems`,
-            gemsAdded: result.gems_awarded || 10
+            gemsAdded: result.gems_awarded || 10,
+            remaining_today: result.remaining_today,
+            next_available_at: result.next_available_at,
+            cooldown_seconds: result.cooldown_seconds
           };
         } else {
           return {

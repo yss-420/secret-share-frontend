@@ -68,7 +68,20 @@ export const EarnModal = ({
           description: result.message,
         });
         refreshUserData();
-        await quickEligibility.refresh(); // Refresh to get updated counter
+        
+        // Immediately update eligibility state with response data
+        if (result.remaining_today !== undefined) {
+          quickEligibility.setEligibility({
+            allowed: result.remaining_today > 0,
+            remaining_today: result.remaining_today,
+            next_available_at: result.next_available_at,
+            cooldown_seconds: result.cooldown_seconds,
+            reason: result.remaining_today > 0 ? undefined : 'Daily limit reached'
+          });
+        }
+        
+        // Sanity check refresh after 1 second
+        setTimeout(() => quickEligibility.refresh(), 1000);
       } else {
         toast({
           title: "Ad Not Completed",
