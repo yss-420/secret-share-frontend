@@ -92,11 +92,29 @@ Deno.serve(async (req) => {
       }
 
       if (gemsToAward > 0) {
-        // Update user gems
+        // First fetch current gems to avoid SQL injection
+        const { data: currentUser, error: fetchUserError } = await supabase
+          .from('users')
+          .select('gems')
+          .eq('telegram_id', parseInt(userId))
+          .single();
+
+        if (fetchUserError) {
+          console.error('Error fetching user for gems update:', fetchUserError);
+          return new Response(
+            JSON.stringify({ error: 'Failed to fetch user data' }),
+            { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+
+        // Safely calculate new gems total
+        const newGems = (currentUser?.gems || 0) + gemsToAward;
+
+        // Update user gems with safe parameterized value
         const { error: gemsError } = await supabase
           .from('users')
           .update({
-            gems: supabase.raw(`COALESCE(gems, 0) + ${gemsToAward}`),
+            gems: newGems,
             updated_at: new Date().toISOString()
           })
           .eq('telegram_id', parseInt(userId));

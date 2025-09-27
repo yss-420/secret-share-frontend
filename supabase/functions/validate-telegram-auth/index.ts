@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { createHash, createHmac } from "https://deno.land/std@0.168.0/crypto/mod.ts"
+import { createHash, createHmac } from "node:crypto"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',

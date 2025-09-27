@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "12.2.3 (519615d)"
+    PostgrestVersion: "13.0.5"
   }
   public: {
     Tables: {
@@ -182,13 +182,6 @@ export type Database = {
           user_id?: number
         }
         Relationships: [
-          {
-            foreignKeyName: "fk_daily_claims_user"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "top_customers"
-            referencedColumns: ["telegram_id"]
-          },
           {
             foreignKeyName: "fk_daily_claims_user"
             columns: ["user_id"]
@@ -547,13 +540,6 @@ export type Database = {
             foreignKeyName: "processed_payments_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "top_customers"
-            referencedColumns: ["telegram_id"]
-          },
-          {
-            foreignKeyName: "processed_payments_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
             referencedRelation: "user_counters_mv"
             referencedColumns: ["telegram_id"]
           },
@@ -724,13 +710,6 @@ export type Database = {
             foreignKeyName: "star_earnings_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "top_customers"
-            referencedColumns: ["telegram_id"]
-          },
-          {
-            foreignKeyName: "star_earnings_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
             referencedRelation: "user_counters_mv"
             referencedColumns: ["telegram_id"]
           },
@@ -839,13 +818,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "subscription_tiers"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "subscriptions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "top_customers"
-            referencedColumns: ["telegram_id"]
           },
           {
             foreignKeyName: "subscriptions_user_id_fkey"
@@ -1163,13 +1135,6 @@ export type Database = {
             foreignKeyName: "fk_voice_calls_user_id"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "top_customers"
-            referencedColumns: ["telegram_id"]
-          },
-          {
-            foreignKeyName: "fk_voice_calls_user_id"
-            columns: ["user_id"]
-            isOneToOne: false
             referencedRelation: "user_counters_mv"
             referencedColumns: ["telegram_id"]
           },
@@ -1215,54 +1180,6 @@ export type Database = {
           id?: string | null
           user_id?: number | null
           user_message?: string | null
-        }
-        Relationships: []
-      }
-      earnings_analytics: {
-        Row: {
-          date: string | null
-          stars_earned: number | null
-          total_transactions: number | null
-          unique_customers: number | null
-        }
-        Relationships: []
-      }
-      monthly_earnings: {
-        Row: {
-          avg_transaction_value: number | null
-          month: string | null
-          total_stars: number | null
-          total_transactions: number | null
-          unique_customers: number | null
-        }
-        Relationships: []
-      }
-      payment_analytics: {
-        Row: {
-          avg_payment_amount: number | null
-          failed_payments: number | null
-          payment_date: string | null
-          revenue_stars: number | null
-          successful_payments: number | null
-          total_payments: number | null
-          unique_paying_users: number | null
-        }
-        Relationships: []
-      }
-      session_analytics: {
-        Row: {
-          avg_hours_since_last_seen: number | null
-          total_users: number | null
-          users_with_sessions: number | null
-        }
-        Relationships: []
-      }
-      top_customers: {
-        Row: {
-          telegram_id: number | null
-          total_purchases: number | null
-          total_stars_spent: number | null
-          username: string | null
         }
         Relationships: []
       }
@@ -1359,13 +1276,6 @@ export type Database = {
             foreignKeyName: "subscriptions_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "top_customers"
-            referencedColumns: ["telegram_id"]
-          },
-          {
-            foreignKeyName: "subscriptions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
             referencedRelation: "user_counters_mv"
             referencedColumns: ["telegram_id"]
           },
@@ -1379,48 +1289,6 @@ export type Database = {
           {
             foreignKeyName: "subscriptions_user_id_fkey"
             columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["telegram_id"]
-          },
-        ]
-      }
-      voice_call_analytics: {
-        Row: {
-          avg_call_duration: number | null
-          last_call_date: string | null
-          telegram_id: number | null
-          total_calls: number | null
-          total_duration_minutes: number | null
-          total_gems_spent: number | null
-          user_name: string | null
-          username: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "fk_voice_calls_user_id"
-            columns: ["telegram_id"]
-            isOneToOne: false
-            referencedRelation: "top_customers"
-            referencedColumns: ["telegram_id"]
-          },
-          {
-            foreignKeyName: "fk_voice_calls_user_id"
-            columns: ["telegram_id"]
-            isOneToOne: false
-            referencedRelation: "user_counters_mv"
-            referencedColumns: ["telegram_id"]
-          },
-          {
-            foreignKeyName: "fk_voice_calls_user_id"
-            columns: ["telegram_id"]
-            isOneToOne: false
-            referencedRelation: "user_status_public"
-            referencedColumns: ["telegram_id"]
-          },
-          {
-            foreignKeyName: "fk_voice_calls_user_id"
-            columns: ["telegram_id"]
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["telegram_id"]
@@ -1450,10 +1318,29 @@ export type Database = {
         Args: { p_amount_stars?: number; p_subscription_id: string }
         Returns: string
       }
+      get_earnings_analytics: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          date: string
+          stars_earned: number
+          total_transactions: number
+          unique_customers: number
+        }[]
+      }
       get_earnings_period: {
         Args: { period_days: number }
         Returns: {
           avg_transaction_value: number
+          total_stars: number
+          total_transactions: number
+          unique_customers: number
+        }[]
+      }
+      get_monthly_earnings: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          avg_transaction_value: number
+          month: string
           total_stars: number
           total_transactions: number
           unique_customers: number
@@ -1468,16 +1355,33 @@ export type Database = {
           telegram_id: number
         }[]
       }
-      get_payment_analytics: {
+      get_payment_analytics_secure: {
         Args: { p_days?: number }
         Returns: {
           avg_payment_amount: number
           failed_payments: number
-          refunded_payments: number
+          payment_date: string
+          revenue_stars: number
           successful_payments: number
-          top_products: Json
           total_payments: number
-          total_revenue_stars: number
+          unique_paying_users: number
+        }[]
+      }
+      get_session_analytics: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          avg_hours_since_last_seen: number
+          total_users: number
+          users_with_sessions: number
+        }[]
+      }
+      get_top_customers_secure: {
+        Args: { p_limit?: number }
+        Returns: {
+          telegram_id: number
+          total_purchases: number
+          total_stars_spent: number
+          username: string
         }[]
       }
       get_total_earnings: {
@@ -1497,6 +1401,19 @@ export type Database = {
           messages_today: number
           subscription_type: string
           telegram_id: number
+        }[]
+      }
+      get_voice_call_analytics: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          avg_call_duration: number
+          last_call_date: string
+          telegram_id: number
+          total_calls: number
+          total_duration_minutes: number
+          total_gems_spent: number
+          user_name: string
+          username: string
         }[]
       }
       increment_user_messages: {
