@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { Users, TrendingUp, Settings, Trophy, Star } from "lucide-react";
+import { Users, TrendingUp, Settings, Trophy } from "lucide-react";
 import { trackNavigation, trackStoreVisit } from "@/utils/analytics";
 import { useTranslation } from 'react-i18next';
 
@@ -14,7 +14,7 @@ export const NavigationBar = ({ activeTab, onTabChange }: NavigationBarProps) =>
   
   const tabs = [
     { id: 'characters', label: t('navigation.characters'), icon: Users },
-    { id: 'showdown', label: t('navigation.showdown'), icon: Trophy, hasStarBadge: true },
+    { id: 'showdown', label: t('navigation.showdown'), icon: Trophy },
     { id: 'upgrade', label: t('navigation.upgrade'), icon: TrendingUp },
     { id: 'settings', label: t('navigation.settings'), icon: Settings }
   ];
@@ -50,12 +50,7 @@ export const NavigationBar = ({ activeTab, onTabChange }: NavigationBarProps) =>
                   : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
               }`}
             >
-              <div className="relative">
-                <Icon className="w-4 h-4" />
-                {tab.hasStarBadge && (
-                  <Star className="w-2 h-2 text-yellow-400 absolute -top-1 -right-1" />
-                )}
-              </div>
+              <Icon className="w-4 h-4" />
               <span className="text-xs font-medium">{tab.label}</span>
             </Button>
           );

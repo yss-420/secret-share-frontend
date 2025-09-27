@@ -178,10 +178,17 @@
     transform-origin: center;
   }
 
+  .animate-shimmer {
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+    background-size: 200% 100%;
+  }
+  
+  .animate-pulse-note {
+    /* Default state without animation */
+  }
+
   @media (prefers-reduced-motion: no-preference) {
     .animate-shimmer {
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
-      background-size: 200% 100%;
       animation: shimmer 3.8s linear infinite;
     }
     
@@ -193,7 +200,6 @@
   @media (prefers-reduced-motion: reduce) {
     .animate-shimmer {
       animation: none;
-      background: none;
     }
     
     .animate-pulse-note {
