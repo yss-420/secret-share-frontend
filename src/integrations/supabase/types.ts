@@ -14,6 +14,69 @@ export type Database = {
   }
   public: {
     Tables: {
+      ad_events: {
+        Row: {
+          ad_type: string | null
+          created_at: string
+          event_name: string
+          id: number
+          props: Json | null
+          session_id: string | null
+          user_id: number
+        }
+        Insert: {
+          ad_type?: string | null
+          created_at?: string
+          event_name: string
+          id?: number
+          props?: Json | null
+          session_id?: string | null
+          user_id: number
+        }
+        Update: {
+          ad_type?: string | null
+          created_at?: string
+          event_name?: string
+          id?: number
+          props?: Json | null
+          session_id?: string | null
+          user_id?: number
+        }
+        Relationships: []
+      }
+      ad_sessions: {
+        Row: {
+          ad_type: string
+          created_at: string
+          reason: string | null
+          reward_gems: number
+          session_id: string
+          status: string
+          updated_at: string
+          user_id: number
+        }
+        Insert: {
+          ad_type: string
+          created_at?: string
+          reason?: string | null
+          reward_gems?: number
+          session_id: string
+          status?: string
+          updated_at?: string
+          user_id: number
+        }
+        Update: {
+          ad_type?: string
+          created_at?: string
+          reason?: string | null
+          reward_gems?: number
+          session_id?: string
+          status?: string
+          updated_at?: string
+          user_id?: number
+        }
+        Relationships: []
+      }
       chats: {
         Row: {
           character_name: string
@@ -148,6 +211,27 @@ export type Database = {
             referencedColumns: ["telegram_id"]
           },
         ]
+      }
+      delivered_media: {
+        Row: {
+          media_type: string
+          r2_key: string
+          served_at: string
+          user_id: number
+        }
+        Insert: {
+          media_type: string
+          r2_key: string
+          served_at?: string
+          user_id: number
+        }
+        Update: {
+          media_type?: string
+          r2_key?: string
+          served_at?: string
+          user_id?: number
+        }
+        Relationships: []
       }
       gem_packages: {
         Row: {
@@ -340,6 +424,66 @@ export type Database = {
           },
         ]
       }
+      penis_ratings: {
+        Row: {
+          character_slug: string
+          created_at: string
+          error_text: string | null
+          gems_spent: number
+          honesty: string
+          id: string
+          image_hash: string
+          instructions: string | null
+          penis_size: string | null
+          provider_json: Json
+          rating_score: number | null
+          rating_steamy: string | null
+          rating_straight: string | null
+          rating_title: string | null
+          reused_from_cache: boolean
+          user_id: number
+          voice_url: string | null
+        }
+        Insert: {
+          character_slug: string
+          created_at?: string
+          error_text?: string | null
+          gems_spent?: number
+          honesty: string
+          id?: string
+          image_hash: string
+          instructions?: string | null
+          penis_size?: string | null
+          provider_json: Json
+          rating_score?: number | null
+          rating_steamy?: string | null
+          rating_straight?: string | null
+          rating_title?: string | null
+          reused_from_cache?: boolean
+          user_id: number
+          voice_url?: string | null
+        }
+        Update: {
+          character_slug?: string
+          created_at?: string
+          error_text?: string | null
+          gems_spent?: number
+          honesty?: string
+          id?: string
+          image_hash?: string
+          instructions?: string | null
+          penis_size?: string | null
+          provider_json?: Json
+          rating_score?: number | null
+          rating_steamy?: string | null
+          rating_straight?: string | null
+          rating_title?: string | null
+          reused_from_cache?: boolean
+          user_id?: number
+          voice_url?: string | null
+        }
+        Relationships: []
+      }
       processed_payments: {
         Row: {
           amount: number
@@ -428,6 +572,54 @@ export type Database = {
             referencedColumns: ["telegram_id"]
           },
         ]
+      }
+      r2_assets: {
+        Row: {
+          character_slug: string
+          created_at: string
+          media_type: string
+          r2_key: string
+        }
+        Insert: {
+          character_slug: string
+          created_at?: string
+          media_type: string
+          r2_key: string
+        }
+        Update: {
+          character_slug?: string
+          created_at?: string
+          media_type?: string
+          r2_key?: string
+        }
+        Relationships: []
+      }
+      rating_cache: {
+        Row: {
+          created_at: string
+          honesty: string
+          image_hash: string
+          instructions: string
+          penis_size: string
+          provider_json: Json
+        }
+        Insert: {
+          created_at?: string
+          honesty: string
+          image_hash: string
+          instructions?: string
+          penis_size?: string
+          provider_json: Json
+        }
+        Update: {
+          created_at?: string
+          honesty?: string
+          image_hash?: string
+          instructions?: string
+          penis_size?: string
+          provider_json?: Json
+        }
+        Relationships: []
       }
       relationships: {
         Row: {
@@ -561,27 +753,33 @@ export type Database = {
       subscription_tiers: {
         Row: {
           active: boolean
+          days: number | null
           display_name: string
           id: string
           monthly_gems: number
           monthly_stars: number
           price_stars: number
+          sort_order: number | null
         }
         Insert: {
           active?: boolean
+          days?: number | null
           display_name: string
           id: string
           monthly_gems?: number
           monthly_stars?: number
           price_stars?: number
+          sort_order?: number | null
         }
         Update: {
           active?: boolean
+          days?: number | null
           display_name?: string
           id?: string
           monthly_gems?: number
           monthly_stars?: number
           price_stars?: number
+          sort_order?: number | null
         }
         Relationships: []
       }
@@ -594,6 +792,8 @@ export type Database = {
           id: number
           is_recurring: boolean
           next_renewal_at: string | null
+          provider_charge_id: string | null
+          starts_at: string | null
           status: Database["public"]["Enums"]["subscription_status"]
           tier: string
           tier_id: string | null
@@ -608,6 +808,8 @@ export type Database = {
           id?: number
           is_recurring?: boolean
           next_renewal_at?: string | null
+          provider_charge_id?: string | null
+          starts_at?: string | null
           status?: Database["public"]["Enums"]["subscription_status"]
           tier: string
           tier_id?: string | null
@@ -622,6 +824,8 @@ export type Database = {
           id?: number
           is_recurring?: boolean
           next_renewal_at?: string | null
+          provider_charge_id?: string | null
+          starts_at?: string | null
           status?: Database["public"]["Enums"]["subscription_status"]
           tier?: string
           tier_id?: string | null
@@ -741,6 +945,11 @@ export type Database = {
       }
       users: {
         Row: {
+          ads_last_bonus_at: string | null
+          ads_last_inapp_at: string | null
+          ads_last_rewarded_at: string | null
+          ads_rewarded_date: string | null
+          ads_rewarded_today: number
           age_verified: boolean | null
           bemob_cid: string | null
           blocked_at: string | null
@@ -749,6 +958,7 @@ export type Database = {
           gems: number | null
           id: string
           last_active: string | null
+          last_bonus_reminder_at: string | null
           last_daily_claim_at: string | null
           last_message_date: string | null
           last_seen: string | null
@@ -773,6 +983,11 @@ export type Database = {
           videos_generated: number | null
         }
         Insert: {
+          ads_last_bonus_at?: string | null
+          ads_last_inapp_at?: string | null
+          ads_last_rewarded_at?: string | null
+          ads_rewarded_date?: string | null
+          ads_rewarded_today?: number
           age_verified?: boolean | null
           bemob_cid?: string | null
           blocked_at?: string | null
@@ -781,6 +996,7 @@ export type Database = {
           gems?: number | null
           id?: string
           last_active?: string | null
+          last_bonus_reminder_at?: string | null
           last_daily_claim_at?: string | null
           last_message_date?: string | null
           last_seen?: string | null
@@ -805,6 +1021,11 @@ export type Database = {
           videos_generated?: number | null
         }
         Update: {
+          ads_last_bonus_at?: string | null
+          ads_last_inapp_at?: string | null
+          ads_last_rewarded_at?: string | null
+          ads_rewarded_date?: string | null
+          ads_rewarded_today?: number
           age_verified?: boolean | null
           bemob_cid?: string | null
           blocked_at?: string | null
@@ -813,6 +1034,7 @@ export type Database = {
           gems?: number | null
           id?: string
           last_active?: string | null
+          last_bonus_reminder_at?: string | null
           last_daily_claim_at?: string | null
           last_message_date?: string | null
           last_seen?: string | null
@@ -1207,6 +1429,15 @@ export type Database = {
       }
     }
     Functions: {
+      activate_subscription: {
+        Args: {
+          p_duration_days: number
+          p_provider_charge_id?: string
+          p_tier: string
+          p_user_id: number
+        }
+        Returns: undefined
+      }
       apply_successful_payment: {
         Args: { p_invoice_id: string; p_provider_payment_id: string }
         Returns: boolean
