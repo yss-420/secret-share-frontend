@@ -3,7 +3,7 @@ import { NavigationBar } from "@/components/NavigationBar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Trophy, Star, Gem } from "lucide-react";
+import { Trophy, Gem } from "lucide-react";
 import { useTranslation } from 'react-i18next';
 import { trackNavigation } from "@/utils/analytics";
 
@@ -22,10 +22,7 @@ const Showdown = () => {
       <main className="px-4 py-6 pb-24 max-w-4xl mx-auto">
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <div className="relative">
-              <Trophy className="w-8 h-8 text-primary" />
-              <Star className="w-3 h-3 text-yellow-400 absolute -top-1 -right-1" />
-            </div>
+            <Trophy className="w-8 h-8 text-primary" />
             <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-pink-400 bg-clip-text text-transparent">
               {t('showdown.title')}
             </h1>
@@ -91,8 +88,8 @@ const Showdown = () => {
           </Card>
 
           {/* Photo Battle Arena Card */}
-          <Card className="card-premium border-muted/20 relative">
-            <Badge className="absolute -top-2 -right-2 bg-yellow-500/20 text-yellow-400 border-yellow-500/30 animate-pulse-note">
+          <Card className="card-premium border-muted/20 relative overflow-hidden">
+            <Badge className="absolute top-2 right-2 bg-yellow-500/20 text-yellow-400 border-yellow-500/30 animate-pulse-note">
               {t('showdown.battleArena.comingSoon')}
             </Badge>
             <CardHeader>
