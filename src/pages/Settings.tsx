@@ -164,7 +164,7 @@ const Settings = () => {
       {/* Social Footer */}
       <SocialFooter className="border-t border-border/50" />
 
-      <NavigationBar activeTab={getActiveTab()} onTabChange={handleTabChange} />
+      <NavigationBar />
 
       {/* Earn Modal */}
       <EarnModal 

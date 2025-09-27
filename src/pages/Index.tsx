@@ -15,7 +15,6 @@ import { EarnModal } from '@/components/EarnModal';
 import { adService } from '@/services/adService';
 
 const Index = () => {
-  const [activeTab, setActiveTab] = useState('characters');
   const [earnModalOpen, setEarnModalOpen] = useState(false);
   const navigate = useNavigate();
   const { user, telegramUser, isLoading, isAuthenticated } = useAuth();
@@ -79,15 +78,6 @@ const Index = () => {
 
   const handleCharacterSelect = (companionName: string) => {
     navigate(`/character/${companionName}`);
-  };
-
-  const handleTabChange = (tab: string) => {
-    setActiveTab(tab);
-    if (tab === 'upgrade') {
-      navigate('/store');
-    } else if (tab === 'settings') {
-      navigate('/settings');
-    }
   };
 
   // Check if user should see Free Gems button
@@ -155,10 +145,7 @@ const Index = () => {
       <SocialFooter className="border-t border-border/50" />
 
       {/* Navigation */}
-      <NavigationBar 
-        activeTab={activeTab}
-        onTabChange={handleTabChange}
-      />
+      <NavigationBar />
 
       {/* Earn Modal */}
       <EarnModal 

@@ -139,7 +139,7 @@ const Showdown = () => {
         </div>
       </main>
 
-      <NavigationBar activeTab="showdown" onTabChange={(tab) => trackNavigation(tab)} />
+      <NavigationBar />
     </div>
   );
 };
