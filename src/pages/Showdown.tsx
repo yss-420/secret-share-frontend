@@ -11,7 +11,8 @@ const Showdown = () => {
   const { t } = useTranslation();
 
   const handleRatingClick = () => {
-    window.open('https://t.me/yoursecretsharebot?start=rating', '_blank');
+    trackNavigation('showdown_rating_cta');
+    window.open('https://t.me/yoursecretsharebot?start=rating', '_blank', 'noopener,noreferrer');
   };
 
   return (
