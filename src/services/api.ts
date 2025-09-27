@@ -1,9 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL as string | undefined;
-const FRONTEND_SECRET_KEY = import.meta.env.VITE_FRONTEND_SECRET_KEY as string | undefined;
-
 export interface Transaction {
   id: string;
   amount: number;
@@ -30,36 +27,17 @@ export interface GemPurchase {
 class ApiService {
   async getUserStatus(telegramId: number): Promise<Pick<UserStats, 'gems' | 'messages_today' | 'subscription_type'> | null> {
     try {
-      if (!BACKEND_URL || !FRONTEND_SECRET_KEY) {
-        console.warn('Missing VITE_BACKEND_URL or VITE_FRONTEND_SECRET_KEY');
-        return null;
-      }
-
-      const response = await fetch(`${BACKEND_URL}/user_status`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${FRONTEND_SECRET_KEY}`
-        },
-        body: JSON.stringify({ telegram_id: telegramId })
+      // Use Supabase function instead of direct external API call
+      const { data, error } = await supabase.functions.invoke('get-user-status', {
+        body: { telegram_id: telegramId }
       });
 
-      if (!response.ok) {
-        console.error('Failed to fetch user status from backend:', response.status, await response.text());
+      if (error) {
+        console.error('Error fetching user status:', error);
         return null;
       }
 
-      const data = await response.json();
-      if (!data?.success) {
-        console.warn('Backend returned non-success for user_status:', data);
-        return null;
-      }
-
-      return {
-        gems: data.gems ?? 0,
-        messages_today: data.messages_today ?? 0,
-        subscription_type: data.subscription_type ?? null
-      };
+      return data;
     } catch (error) {
       console.error('Error fetching user status:', error);
       return null;

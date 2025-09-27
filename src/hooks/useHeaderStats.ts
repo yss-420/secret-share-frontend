@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useDevMode } from '@/hooks/useDevMode';
+import { supabase } from '@/integrations/supabase/client';
 
 interface HeaderStats {
   gems: number;
@@ -14,8 +15,6 @@ interface HeaderStats {
   } | null;
 }
 
-const API_BASE = import.meta.env.VITE_BACKEND_URL || 'https://pfuyxdqzbrjrtqlbkbku.supabase.co/functions/v1';
-const FRONTEND_SECRET_KEY = import.meta.env.VITE_FRONTEND_SECRET_KEY;
 
 async function fetchHeaderStats() {
   // Try multiple methods to get telegram_id for real users
@@ -63,24 +62,16 @@ async function fetchHeaderStats() {
 
   console.log('🌐 Making API request for real user:', telegram_id);
   
-  const res = await fetch(`${API_BASE}/api/user-status`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${FRONTEND_SECRET_KEY}`
-    },
-    body: JSON.stringify({ telegram_id })
+  // Use Supabase edge function instead of direct API call
+  const { data, error } = await supabase.functions.invoke('get-user-status', {
+    body: { telegram_id }
   });
   
-  console.log('📡 API Response status:', res.status);
-  
-  if (!res.ok) {
-    const errorText = await res.text();
-    console.error('❌ API Error:', errorText);
-    throw new Error(`API request failed: ${res.status} - ${errorText}`);
+  if (error) {
+    console.error('❌ API Error:', error);
+    throw new Error(`API request failed: ${error.message}`);
   }
   
-  const data = await res.json();
   console.log('✅ Real user data received:', data);
   
   const { gems, messages_today, subscription_type, daily_limit, intro } = data;
