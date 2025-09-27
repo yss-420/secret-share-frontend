@@ -1,6 +1,7 @@
 {
   "navigation": {
     "characters": "Personajes",
+    "showdown": "Enfrentamiento",
     "upgrade": "Actualizar",
     "settings": "Configuración"
   },
@@ -84,5 +85,27 @@
     "es": "Español",
     "it": "Italiano",
     "de": "Alemán"
+  },
+  "showdown": {
+    "title": "Enfrentamiento",
+    "subtitle": "Funciones premium para usuarios élite",
+    "note": "Nota: No se guardan imágenes.",
+    "privateRating": {
+      "title": "Calificación Privada",
+      "tagline": "Tu calificación privada personalizada",
+      "step1": "Elige tu personaje.",
+      "step2": "Elige honestidad y envía una foto clara.",
+      "step3": "Obtén tu puntuación, desglose y una nota de voz privada.",
+      "cta": "Califícame"
+    },
+    "battleArena": {
+      "title": "Arena de Batalla de Fotos",
+      "tagline": "Batalla por derechos de presumir",
+      "step1": "Únete a la arena.",
+      "step2": "Envía una foto para una batalla cara a cara.",
+      "step3": "Escala en la clasificación y gana recompensas.",
+      "cta": "Próximamente",
+      "comingSoon": "Próximamente"
+    }
   }
 }

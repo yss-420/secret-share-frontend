@@ -8,6 +8,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import Index from "./pages/Index";
 import ScenarioSelection from "./pages/ScenarioSelection";
+import Showdown from "./pages/Showdown";
 import Store from "./pages/Store";
 import Settings from "./pages/Settings";
 import LanguageSelection from "./pages/LanguageSelection";
@@ -29,6 +30,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/character/:name" element={<ScenarioSelection />} />
+            <Route path="/showdown" element={<Showdown />} />
             <Route path="/store" element={<Store />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/language-selection" element={<LanguageSelection />} />

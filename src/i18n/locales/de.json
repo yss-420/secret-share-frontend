@@ -1,6 +1,7 @@
 {
   "navigation": {
     "characters": "Charaktere",
+    "showdown": "Showdown",
     "upgrade": "Upgrade",
     "settings": "Einstellungen"
   },
@@ -84,5 +85,27 @@
     "es": "Spanisch",
     "it": "Italienisch",
     "de": "Deutsch"
+  },
+  "showdown": {
+    "title": "Showdown",
+    "subtitle": "Premium-Features für Elite-Nutzer",
+    "note": "Hinweis: Keine Bilder werden gespeichert.",
+    "privateRating": {
+      "title": "Private Bewertung",
+      "tagline": "Deine personalisierte private Bewertung",
+      "step1": "Wähle deinen Charakter.",
+      "step2": "Wähle Ehrlichkeit und sende ein klares Foto.",
+      "step3": "Erhalte deine Punktzahl, Aufschlüsselung und eine private Sprachnachricht.",
+      "cta": "Bewerte mich"
+    },
+    "battleArena": {
+      "title": "Foto-Kampf-Arena",
+      "tagline": "Kämpfe um Prahlrechte",
+      "step1": "Tritt der Arena bei.",
+      "step2": "Sende ein Foto für einen direkten Kampf.",
+      "step3": "Klettere in der Rangliste und gewinne Belohnungen.",
+      "cta": "Kommt bald",
+      "comingSoon": "Kommt bald"
+    }
   }
 }

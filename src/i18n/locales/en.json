@@ -1,6 +1,7 @@
 {
   "navigation": {
     "characters": "Characters",
+    "showdown": "Showdown",
     "upgrade": "Upgrade",
     "settings": "Settings"
   },
@@ -88,5 +89,27 @@
     "es": "Spanish",
     "it": "Italian",
     "de": "German"
+  },
+  "showdown": {
+    "title": "Showdown",
+    "subtitle": "Premium features for elite users",
+    "note": "Note: No images are saved.",
+    "privateRating": {
+      "title": "Private Rating",
+      "tagline": "Your personalised private rating",
+      "step1": "Choose your character.",
+      "step2": "Pick honesty and send one clear photo.",
+      "step3": "Get your score, breakdown, and a private voice note.",
+      "cta": "Rate Me"
+    },
+    "battleArena": {
+      "title": "Photo Battle Arena",
+      "tagline": "Battle for bragging rights",
+      "step1": "Join the arena.",
+      "step2": "Submit a photo for a head‑to‑head battle.",
+      "step3": "Climb the leaderboard and win rewards.",
+      "cta": "Coming Soon",
+      "comingSoon": "Coming Soon"
+    }
   }
 }

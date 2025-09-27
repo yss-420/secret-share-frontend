@@ -1,6 +1,7 @@
 {
   "navigation": {
     "characters": "Personagens",
+    "showdown": "Confronto",
     "upgrade": "Atualizar",
     "settings": "Configurações"
   },
@@ -84,5 +85,27 @@
     "es": "Espanhol",
     "it": "Italiano",
     "de": "Alemão"
+  },
+  "showdown": {
+    "title": "Confronto",
+    "subtitle": "Recursos premium para usuários elite",
+    "note": "Nota: Nenhuma imagem é salva.",
+    "privateRating": {
+      "title": "Avaliação Privada",
+      "tagline": "Sua avaliação privada personalizada",
+      "step1": "Escolha seu personagem.",
+      "step2": "Escolha a honestidade e envie uma foto clara.",
+      "step3": "Obtenha sua pontuação, análise e uma nota de voz privada.",
+      "cta": "Me Avalie"
+    },
+    "battleArena": {
+      "title": "Arena de Batalha de Fotos",
+      "tagline": "Batalhe por direitos de se gabar",
+      "step1": "Junte-se à arena.",
+      "step2": "Envie uma foto para uma batalha cara a cara.",
+      "step3": "Suba no ranking e ganhe recompensas.",
+      "cta": "Em Breve",
+      "comingSoon": "Em Breve"
+    }
   }
 }

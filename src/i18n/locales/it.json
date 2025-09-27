@@ -1,6 +1,7 @@
 {
   "navigation": {
     "characters": "Personaggi",
+    "showdown": "Resa dei Conti",
     "upgrade": "Aggiorna",
     "settings": "Impostazioni"
   },
@@ -84,5 +85,27 @@
     "es": "Spagnolo",
     "it": "Italiano",
     "de": "Tedesco"
+  },
+  "showdown": {
+    "title": "Resa dei Conti",
+    "subtitle": "Funzionalità premium per utenti élite",
+    "note": "Nota: Nessuna immagine viene salvata.",
+    "privateRating": {
+      "title": "Valutazione Privata",
+      "tagline": "La tua valutazione privata personalizzata",
+      "step1": "Scegli il tuo personaggio.",
+      "step2": "Scegli l'onestà e invia una foto chiara.",
+      "step3": "Ottieni il tuo punteggio, analisi e una nota vocale privata.",
+      "cta": "Valutami"
+    },
+    "battleArena": {
+      "title": "Arena di Battaglia Foto",
+      "tagline": "Combatti per i diritti di vanteria",
+      "step1": "Unisciti all'arena.",
+      "step2": "Invia una foto per una battaglia testa a testa.",
+      "step3": "Scala la classifica e vinci ricompense.",
+      "cta": "Prossimamente",
+      "comingSoon": "Prossimamente"
+    }
   }
 }
