@@ -29,8 +29,8 @@ const BattleAnimation = () => {
         <div 
           className="animate-pulse bg-muted/20 rounded"
           style={{
-            width: isMobile ? 285 : 265,
-            height: isMobile ? 203 : 189
+            width: isMobile ? 260 : 240,
+            height: isMobile ? 185 : 171
           }}
         />
       </div>
@@ -48,8 +48,8 @@ const BattleAnimation = () => {
         loop={true}
         autoplay={true}
         style={{
-          width: isMobile ? 285 : 265,
-          height: isMobile ? 203 : 189
+          width: isMobile ? 260 : 240,
+          height: isMobile ? 185 : 171
         }}
         rendererSettings={{
           preserveAspectRatio: 'xMidYMid slice'
