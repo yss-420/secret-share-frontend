@@ -6,6 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { Trophy, Gem } from "lucide-react";
 import { useTranslation } from 'react-i18next';
 import { trackNavigation } from "@/utils/analytics";
+import RatingAnimation from "@/components/animations/RatingAnimation";
+import BattleAnimation from "@/components/animations/BattleAnimation";
 
 const Showdown = () => {
   const { t } = useTranslation();
@@ -44,6 +46,9 @@ const Showdown = () => {
               </p>
             </CardHeader>
             <CardContent className="space-y-4">
+              <div className="mb-6">
+                <RatingAnimation />
+              </div>
               <div className="space-y-3">
                 <div className="flex items-start gap-3 text-sm">
                   <span className="bg-primary/20 text-primary rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold flex-shrink-0">
@@ -101,6 +106,9 @@ const Showdown = () => {
               </p>
             </CardHeader>
             <CardContent className="space-y-4">
+              <div className="mb-6">
+                <BattleAnimation />
+              </div>
               <div className="space-y-3 opacity-60">
                 <div className="flex items-start gap-3 text-sm">
                   <span className="bg-muted/20 text-muted-foreground rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold flex-shrink-0">
