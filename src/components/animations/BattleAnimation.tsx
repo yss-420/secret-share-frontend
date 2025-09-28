@@ -29,8 +29,8 @@ const BattleAnimation = () => {
         <div 
           className="animate-pulse bg-muted/20 rounded"
           style={{
-            width: isMobile ? 260 : 240,
-            height: isMobile ? 185 : 171
+            width: isMobile ? 300 : 280,
+            height: isMobile ? 214 : 200
           }}
         />
       </div>
