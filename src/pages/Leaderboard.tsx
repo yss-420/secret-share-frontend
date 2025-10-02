@@ -109,8 +109,8 @@ const Leaderboard = () => {
         {/* Period Tabs */}
         <Tabs value={period} onValueChange={(value) => setPeriod(value as 'alltime' | 'monthly')} className="mb-6">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="alltime">All Time</TabsTrigger>
             <TabsTrigger value="monthly">This Month</TabsTrigger>
+            <TabsTrigger value="alltime">All Time</TabsTrigger>
           </TabsList>
         </Tabs>
 
