@@ -38,7 +38,7 @@ interface LeaderboardData {
 const Leaderboard = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [period, setPeriod] = useState<'alltime' | 'monthly'>('alltime');
+  const [period, setPeriod] = useState<'alltime' | 'monthly'>('monthly');
   const [data, setData] = useState<LeaderboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
