@@ -109,11 +109,10 @@
     "battleArena": {
       "title": "Schwanz-Kampf-Arena",
       "tagline": "Kämpfe um Prahlrechte",
-      "step1": "Tritt der Arena bei.",
-      "step2": "Sende ein Foto für einen direkten Kampf in Echtzeit.",
-      "step3": "Klettere in der Rangliste und gewinne Belohnungen.",
-      "cta": "Kommt bald",
-      "comingSoon": "Kommt bald"
+      "step1": "Registriere deinen Champion und betrete die Arena.",
+      "step2": "Lade ein klares Foto für einen sofortigen Echtzeit-PvP-Kampf hoch.",
+      "step3": "Gewinne Duelle, um 300💎 zu gewinnen und die Rangliste für massive Belohnungen zu erklimmen.",
+      "cta": "Arena betreten"
     }
   }
 }

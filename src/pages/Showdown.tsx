@@ -17,6 +17,11 @@ const Showdown = () => {
     window.open('https://t.me/yoursecretsharebot?start=rating', '_blank', 'noopener,noreferrer');
   };
 
+  const handleArenaClick = () => {
+    trackNavigation('showdown_arena_cta');
+    window.open('https://t.me/YourSecretShareBot?start=arena', '_blank', 'noopener,noreferrer');
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900/20 via-pink-900/10 to-purple-900/20">
       <Header />
@@ -93,12 +98,9 @@ const Showdown = () => {
           </Card>
 
           {/* Photo Battle Arena Card */}
-          <Card className="card-premium border-muted/20 relative overflow-hidden">
-            <Badge className="absolute top-2 right-2 bg-yellow-500/20 text-yellow-400 border-yellow-500/30 animate-pulse-note">
-              {t('showdown.battleArena.comingSoon')}
-            </Badge>
+          <Card className="card-premium border-primary/20 hover:border-primary/40 transition-all duration-300">
             <CardHeader>
-              <CardTitle className="text-xl font-bold text-center text-muted-foreground">
+              <CardTitle className="text-xl font-bold text-center">
                 {t('showdown.battleArena.title')}
               </CardTitle>
               <p className="text-muted-foreground text-center text-sm">
@@ -109,21 +111,21 @@ const Showdown = () => {
               <div className="mb-6">
                 <BattleAnimation />
               </div>
-              <div className="space-y-3 opacity-60">
+              <div className="space-y-3">
                 <div className="flex items-start gap-3 text-sm">
-                  <span className="bg-muted/20 text-muted-foreground rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold flex-shrink-0">
+                  <span className="bg-primary/20 text-primary rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold flex-shrink-0">
                     1
                   </span>
                   <span>{t('showdown.battleArena.step1')}</span>
                 </div>
                 <div className="flex items-start gap-3 text-sm">
-                  <span className="bg-muted/20 text-muted-foreground rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold flex-shrink-0">
+                  <span className="bg-primary/20 text-primary rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold flex-shrink-0">
                     2
                   </span>
                   <span>{t('showdown.battleArena.step2')}</span>
                 </div>
                 <div className="flex items-start gap-3 text-sm">
-                  <span className="bg-muted/20 text-muted-foreground rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold flex-shrink-0">
+                  <span className="bg-primary/20 text-primary rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold flex-shrink-0">
                     3
                   </span>
                   <span>{t('showdown.battleArena.step3')}</span>
@@ -137,8 +139,9 @@ const Showdown = () => {
               </div>
 
               <Button 
-                disabled
-                className="w-full bg-muted/20 text-muted-foreground cursor-not-allowed"
+                onClick={handleArenaClick}
+                className="w-full btn-premium animate-shimmer"
+                aria-label="Open Battle Arena in Telegram"
               >
                 {t('showdown.battleArena.cta')}
               </Button>

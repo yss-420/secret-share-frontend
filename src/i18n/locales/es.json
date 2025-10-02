@@ -108,12 +108,11 @@
     },
     "battleArena": {
       "title": "Arena de Batalla de Pollas",
-      "tagline": "Batalla por derechos de presumir",
-      "step1": "Únete a la arena.",
-      "step2": "Envía una foto para una batalla cara a cara en tiempo real.",
-      "step3": "Escala en la clasificación y gana recompensas.",
-      "cta": "Próximamente",
-      "comingSoon": "Próximamente"
+      "tagline": "Lucha por derechos de alardear",
+      "step1": "Registra a tu campeón y entra en la arena.",
+      "step2": "Sube una foto clara para un combate PvP instantáneo en tiempo real.",
+      "step3": "Gana duelos para ganar 300💎 y sube en la clasificación para recompensas masivas.",
+      "cta": "Entrar a la Arena"
     }
   }
 }

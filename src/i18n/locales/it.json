@@ -109,11 +109,10 @@
     "battleArena": {
       "title": "Arena di Battaglia Cazzi",
       "tagline": "Combatti per i diritti di vanteria",
-      "step1": "Unisciti all'arena.",
-      "step2": "Invia una foto per una battaglia testa a testa in tempo reale.",
-      "step3": "Scala la classifica e vinci ricompense.",
-      "cta": "Prossimamente",
-      "comingSoon": "Prossimamente"
+      "step1": "Registra il tuo campione ed entra nell'arena.",
+      "step2": "Carica una foto chiara per un combattimento PvP istantaneo in tempo reale.",
+      "step3": "Vinci duelli per vincere 300💎 e scala la classifica per ricompense enormi.",
+      "cta": "Entra nell'Arena"
     }
   }
 }
