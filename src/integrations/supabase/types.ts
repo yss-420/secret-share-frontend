@@ -1277,33 +1277,6 @@ export type Database = {
       }
     }
     Views: {
-      conversations_view: {
-        Row: {
-          bot_response: string | null
-          character: string | null
-          created_at: string | null
-          id: string | null
-          user_id: number | null
-          user_message: string | null
-        }
-        Insert: {
-          bot_response?: string | null
-          character?: string | null
-          created_at?: string | null
-          id?: string | null
-          user_id?: number | null
-          user_message?: string | null
-        }
-        Update: {
-          bot_response?: string | null
-          character?: string | null
-          created_at?: string | null
-          id?: string | null
-          user_id?: number | null
-          user_message?: string | null
-        }
-        Relationships: []
-      }
       user_counters_mv: {
         Row: {
           images_generated: number | null
@@ -1500,6 +1473,17 @@ export type Database = {
           total_customers: number
           total_stars: number
           total_transactions: number
+        }[]
+      }
+      get_user_conversations: {
+        Args: { p_user_id?: number }
+        Returns: {
+          bot_response: string
+          character: string
+          created_at: string
+          id: string
+          user_id: number
+          user_message: string
         }[]
       }
       get_user_stats_safe: {
