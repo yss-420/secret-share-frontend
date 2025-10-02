@@ -5,12 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Trophy, Swords } from "lucide-react";
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { trackNavigation } from "@/utils/analytics";
 import RatingAnimation from "@/components/animations/RatingAnimation";
 import BattleAnimation from "@/components/animations/BattleAnimation";
 
 const Showdown = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const handleRatingClick = () => {
     trackNavigation('showdown_rating_cta');
@@ -22,11 +24,27 @@ const Showdown = () => {
     window.open('https://t.me/YourSecretShareBot?start=arena', '_blank', 'noopener,noreferrer');
   };
 
+  const handleLeaderboardClick = () => {
+    trackNavigation('showdown_leaderboard_cta');
+    navigate('/leaderboard');
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900/20 via-pink-900/10 to-purple-900/20">
       <Header />
       
       <main className="px-4 py-6 pb-24 max-w-4xl mx-auto">
+        {/* Leaderboard Button - Top Right */}
+        <div className="flex justify-end mb-4">
+          <Button 
+            onClick={handleLeaderboardClick}
+            className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-4 py-2 shadow-lg hover:shadow-emerald-500/25 transition-all duration-300"
+            aria-label="View Leaderboard"
+          >
+            <Trophy className="w-4 h-4 mr-2" />
+            Leaderboard
+          </Button>
+        </div>
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-2 mb-4">
             <Trophy className="w-8 h-8 text-primary" />
