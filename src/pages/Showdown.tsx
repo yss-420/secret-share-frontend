@@ -3,7 +3,7 @@ import { NavigationBar } from "@/components/NavigationBar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Trophy, Gem } from "lucide-react";
+import { Trophy, Swords } from "lucide-react";
 import { useTranslation } from 'react-i18next';
 import { trackNavigation } from "@/utils/analytics";
 import RatingAnimation from "@/components/animations/RatingAnimation";
@@ -86,13 +86,7 @@ const Showdown = () => {
                 className="w-full btn-premium animate-shimmer"
                 aria-label="Open Private Rating in Telegram"
               >
-                <div className="flex items-center gap-2">
-                  <span>{t('showdown.privateRating.cta')}</span>
-                  <div className="flex items-center gap-1">
-                    <span>150</span>
-                    <Gem className="w-4 h-4" />
-                  </div>
-                </div>
+                {t('showdown.privateRating.cta')}
               </Button>
             </CardContent>
           </Card>
@@ -143,7 +137,10 @@ const Showdown = () => {
                 className="w-full btn-premium animate-shimmer"
                 aria-label="Open Battle Arena in Telegram"
               >
-                {t('showdown.battleArena.cta')}
+                <div className="flex items-center gap-2">
+                  <Swords className="w-4 h-4" />
+                  <span>{t('showdown.battleArena.cta')}</span>
+                </div>
               </Button>
             </CardContent>
           </Card>
