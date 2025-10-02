@@ -4,8 +4,9 @@ import { NavigationBar } from "@/components/NavigationBar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Trophy, Target, Flame, Loader2 } from "lucide-react";
+import { Trophy, Target, Flame, Loader2, ArrowLeft } from "lucide-react";
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { trackNavigation } from "@/utils/analytics";
 
 interface LeaderboardEntry {
@@ -36,6 +37,7 @@ interface LeaderboardData {
 
 const Leaderboard = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [period, setPeriod] = useState<'alltime' | 'monthly'>('alltime');
   const [data, setData] = useState<LeaderboardData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -80,6 +82,19 @@ const Leaderboard = () => {
       <Header />
       
       <main className="px-4 py-6 pb-24 max-w-4xl mx-auto">
+        {/* Back Button */}
+        <div className="mb-4">
+          <Button 
+            onClick={() => navigate('/showdown')}
+            variant="outline"
+            className="gap-2"
+            aria-label="Back to Showdown"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back
+          </Button>
+        </div>
+
         {/* Title */}
         <div className="text-center mb-6">
           <div className="flex items-center justify-center gap-2 mb-2">
