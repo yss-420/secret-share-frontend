@@ -72,7 +72,15 @@
       "extendedChatHistory": "Histórico de Chat Estendido",
       "ultimatePriorityQueue": "Fila de Prioridade Máxima",
       "earlyAccessNewCharacters": "Acesso Antecipado a Novos Personagens",
-      "priorityAccessNewFeatures": "Acesso Prioritário a Novos Recursos"
+      "priorityAccessNewFeatures": "Acesso Prioritário a Novos Recursos",
+      "freeRating1": "1 Avaliação Grátis",
+      "battleArenaAccess": "Acesso à Arena de Batalha",
+      "freeRatings3": "3 Avaliações Grátis",
+      "freeBattleArenaDuels3": "3 Duelos Grátis da Arena",
+      "freeRatings5": "5 Avaliações Grátis",
+      "freeBattleArenaDuels5": "5 Duelos Grátis da Arena",
+      "freeRatings10": "10 Avaliações Grátis",
+      "freeBattleArenaDuels10": "10 Duelos Grátis da Arena"
     },
     "subscribe": "Assinar",
     "buyGems": "Comprar Gemas",

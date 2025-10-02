@@ -72,7 +72,15 @@
       "extendedChatHistory": "Расширенная история чатов",
       "ultimatePriorityQueue": "Максимальный приоритет",
       "earlyAccessNewCharacters": "Ранний доступ к персонажам",
-      "priorityAccessNewFeatures": "Приоритет новых функций"
+      "priorityAccessNewFeatures": "Приоритет новых функций",
+      "freeRating1": "1 Бесплатная Оценка",
+      "battleArenaAccess": "Доступ к Арене Битвы",
+      "freeRatings3": "3 Бесплатные Оценки",
+      "freeBattleArenaDuels3": "3 Бесплатные Дуэли Арены",
+      "freeRatings5": "5 Бесплатных Оценок",
+      "freeBattleArenaDuels5": "5 Бесплатных Дуэлей Арены",
+      "freeRatings10": "10 Бесплатных Оценок",
+      "freeBattleArenaDuels10": "10 Бесплатных Дуэлей Арены"
     },
     "subscribe": "Подписаться",
     "buyGems": "Купить гемы",

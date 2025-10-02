@@ -616,7 +616,8 @@ const Store = () => {
       "**80 Gems**",
       "Multiple Languages",
       "Access to All Features",
-      "Top-up Messages"
+      "Top-up Messages",
+      t('store.features.freeRating1')
     ],
     isIntro: true
   };
@@ -635,7 +636,10 @@ const Store = () => {
         t('store.features.noBlurredImages'),
         t('store.features.unlimitedConversations'),
         t('store.features.adFreeExperience'),
-        t('store.features.prioritySupport')
+        t('store.features.prioritySupport'),
+        t('store.features.battleArenaAccess'),
+        t('store.features.freeRatings3'),
+        t('store.features.freeBattleArenaDuels3')
       ]
     },
     {
@@ -652,7 +656,9 @@ const Store = () => {
         t('store.features.fasterRenderingSpeed'),
         t('store.features.skipChatQueue'),
         t('store.features.mediaPriorityQueue'),
-        t('store.features.enhancedMediaQuality')
+        t('store.features.enhancedMediaQuality'),
+        t('store.features.freeRatings5'),
+        t('store.features.freeBattleArenaDuels5')
       ]
     },
     {
@@ -669,7 +675,9 @@ const Store = () => {
         t('store.features.extendedChatHistory'),
         t('store.features.ultimatePriorityQueue'),
         t('store.features.earlyAccessNewCharacters'),
-        t('store.features.priorityAccessNewFeatures')
+        t('store.features.priorityAccessNewFeatures'),
+        t('store.features.freeRatings10'),
+        t('store.features.freeBattleArenaDuels10')
       ]
     }
   ];
