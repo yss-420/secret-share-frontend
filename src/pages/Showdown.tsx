@@ -110,8 +110,11 @@ const Showdown = () => {
           </Card>
 
           {/* Photo Battle Arena Card */}
-          <Card className="card-premium border-primary/20 hover:border-primary/40 transition-all duration-300">
-            <CardHeader>
+          <Card className="card-premium border-primary/20 hover:border-primary/40 transition-all duration-300 relative">
+            <CardHeader className="relative">
+              <Badge className="absolute top-2 right-2 bg-primary/90 text-primary-foreground animate-breathing">
+                Subscriber Only
+              </Badge>
               <CardTitle className="text-xl font-bold text-center">
                 {t('showdown.battleArena.title')}
               </CardTitle>
