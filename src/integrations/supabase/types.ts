@@ -219,6 +219,45 @@ export type Database = {
         }
         Relationships: []
       }
+      fight_history: {
+        Row: {
+          fight_timestamp: string
+          id: string
+          is_genesis_bot: boolean
+          player1_champion_name: string
+          player1_score: number
+          player1_user_id: number
+          player2_champion_name: string
+          player2_score: number
+          player2_user_id: number | null
+          winner_user_id: number | null
+        }
+        Insert: {
+          fight_timestamp?: string
+          id?: string
+          is_genesis_bot?: boolean
+          player1_champion_name: string
+          player1_score: number
+          player1_user_id: number
+          player2_champion_name: string
+          player2_score: number
+          player2_user_id?: number | null
+          winner_user_id?: number | null
+        }
+        Update: {
+          fight_timestamp?: string
+          id?: string
+          is_genesis_bot?: boolean
+          player1_champion_name?: string
+          player1_score?: number
+          player1_user_id?: number
+          player2_champion_name?: string
+          player2_score?: number
+          player2_user_id?: number | null
+          winner_user_id?: number | null
+        }
+        Relationships: []
+      }
       gem_packages: {
         Row: {
           description: string | null
@@ -887,6 +926,33 @@ export type Database = {
         }
         Relationships: []
       }
+      user_pass_balances: {
+        Row: {
+          arena_passes: number
+          created_at: string
+          last_refreshed_at: string
+          rating_passes: number
+          updated_at: string
+          user_id: number
+        }
+        Insert: {
+          arena_passes?: number
+          created_at?: string
+          last_refreshed_at?: string
+          rating_passes?: number
+          updated_at?: string
+          user_id: number
+        }
+        Update: {
+          arena_passes?: number
+          created_at?: string
+          last_refreshed_at?: string
+          rating_passes?: number
+          updated_at?: string
+          user_id?: number
+        }
+        Relationships: []
+      }
       users: {
         Row: {
           ads_last_bonus_at: string | null
@@ -1119,6 +1185,96 @@ export type Database = {
           },
         ]
       }
+      willy_arena_submissions: {
+        Row: {
+          champion_name: string
+          id: string
+          rating_score: number
+          submitted_at: string
+          telegram_file_id: string
+          user_id: number
+        }
+        Insert: {
+          champion_name: string
+          id?: string
+          rating_score: number
+          submitted_at?: string
+          telegram_file_id: string
+          user_id: number
+        }
+        Update: {
+          champion_name?: string
+          id?: string
+          rating_score?: number
+          submitted_at?: string
+          telegram_file_id?: string
+          user_id?: number
+        }
+        Relationships: []
+      }
+      willy_leaderboard: {
+        Row: {
+          alltime_score: number | null
+          best_streak: number
+          champion_name: string
+          created_at: string
+          last_duel_at: string | null
+          last_monthly_reset: string | null
+          losses: number
+          monthly_best_streak: number | null
+          monthly_current_streak: number | null
+          monthly_losses: number | null
+          monthly_score: number | null
+          monthly_wins: number | null
+          total_duels: number | null
+          updated_at: string
+          user_id: number
+          win_rate: number | null
+          win_streak: number
+          wins: number
+        }
+        Insert: {
+          alltime_score?: number | null
+          best_streak?: number
+          champion_name: string
+          created_at?: string
+          last_duel_at?: string | null
+          last_monthly_reset?: string | null
+          losses?: number
+          monthly_best_streak?: number | null
+          monthly_current_streak?: number | null
+          monthly_losses?: number | null
+          monthly_score?: number | null
+          monthly_wins?: number | null
+          total_duels?: number | null
+          updated_at?: string
+          user_id: number
+          win_rate?: number | null
+          win_streak?: number
+          wins?: number
+        }
+        Update: {
+          alltime_score?: number | null
+          best_streak?: number
+          champion_name?: string
+          created_at?: string
+          last_duel_at?: string | null
+          last_monthly_reset?: string | null
+          losses?: number
+          monthly_best_streak?: number | null
+          monthly_current_streak?: number | null
+          monthly_losses?: number | null
+          monthly_score?: number | null
+          monthly_wins?: number | null
+          total_duels?: number | null
+          updated_at?: string
+          user_id?: number
+          win_rate?: number | null
+          win_streak?: number
+          wins?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       conversations_view: {
@@ -1311,6 +1467,12 @@ export type Database = {
           successful_payments: number
           total_payments: number
           unique_paying_users: number
+        }[]
+      }
+      get_recent_opponents: {
+        Args: { days_back?: number; p_user_id: number }
+        Returns: {
+          opponent_user_id: number
         }[]
       }
       get_session_analytics: {
