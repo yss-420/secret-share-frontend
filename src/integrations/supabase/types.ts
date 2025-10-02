@@ -117,13 +117,6 @@ export type Database = {
             foreignKeyName: "chats_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "user_window_caps"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "chats_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
           },
@@ -323,13 +316,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "user_counters_mv"
             referencedColumns: ["user_uuid"]
-          },
-          {
-            foreignKeyName: "images_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user_window_caps"
-            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "images_user_id_fkey"
@@ -678,13 +664,6 @@ export type Database = {
             foreignKeyName: "relationships_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "user_window_caps"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "relationships_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
           },
@@ -885,13 +864,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "user_counters_mv"
             referencedColumns: ["user_uuid"]
-          },
-          {
-            foreignKeyName: "transactions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user_window_caps"
-            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "transactions_user_id_fkey"
@@ -1119,13 +1091,6 @@ export type Database = {
             foreignKeyName: "videos_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "user_window_caps"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "videos_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
           },
@@ -1309,30 +1274,6 @@ export type Database = {
           user_id: string | null
           username: string | null
         }
-        Insert: {
-          base_cap?: never
-          bonus_messages_in_window?: never
-          effective_cap?: never
-          hit_cap?: never
-          last_seen?: string | null
-          message_window_index?: never
-          message_window_started_at?: never
-          messages_today?: never
-          user_id?: string | null
-          username?: never
-        }
-        Update: {
-          base_cap?: never
-          bonus_messages_in_window?: never
-          effective_cap?: never
-          hit_cap?: never
-          last_seen?: string | null
-          message_window_index?: never
-          message_window_started_at?: never
-          messages_today?: never
-          user_id?: string | null
-          username?: never
-        }
         Relationships: []
       }
       v_user_active_subscription: {
@@ -1340,35 +1281,13 @@ export type Database = {
           current_period_end: string | null
           is_recurring: boolean | null
           next_renewal_at: string | null
-          status: Database["public"]["Enums"]["subscription_status"] | null
+          status: string | null
           subscription_id: number | null
           tier_id: string | null
           tier_name: string | null
           user_id: number | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "subscriptions_tier_id_fkey"
-            columns: ["tier_id"]
-            isOneToOne: false
-            referencedRelation: "subscription_tiers"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "subscriptions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user_counters_mv"
-            referencedColumns: ["telegram_id"]
-          },
-          {
-            foreignKeyName: "subscriptions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["telegram_id"]
-          },
-        ]
+        Relationships: []
       }
     }
     Functions: {
@@ -1392,6 +1311,19 @@ export type Database = {
       create_renewal_invoice: {
         Args: { p_amount_stars?: number; p_subscription_id: string }
         Returns: string
+      }
+      get_active_subscription_secure: {
+        Args: { p_user_id?: number }
+        Returns: {
+          current_period_end: string
+          is_recurring: boolean
+          next_renewal_at: string
+          status: string
+          subscription_id: number
+          tier_id: string
+          tier_name: string
+          user_id: number
+        }[]
       }
       get_earnings_analytics: {
         Args: Record<PropertyKey, never>
@@ -1511,6 +1443,21 @@ export type Database = {
           messages_today: number
           subscription_type: string
           telegram_id: number
+        }[]
+      }
+      get_user_window_caps_secure: {
+        Args: { p_user_id?: string }
+        Returns: {
+          base_cap: number
+          bonus_messages_in_window: number
+          effective_cap: number
+          hit_cap: boolean
+          last_seen: string
+          message_window_index: number
+          message_window_started_at: string
+          messages_today: number
+          user_id: string
+          username: string
         }[]
       }
       get_voice_call_analytics: {
