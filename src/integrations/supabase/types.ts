@@ -1504,6 +1504,15 @@ export type Database = {
           telegram_id: number
         }[]
       }
+      get_user_status_secure: {
+        Args: { p_telegram_id?: number }
+        Returns: {
+          gems: number
+          messages_today: number
+          subscription_type: string
+          telegram_id: number
+        }[]
+      }
       get_voice_call_analytics: {
         Args: Record<PropertyKey, never>
         Returns: {
