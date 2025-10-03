@@ -8,7 +8,9 @@ const ADMIN_IDS = [
 ];
 
 export const isAdmin = (telegramId: number): boolean => {
-  return ADMIN_IDS.includes(telegramId);
+  const result = ADMIN_IDS.includes(telegramId);
+  console.log(`🔍 Admin check for ID ${telegramId}:`, result);
+  return result;
 };
 
 export const requireAdmin = (telegramUser: any): void => {

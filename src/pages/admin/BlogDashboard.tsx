@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { requireAdmin, getTelegramUser } from '@/lib/adminCheck';
+import { requireAdmin, getTelegramUser, isAdmin } from '@/lib/adminCheck';
 import { Plus, Edit, Trash2, Eye, EyeOff } from 'lucide-react';
 
 export default function BlogDashboard() {
@@ -12,10 +12,18 @@ export default function BlogDashboard() {
   useEffect(() => {
     try {
       const user = getTelegramUser();
+      console.log('🔐 Admin Check:', {
+        user,
+        telegramId: user?.id,
+        isAdmin: user ? isAdmin(user.id) : false
+      });
+      
       requireAdmin(user);
+      console.log('✅ Admin access granted');
       fetchAllPosts();
-    } catch {
-      alert('⛔ Admin access required');
+    } catch (error) {
+      console.error('❌ Admin access denied:', error);
+      alert('⛔ Admin access required\n\nYour Telegram ID: ' + (getTelegramUser()?.id || 'Not logged in') + '\n\nRequired ID: 1226785406');
       navigate('/blog');
     }
   }, []);
