@@ -38,8 +38,16 @@ const ContactSupport = () => {
             <div className="space-y-3">
               <h3 className="text-lg font-semibold text-foreground">Community Support</h3>
               <p className="text-sm text-muted-foreground">
-                Our Telegram community and moderators will be releasing soon.
+                Join our Telegram community to connect with other users, get quick help, and stay updated with the latest news!
               </p>
+              <a 
+                href="https://t.me/secretshare_community" 
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block text-primary hover:underline font-medium"
+              >
+                Join Community →
+              </a>
             </div>
           </Card>
 
