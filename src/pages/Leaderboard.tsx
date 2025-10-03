@@ -4,7 +4,8 @@ import { NavigationBar } from "@/components/NavigationBar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Trophy, Target, Flame, Loader2, ArrowLeft } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Trophy, Target, Flame, Loader2, ArrowLeft, Gift } from "lucide-react";
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { trackNavigation } from "@/utils/analytics";
@@ -42,6 +43,7 @@ const Leaderboard = () => {
   const [data, setData] = useState<LeaderboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showRewards, setShowRewards] = useState(false);
 
   const fetchLeaderboard = async (selectedPeriod: 'alltime' | 'monthly') => {
     setLoading(true);
@@ -82,8 +84,8 @@ const Leaderboard = () => {
       <Header />
       
       <main className="px-4 py-6 pb-24 max-w-4xl mx-auto">
-        {/* Back Button */}
-        <div className="mb-4">
+        {/* Back Button and Rewards Button */}
+        <div className="mb-4 flex justify-between items-center">
           <Button 
             onClick={() => navigate('/showdown')}
             variant="outline"
@@ -92,6 +94,16 @@ const Leaderboard = () => {
           >
             <ArrowLeft className="w-4 h-4" />
             Back
+          </Button>
+          
+          <Button
+            onClick={() => setShowRewards(true)}
+            variant="outline"
+            size="icon"
+            className="text-2xl"
+            aria-label="View Rewards"
+          >
+            🎁
           </Button>
         </div>
 
@@ -228,6 +240,67 @@ const Leaderboard = () => {
       </main>
 
       <NavigationBar />
+      
+      {/* Rewards Modal */}
+      <Dialog open={showRewards} onOpenChange={setShowRewards}>
+        <DialogContent className="max-w-md animate-slide-in-up">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold text-center">
+              🏆 MONTHLY LEADERBOARD REWARDS
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <p className="text-sm text-muted-foreground text-center">
+              Compete for epic prizes! Top performers are rewarded automatically on the 1st of each month.
+            </p>
+            
+            <div className="space-y-3">
+              <div className="bg-primary/10 p-3 rounded-lg">
+                <p className="font-bold text-lg mb-1">🥇 1ST PLACE</p>
+                <p className="text-sm">• Premium Subscription (1 month)</p>
+                <p className="text-sm">• 500 💎 Gems</p>
+              </div>
+              
+              <div className="bg-primary/10 p-3 rounded-lg">
+                <p className="font-bold text-lg mb-1">🥈 2ND PLACE</p>
+                <p className="text-sm">• Plus Subscription (1 month)</p>
+                <p className="text-sm">• 300 💎 Gems</p>
+              </div>
+              
+              <div className="bg-primary/10 p-3 rounded-lg">
+                <p className="font-bold text-lg mb-1">🥉 3RD PLACE</p>
+                <p className="text-sm">• Essential Subscription (1 month)</p>
+                <p className="text-sm">• 200 💎 Gems</p>
+              </div>
+              
+              <div className="bg-muted/50 p-3 rounded-lg">
+                <p className="font-bold mb-2">💎 GEM REWARDS</p>
+                <p className="text-sm">• 4th-5th Place: 200 💎</p>
+                <p className="text-sm">• 6th-10th Place: 150 💎</p>
+                <p className="text-sm">• 11th-25th Place: 100 💎</p>
+                <p className="text-sm">• 26th+ Place: 50 💎 (requires 3+ duels)</p>
+              </div>
+              
+              <div className="bg-muted/50 p-3 rounded-lg">
+                <p className="font-bold mb-1">🔄 MONTHLY RESET</p>
+                <p className="text-sm">The leaderboard resets on the 1st of each month. Fresh competition, fresh rewards!</p>
+              </div>
+            </div>
+            
+            <p className="text-center font-semibold text-primary pt-2">
+              Battle for bragging rights and win massive rewards! ⚔️
+            </p>
+            
+            <Button 
+              onClick={() => setShowRewards(false)}
+              className="w-full"
+            >
+              Got it
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
