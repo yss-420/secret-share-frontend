@@ -243,58 +243,59 @@ const Leaderboard = () => {
       
       {/* Rewards Modal */}
       <Dialog open={showRewards} onOpenChange={setShowRewards}>
-        <DialogContent className="max-w-md animate-slide-in-up">
-          <DialogHeader>
-            <DialogTitle className="text-2xl font-bold text-center">
-              🏆 MONTHLY LEADERBOARD REWARDS
+        <DialogContent className="max-w-sm max-h-[85vh] p-4 animate-slide-in-up overflow-y-auto">
+          <DialogHeader className="pb-2">
+            <DialogTitle className="text-lg font-bold text-center leading-tight">
+              🏆 MONTHLY REWARDS
             </DialogTitle>
           </DialogHeader>
           
-          <div className="space-y-4 py-4">
-            <p className="text-sm text-muted-foreground text-center">
-              Compete for epic prizes! Top performers are rewarded automatically on the 1st of each month.
+          <div className="space-y-2.5">
+            <p className="text-xs text-muted-foreground text-center">
+              Top performers rewarded automatically on the 1st of each month.
             </p>
             
-            <div className="space-y-3">
-              <div className="bg-primary/10 p-3 rounded-lg">
-                <p className="font-bold text-lg mb-1">🥇 1ST PLACE</p>
-                <p className="text-sm">• Premium Subscription (1 month)</p>
-                <p className="text-sm">• 500 💎 Gems</p>
+            <div className="space-y-2">
+              <div className="bg-primary/10 p-2 rounded-lg">
+                <p className="font-bold text-sm mb-0.5">🥇 1ST PLACE</p>
+                <p className="text-xs">• Premium Sub (1 month)</p>
+                <p className="text-xs">• 500 💎 Gems</p>
               </div>
               
-              <div className="bg-primary/10 p-3 rounded-lg">
-                <p className="font-bold text-lg mb-1">🥈 2ND PLACE</p>
-                <p className="text-sm">• Plus Subscription (1 month)</p>
-                <p className="text-sm">• 300 💎 Gems</p>
+              <div className="bg-primary/10 p-2 rounded-lg">
+                <p className="font-bold text-sm mb-0.5">🥈 2ND PLACE</p>
+                <p className="text-xs">• Plus Sub (1 month)</p>
+                <p className="text-xs">• 300 💎 Gems</p>
               </div>
               
-              <div className="bg-primary/10 p-3 rounded-lg">
-                <p className="font-bold text-lg mb-1">🥉 3RD PLACE</p>
-                <p className="text-sm">• Essential Subscription (1 month)</p>
-                <p className="text-sm">• 200 💎 Gems</p>
+              <div className="bg-primary/10 p-2 rounded-lg">
+                <p className="font-bold text-sm mb-0.5">🥉 3RD PLACE</p>
+                <p className="text-xs">• Essential Sub (1 month)</p>
+                <p className="text-xs">• 200 💎 Gems</p>
               </div>
               
-              <div className="bg-muted/50 p-3 rounded-lg">
-                <p className="font-bold mb-2">💎 GEM REWARDS</p>
-                <p className="text-sm">• 4th-5th Place: 200 💎</p>
-                <p className="text-sm">• 6th-10th Place: 150 💎</p>
-                <p className="text-sm">• 11th-25th Place: 100 💎</p>
-                <p className="text-sm">• 26th+ Place: 50 💎 (requires 3+ duels)</p>
+              <div className="bg-muted/50 p-2 rounded-lg">
+                <p className="font-bold text-sm mb-1">💎 GEM REWARDS</p>
+                <p className="text-xs">• 4th-5th: 200 💎</p>
+                <p className="text-xs">• 6th-10th: 150 💎</p>
+                <p className="text-xs">• 11th-25th: 100 💎</p>
+                <p className="text-xs">• 26th+: 50 💎 (3+ duels)</p>
               </div>
               
-              <div className="bg-muted/50 p-3 rounded-lg">
-                <p className="font-bold mb-1">🔄 MONTHLY RESET</p>
-                <p className="text-sm">The leaderboard resets on the 1st of each month. Fresh competition, fresh rewards!</p>
+              <div className="bg-muted/50 p-2 rounded-lg">
+                <p className="font-bold text-sm mb-0.5">🔄 MONTHLY RESET</p>
+                <p className="text-xs">Resets on the 1st. Fresh competition, fresh rewards!</p>
               </div>
             </div>
             
-            <p className="text-center font-semibold text-primary pt-2">
+            <p className="text-center text-xs font-semibold text-primary pt-1">
               Battle for bragging rights and win massive rewards! ⚔️
             </p>
             
             <Button 
               onClick={() => setShowRewards(false)}
-              className="w-full"
+              className="w-full mt-2"
+              size="sm"
             >
               Got it
             </Button>
