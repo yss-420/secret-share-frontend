@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { requireAdmin, getTelegramUser, isAdmin } from '@/lib/adminCheck';
-import { Plus, Edit, Trash2, Eye, EyeOff } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 
 export default function BlogDashboard() {
   const navigate = useNavigate();
@@ -75,13 +75,21 @@ export default function BlogDashboard() {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold text-gradient">📝 Blog Admin Dashboard</h1>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => navigate('/settings')}
+              className="p-2 hover:bg-secondary rounded-lg transition-smooth"
+            >
+              <ArrowLeft className="w-6 h-6" />
+            </button>
+            <h1 className="text-3xl font-bold text-gradient">Admin Dashboard</h1>
+          </div>
           <button
             onClick={() => navigate('/admin/blog/new')}
             className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-smooth flex items-center gap-2"
           >
             <Plus className="w-5 h-5" />
-            Create New Post
+            New Post
           </button>
         </div>
 

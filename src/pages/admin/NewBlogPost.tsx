@@ -157,7 +157,7 @@ export default function NewBlogPost() {
           </div>
 
           <div className="card-premium p-6">
-            <label className="block mb-2 font-semibold">Featured Image URL</label>
+            <label className="block mb-2 font-semibold">Featured Image URL (1200x630px recommended)</label>
             <input
               type="url"
               value={featuredImage}
