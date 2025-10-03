@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Header } from "@/components/Header";
 import { NavigationBar } from "@/components/NavigationBar";
 import { SocialFooter } from "@/components/SocialFooter";
-import { ArrowLeft, BookOpen, ChevronRight, Crown, Globe, HelpCircle, Phone, Shield } from "lucide-react";
+import { ArrowLeft, BookOpen, ChevronRight, Crown, Globe, HelpCircle, Phone, Shield, Settings as SettingsIcon } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserData } from "@/hooks/useUserData";
@@ -14,7 +14,7 @@ import { FreeGemsButton } from "@/components/FreeGemsButton";
 import { EarnModal } from "@/components/EarnModal";
 import { adService } from "@/services/adService";
 import { useTelegramAuth } from "@/hooks/useTelegramAuth";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const Settings = () => {
   const location = useLocation();
@@ -25,6 +25,26 @@ const Settings = () => {
   const { availableLanguages, currentLanguage, changeLanguage } = useLanguage();
   const { user: telegramUser } = useTelegramAuth();
   const [earnModalOpen, setEarnModalOpen] = useState(false);
+  
+  // Check if current user is admin
+  const [isAdmin, setIsAdmin] = useState(false);
+  
+  useEffect(() => {
+    const checkAdminStatus = () => {
+      const tg = (window as any).Telegram?.WebApp;
+      const user = tg?.initDataUnsafe?.user;
+      const adminId = 1226785406;
+      
+      console.log('🔍 Admin check:', {
+        telegramId: user?.id,
+        isAdmin: user?.id === adminId
+      });
+      
+      setIsAdmin(user?.id === adminId);
+    };
+    
+    checkAdminStatus();
+  }, []);
 
   // Check if user should see Free Gems
   const shouldShowFreeGems = !adService.isPaidUser(userStats?.subscription_type);
@@ -128,6 +148,22 @@ const Settings = () => {
         <div>
           <h2 className="text-lg font-semibold text-foreground mb-3">{t('settings.helpSupport')}</h2>
           <div className="space-y-3">
+            {/* Admin Panel - Only visible to admin */}
+            {isAdmin && (
+              <Card className="card-premium transition-smooth p-4 cursor-pointer bg-gradient-to-r from-purple-500/10 to-pink-500/10 border-purple-500/20" onClick={() => navigate('/admin/blog')}>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <SettingsIcon className="w-5 h-5 text-purple-400" />
+                    <div>
+                      <div className="text-sm font-semibold text-foreground">Admin Panel</div>
+                      <div className="text-xs text-muted-foreground">Manage blog posts</div>
+                    </div>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                </div>
+              </Card>
+            )}
+
             <Card className="card-premium transition-smooth p-4 cursor-pointer" onClick={() => navigate('/blog')}>
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
