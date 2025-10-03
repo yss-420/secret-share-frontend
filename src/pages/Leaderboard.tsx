@@ -258,19 +258,19 @@ const Leaderboard = () => {
             <div className="space-y-2">
               <div className="bg-primary/10 p-2 rounded-lg">
                 <p className="font-bold text-sm mb-0.5">🥇 1ST PLACE</p>
-                <p className="text-xs">• Premium Sub (1 month)</p>
+                <p className="text-xs">• Premium Subscription (1 month)</p>
                 <p className="text-xs">• 500 💎 Gems</p>
               </div>
               
               <div className="bg-primary/10 p-2 rounded-lg">
                 <p className="font-bold text-sm mb-0.5">🥈 2ND PLACE</p>
-                <p className="text-xs">• Plus Sub (1 month)</p>
+                <p className="text-xs">• Plus Subscription (1 month)</p>
                 <p className="text-xs">• 300 💎 Gems</p>
               </div>
               
               <div className="bg-primary/10 p-2 rounded-lg">
                 <p className="font-bold text-sm mb-0.5">🥉 3RD PLACE</p>
-                <p className="text-xs">• Essential Sub (1 month)</p>
+                <p className="text-xs">• Essential Subscription (1 month)</p>
                 <p className="text-xs">• 200 💎 Gems</p>
               </div>
               
