@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
 import { requireAdmin, getTelegramUser } from '@/lib/adminCheck';
+import { adminBlogService } from '@/services/adminBlogService';
 import QuillEditor from '@/components/QuillEditor';
 import { ArrowLeft, Save, Send } from 'lucide-react';
 
@@ -57,30 +57,26 @@ export default function NewBlogPost() {
 
     setSaving(true);
 
-    const postData = {
-      slug,
-      title,
-      meta_description: metaDescription,
-      content,
-      featured_image_url: featuredImage || null,
-      keywords: keywords ? keywords.split(',').map(k => k.trim()) : [],
-      status,
-      published_at: status === 'published' ? new Date().toISOString() : null,
-      reading_time_minutes: calculateReadingTime(),
-      author_telegram_id: 1226785406,
-      og_title: title,
-      og_description: metaDescription,
-      og_image_url: featuredImage || null
-    };
+    try {
+      const postData = {
+        slug,
+        title,
+        meta_description: metaDescription,
+        content,
+        featured_image_url: featuredImage || null,
+        keywords: keywords ? keywords.split(',').map(k => k.trim()) : [],
+        status,
+        published_at: status === 'published' ? new Date().toISOString() : null,
+        reading_time_minutes: calculateReadingTime(),
+        og_title: title,
+        og_description: metaDescription,
+        og_image_url: featuredImage || null
+      };
 
-    const { error } = await (supabase as any)
-      .from('blog_posts')
-      .insert(postData);
-
-    if (!error) {
+      await adminBlogService.createPost(postData);
       alert(`✅ Post ${status === 'published' ? 'published' : 'saved as draft'}!`);
       navigate('/admin/blog');
-    } else {
+    } catch (error: any) {
       alert('❌ Error: ' + error.message);
     }
 

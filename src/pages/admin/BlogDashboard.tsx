@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
 import { requireAdmin, getTelegramUser, isAdmin } from '@/lib/adminCheck';
+import { adminBlogService } from '@/services/adminBlogService';
 import { Plus, Edit, Trash2, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 
 export default function BlogDashboard() {
@@ -29,28 +29,24 @@ export default function BlogDashboard() {
   }, []);
 
   const fetchAllPosts = async () => {
-    const { data } = await (supabase as any)
-      .from('blog_posts')
-      .select('*')
-      .eq('author_telegram_id', 1226785406)
-      .order('created_at', { ascending: false });
-    
-    if (data) setPosts(data);
+    try {
+      const data = await adminBlogService.fetchAllPosts();
+      if (data) setPosts(data);
+    } catch (error: any) {
+      alert('❌ Error fetching posts: ' + error.message);
+    }
     setLoading(false);
   };
 
   const deletePost = async (id: string) => {
     if (!confirm('Delete this post permanently?')) return;
     
-    const { error } = await (supabase as any)
-      .from('blog_posts')
-      .delete()
-      .eq('id', id)
-      .eq('author_telegram_id', 1226785406);
-    
-    if (!error) {
+    try {
+      await adminBlogService.deletePost(id);
       alert('✅ Post deleted');
       fetchAllPosts();
+    } catch (error: any) {
+      alert('❌ Error deleting post: ' + error.message);
     }
   };
 
@@ -58,13 +54,12 @@ export default function BlogDashboard() {
     const newStatus = currentStatus === 'published' ? 'draft' : 'published';
     const published_at = newStatus === 'published' ? new Date().toISOString() : null;
     
-    await (supabase as any)
-      .from('blog_posts')
-      .update({ status: newStatus, published_at })
-      .eq('id', id)
-      .eq('author_telegram_id', 1226785406);
-    
-    fetchAllPosts();
+    try {
+      await adminBlogService.togglePublish(id, newStatus, published_at);
+      fetchAllPosts();
+    } catch (error: any) {
+      alert('❌ Error toggling publish: ' + error.message);
+    }
   };
 
   if (loading) return (

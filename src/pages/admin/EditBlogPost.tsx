@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
 import { requireAdmin, getTelegramUser } from '@/lib/adminCheck';
+import { adminBlogService } from '@/services/adminBlogService';
 import QuillEditor from '@/components/QuillEditor';
 import { ArrowLeft, Save, Send } from 'lucide-react';
 
@@ -33,21 +33,20 @@ export default function EditBlogPost() {
   }, [slug]);
 
   const fetchPost = async (postSlug: string) => {
-    const { data } = await (supabase as any)
-      .from('blog_posts')
-      .select('*')
-      .eq('slug', postSlug)
-      .eq('author_telegram_id', 1226785406)
-      .single();
-    
-    if (data) {
-      setPostId(data.id);
-      setTitle(data.title);
-      setPostSlug(data.slug);
-      setMetaDescription(data.meta_description || '');
-      setFeaturedImage(data.featured_image_url || '');
-      setKeywords(data.keywords?.join(', ') || '');
-      setContent(data.content);
+    try {
+      const data = await adminBlogService.fetchPost(postSlug);
+      
+      if (data) {
+        setPostId(data.id);
+        setTitle(data.title);
+        setPostSlug(data.slug);
+        setMetaDescription(data.meta_description || '');
+        setFeaturedImage(data.featured_image_url || '');
+        setKeywords(data.keywords?.join(', ') || '');
+        setContent(data.content);
+      }
+    } catch (error: any) {
+      alert('❌ Error fetching post: ' + error.message);
     }
     setLoading(false);
   };
@@ -76,31 +75,26 @@ export default function EditBlogPost() {
 
     setSaving(true);
 
-    const postData = {
-      slug: postSlug,
-      title,
-      meta_description: metaDescription,
-      content,
-      featured_image_url: featuredImage || null,
-      keywords: keywords ? keywords.split(',').map(k => k.trim()) : [],
-      status,
-      published_at: status === 'published' ? new Date().toISOString() : null,
-      reading_time_minutes: calculateReadingTime(),
-      og_title: title,
-      og_description: metaDescription,
-      og_image_url: featuredImage || null
-    };
+    try {
+      const postData = {
+        slug: postSlug,
+        title,
+        meta_description: metaDescription,
+        content,
+        featured_image_url: featuredImage || null,
+        keywords: keywords ? keywords.split(',').map(k => k.trim()) : [],
+        status,
+        published_at: status === 'published' ? new Date().toISOString() : null,
+        reading_time_minutes: calculateReadingTime(),
+        og_title: title,
+        og_description: metaDescription,
+        og_image_url: featuredImage || null
+      };
 
-    const { error } = await (supabase as any)
-      .from('blog_posts')
-      .update(postData)
-      .eq('id', postId)
-      .eq('author_telegram_id', 1226785406);
-
-    if (!error) {
+      await adminBlogService.updatePost(postId, postData);
       alert(`✅ Post ${status === 'published' ? 'published' : 'saved as draft'}!`);
       navigate('/admin/blog');
-    } else {
+    } catch (error: any) {
       alert('❌ Error: ' + error.message);
     }
 
