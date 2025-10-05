@@ -37,6 +37,7 @@ export default function EditBlogPost() {
       .from('blog_posts')
       .select('*')
       .eq('slug', postSlug)
+      .eq('author_telegram_id', 1226785406)
       .single();
     
     if (data) {
@@ -93,7 +94,8 @@ export default function EditBlogPost() {
     const { error } = await (supabase as any)
       .from('blog_posts')
       .update(postData)
-      .eq('id', postId);
+      .eq('id', postId)
+      .eq('author_telegram_id', 1226785406);
 
     if (!error) {
       alert(`✅ Post ${status === 'published' ? 'published' : 'saved as draft'}!`);

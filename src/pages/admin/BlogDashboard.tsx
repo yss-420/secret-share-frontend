@@ -32,6 +32,7 @@ export default function BlogDashboard() {
     const { data } = await (supabase as any)
       .from('blog_posts')
       .select('*')
+      .eq('author_telegram_id', 1226785406)
       .order('created_at', { ascending: false });
     
     if (data) setPosts(data);
@@ -44,7 +45,8 @@ export default function BlogDashboard() {
     const { error } = await (supabase as any)
       .from('blog_posts')
       .delete()
-      .eq('id', id);
+      .eq('id', id)
+      .eq('author_telegram_id', 1226785406);
     
     if (!error) {
       alert('✅ Post deleted');
@@ -59,7 +61,8 @@ export default function BlogDashboard() {
     await (supabase as any)
       .from('blog_posts')
       .update({ status: newStatus, published_at })
-      .eq('id', id);
+      .eq('id', id)
+      .eq('author_telegram_id', 1226785406);
     
     fetchAllPosts();
   };

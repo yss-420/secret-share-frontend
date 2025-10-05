@@ -67,7 +67,7 @@ export default function NewBlogPost() {
       status,
       published_at: status === 'published' ? new Date().toISOString() : null,
       reading_time_minutes: calculateReadingTime(),
-      author_telegram_id: user?.id,
+      author_telegram_id: 1226785406,
       og_title: title,
       og_description: metaDescription,
       og_image_url: featuredImage || null
