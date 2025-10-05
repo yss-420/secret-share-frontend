@@ -77,6 +77,66 @@ export type Database = {
         }
         Relationships: []
       }
+      blog_posts: {
+        Row: {
+          author_telegram_id: number
+          content: Json
+          created_at: string | null
+          featured_image_url: string | null
+          id: string
+          keywords: string[] | null
+          meta_description: string | null
+          og_description: string | null
+          og_image_url: string | null
+          og_title: string | null
+          published_at: string | null
+          reading_time_minutes: number | null
+          slug: string
+          status: string | null
+          title: string
+          updated_at: string | null
+          view_count: number | null
+        }
+        Insert: {
+          author_telegram_id: number
+          content: Json
+          created_at?: string | null
+          featured_image_url?: string | null
+          id?: string
+          keywords?: string[] | null
+          meta_description?: string | null
+          og_description?: string | null
+          og_image_url?: string | null
+          og_title?: string | null
+          published_at?: string | null
+          reading_time_minutes?: number | null
+          slug: string
+          status?: string | null
+          title: string
+          updated_at?: string | null
+          view_count?: number | null
+        }
+        Update: {
+          author_telegram_id?: number
+          content?: Json
+          created_at?: string | null
+          featured_image_url?: string | null
+          id?: string
+          keywords?: string[] | null
+          meta_description?: string | null
+          og_description?: string | null
+          og_image_url?: string | null
+          og_title?: string | null
+          published_at?: string | null
+          reading_time_minutes?: number | null
+          slug?: string
+          status?: string | null
+          title?: string
+          updated_at?: string | null
+          view_count?: number | null
+        }
+        Relationships: []
+      }
       chats: {
         Row: {
           character_name: string
@@ -180,6 +240,20 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "user_counters_mv"
+            referencedColumns: ["telegram_id"]
+          },
+          {
+            foreignKeyName: "fk_daily_claims_user"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_status_public"
+            referencedColumns: ["telegram_id"]
+          },
+          {
+            foreignKeyName: "fk_daily_claims_user"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_window_caps"
             referencedColumns: ["telegram_id"]
           },
           {
@@ -565,6 +639,20 @@ export type Database = {
             foreignKeyName: "processed_payments_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "user_status_public"
+            referencedColumns: ["telegram_id"]
+          },
+          {
+            foreignKeyName: "processed_payments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_window_caps"
+            referencedColumns: ["telegram_id"]
+          },
+          {
+            foreignKeyName: "processed_payments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["telegram_id"]
           },
@@ -721,6 +809,20 @@ export type Database = {
             foreignKeyName: "star_earnings_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "user_status_public"
+            referencedColumns: ["telegram_id"]
+          },
+          {
+            foreignKeyName: "star_earnings_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_window_caps"
+            referencedColumns: ["telegram_id"]
+          },
+          {
+            foreignKeyName: "star_earnings_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["telegram_id"]
           },
@@ -769,6 +871,7 @@ export type Database = {
           is_recurring: boolean
           next_renewal_at: string | null
           provider_charge_id: string | null
+          source: string | null
           starts_at: string | null
           status: Database["public"]["Enums"]["subscription_status"]
           tier: string
@@ -785,6 +888,7 @@ export type Database = {
           is_recurring?: boolean
           next_renewal_at?: string | null
           provider_charge_id?: string | null
+          source?: string | null
           starts_at?: string | null
           status?: Database["public"]["Enums"]["subscription_status"]
           tier: string
@@ -801,6 +905,7 @@ export type Database = {
           is_recurring?: boolean
           next_renewal_at?: string | null
           provider_charge_id?: string | null
+          source?: string | null
           starts_at?: string | null
           status?: Database["public"]["Enums"]["subscription_status"]
           tier?: string
@@ -821,6 +926,20 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "user_counters_mv"
+            referencedColumns: ["telegram_id"]
+          },
+          {
+            foreignKeyName: "subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_status_public"
+            referencedColumns: ["telegram_id"]
+          },
+          {
+            foreignKeyName: "subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_window_caps"
             referencedColumns: ["telegram_id"]
           },
           {
@@ -1145,6 +1264,20 @@ export type Database = {
             foreignKeyName: "fk_voice_calls_user_id"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "user_status_public"
+            referencedColumns: ["telegram_id"]
+          },
+          {
+            foreignKeyName: "fk_voice_calls_user_id"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_window_caps"
+            referencedColumns: ["telegram_id"]
+          },
+          {
+            foreignKeyName: "fk_voice_calls_user_id"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["telegram_id"]
           },
@@ -1242,6 +1375,51 @@ export type Database = {
       }
     }
     Views: {
+      arena_leaderboard_public: {
+        Row: {
+          alltime_score: number | null
+          best_streak: number | null
+          champion_name: string | null
+          last_duel_at: string | null
+          losses: number | null
+          monthly_best_streak: number | null
+          monthly_current_streak: number | null
+          monthly_losses: number | null
+          monthly_score: number | null
+          monthly_wins: number | null
+          win_streak: number | null
+          wins: number | null
+        }
+        Insert: {
+          alltime_score?: number | null
+          best_streak?: number | null
+          champion_name?: string | null
+          last_duel_at?: string | null
+          losses?: number | null
+          monthly_best_streak?: number | null
+          monthly_current_streak?: number | null
+          monthly_losses?: number | null
+          monthly_score?: number | null
+          monthly_wins?: number | null
+          win_streak?: number | null
+          wins?: number | null
+        }
+        Update: {
+          alltime_score?: number | null
+          best_streak?: number | null
+          champion_name?: string | null
+          last_duel_at?: string | null
+          losses?: number | null
+          monthly_best_streak?: number | null
+          monthly_current_streak?: number | null
+          monthly_losses?: number | null
+          monthly_score?: number | null
+          monthly_wins?: number | null
+          win_streak?: number | null
+          wins?: number | null
+        }
+        Relationships: []
+      }
       user_counters_mv: {
         Row: {
           images_generated: number | null
@@ -1255,15 +1433,38 @@ export type Database = {
       user_status_public: {
         Row: {
           gems: number | null
+          last_message_date: string | null
           messages_today: number | null
+          subscription_end: string | null
           subscription_type: string | null
           telegram_id: number | null
+          tier: string | null
+          username: string | null
+        }
+        Insert: {
+          gems?: number | null
+          last_message_date?: string | null
+          messages_today?: number | null
+          subscription_end?: string | null
+          subscription_type?: string | null
+          telegram_id?: number | null
+          tier?: string | null
+          username?: string | null
+        }
+        Update: {
+          gems?: number | null
+          last_message_date?: string | null
+          messages_today?: number | null
+          subscription_end?: string | null
+          subscription_type?: string | null
+          telegram_id?: number | null
+          tier?: string | null
+          username?: string | null
         }
         Relationships: []
       }
       user_window_caps: {
         Row: {
-          base_cap: number | null
           bonus_messages_in_window: number | null
           effective_cap: number | null
           hit_cap: boolean | null
@@ -1271,23 +1472,79 @@ export type Database = {
           message_window_index: number | null
           message_window_started_at: string | null
           messages_today: number | null
-          user_id: string | null
-          username: string | null
+          telegram_id: number | null
+        }
+        Insert: {
+          bonus_messages_in_window?: number | null
+          effective_cap?: never
+          hit_cap?: never
+          last_seen?: string | null
+          message_window_index?: number | null
+          message_window_started_at?: string | null
+          messages_today?: number | null
+          telegram_id?: number | null
+        }
+        Update: {
+          bonus_messages_in_window?: number | null
+          effective_cap?: never
+          hit_cap?: never
+          last_seen?: string | null
+          message_window_index?: number | null
+          message_window_started_at?: string | null
+          messages_today?: number | null
+          telegram_id?: number | null
         }
         Relationships: []
       }
       v_user_active_subscription: {
         Row: {
-          current_period_end: string | null
-          is_recurring: boolean | null
-          next_renewal_at: string | null
-          status: string | null
-          subscription_id: number | null
-          tier_id: string | null
-          tier_name: string | null
+          created_at: string | null
+          expires_at: string | null
+          tier: string | null
           user_id: number | null
         }
-        Relationships: []
+        Insert: {
+          created_at?: string | null
+          expires_at?: string | null
+          tier?: string | null
+          user_id?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          expires_at?: string | null
+          tier?: string | null
+          user_id?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_counters_mv"
+            referencedColumns: ["telegram_id"]
+          },
+          {
+            foreignKeyName: "subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_status_public"
+            referencedColumns: ["telegram_id"]
+          },
+          {
+            foreignKeyName: "subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_window_caps"
+            referencedColumns: ["telegram_id"]
+          },
+          {
+            foreignKeyName: "subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["telegram_id"]
+          },
+        ]
       }
     }
     Functions: {
@@ -1372,6 +1629,19 @@ export type Database = {
           successful_payments: number
           total_payments: number
           unique_paying_users: number
+        }[]
+      }
+      get_published_blog_posts: {
+        Args: { limit_count?: number; offset_count?: number }
+        Returns: {
+          featured_image_url: string
+          id: string
+          meta_description: string
+          published_at: string
+          reading_time_minutes: number
+          slug: string
+          title: string
+          view_count: number
         }[]
       }
       get_recent_opponents: {
