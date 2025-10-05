@@ -3,6 +3,9 @@ project_id = "pfuyxdqzbrjrtqlbkbku"
 [functions.validate-telegram-auth]
 verify_jwt = false
 
+[functions.admin-blog-operations]
+verify_jwt = false
+
 # [functions.ads-offer-webhook]
 # verify_jwt = false
 # DISABLED: Using Railway webhook only to prevent double-crediting
