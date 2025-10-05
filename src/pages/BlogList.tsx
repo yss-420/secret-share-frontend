@@ -15,15 +15,19 @@ export default function BlogList() {
   }, []);
 
   const fetchPosts = async () => {
+    console.log('Fetching blog posts...');
     const { data, error } = await supabase
       .from('blog_posts')
       .select('id, slug, title, meta_description, featured_image_url, published_at, reading_time_minutes')
       .eq('status', 'published')
       .order('published_at', { ascending: false });
     
+    console.log('Blog posts fetch result:', { data, error });
+    
     if (error) {
-      console.error('Error fetching blog posts:', error);
+      console.error('❌ Error fetching blog posts:', error);
     } else if (data) {
+      console.log('✅ Successfully fetched posts:', data.length);
       setPosts(data);
     }
     setLoading(false);
