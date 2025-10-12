@@ -53,7 +53,7 @@ serve(async (req) => {
       message: !user.first_rating_used 
         ? '🎁 First rating FREE!'
         : user.gems >= RATING_GEM_COST
-        ? `${RATING_GEM_COST} gems available`
+        ? `${RATING_GEM_COST} gems`
         : `Need ${RATING_GEM_COST} gems (you have ${user.gems})`
     }
 
