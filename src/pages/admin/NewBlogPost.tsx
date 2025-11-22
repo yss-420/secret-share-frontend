@@ -1,13 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { requireAdmin, getTelegramUser } from '@/lib/adminCheck';
 import { adminBlogService } from '@/services/adminBlogService';
 import QuillEditor from '@/components/QuillEditor';
 import { ArrowLeft, Save, Send } from 'lucide-react';
 
 export default function NewBlogPost() {
   const navigate = useNavigate();
-  const [user, setUser] = useState<any>(null);
   const [title, setTitle] = useState('');
   const [slug, setSlug] = useState('');
   const [metaDescription, setMetaDescription] = useState('');
@@ -15,17 +13,6 @@ export default function NewBlogPost() {
   const [keywords, setKeywords] = useState('');
   const [content, setContent] = useState(null);
   const [saving, setSaving] = useState(false);
-
-  useEffect(() => {
-    try {
-      const tgUser = getTelegramUser();
-      requireAdmin(tgUser);
-      setUser(tgUser);
-    } catch {
-      alert('⛔ Admin access required');
-      navigate('/blog');
-    }
-  }, []);
 
   const generateSlug = (text: string) => {
     return text
@@ -77,17 +64,13 @@ export default function NewBlogPost() {
       alert(`✅ Post ${status === 'published' ? 'published' : 'saved as draft'}!`);
       navigate('/admin/blog');
     } catch (error: any) {
-      alert('❌ Error: ' + error.message);
+      console.error('❌ Admin access denied:', error);
+      alert('⛔ Admin access required\n\n' + error.message);
+      navigate('/blog');
     }
 
     setSaving(false);
   };
-
-  if (!user) return (
-    <div className="min-h-screen bg-background flex items-center justify-center">
-      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-    </div>
-  );
 
   return (
     <div className="min-h-screen bg-background p-6">

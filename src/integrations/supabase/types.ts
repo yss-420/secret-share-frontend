@@ -77,6 +77,39 @@ export type Database = {
         }
         Relationships: []
       }
+      admin_audit_log: {
+        Row: {
+          action: string
+          created_at: string
+          error_message: string | null
+          id: string
+          resource_id: string | null
+          resource_type: string
+          success: boolean
+          telegram_id: number
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          resource_id?: string | null
+          resource_type: string
+          success: boolean
+          telegram_id: number
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          resource_id?: string | null
+          resource_type?: string
+          success?: boolean
+          telegram_id?: number
+        }
+        Relationships: []
+      }
       blog_posts: {
         Row: {
           author_telegram_id: number
@@ -1044,6 +1077,56 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_roles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_counters_mv"
+            referencedColumns: ["telegram_id"]
+          },
+          {
+            foreignKeyName: "user_roles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_status_public"
+            referencedColumns: ["telegram_id"]
+          },
+          {
+            foreignKeyName: "user_roles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_window_caps"
+            referencedColumns: ["telegram_id"]
+          },
+          {
+            foreignKeyName: "user_roles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["telegram_id"]
+          },
+        ]
+      }
       users: {
         Row: {
           ads_last_bonus_at: string | null
@@ -1794,6 +1877,13 @@ export type Database = {
           username: string
         }[]
       }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _telegram_id: number
+        }
+        Returns: boolean
+      }
       increment_user_messages: {
         Args: { p_user_id: number }
         Returns: undefined
@@ -1827,6 +1917,7 @@ export type Database = {
       }
     }
     Enums: {
+      app_role: "admin" | "moderator" | "user"
       subscription_status:
         | "active"
         | "in_grace"
@@ -1960,6 +2051,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      app_role: ["admin", "moderator", "user"],
       subscription_status: [
         "active",
         "in_grace",

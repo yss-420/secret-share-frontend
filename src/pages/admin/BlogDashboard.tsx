@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { requireAdmin, getTelegramUser, isAdmin } from '@/lib/adminCheck';
 import { adminBlogService } from '@/services/adminBlogService';
 import { Plus, Edit, Trash2, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 
@@ -10,22 +9,7 @@ export default function BlogDashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    try {
-      const user = getTelegramUser();
-      console.log('🔐 Admin Check:', {
-        user,
-        telegramId: user?.id,
-        isAdmin: user ? isAdmin(user.id) : false
-      });
-      
-      requireAdmin(user);
-      console.log('✅ Admin access granted');
-      fetchAllPosts();
-    } catch (error) {
-      console.error('❌ Admin access denied:', error);
-      alert('⛔ Admin access required\n\nYour Telegram ID: ' + (getTelegramUser()?.id || 'Not logged in') + '\n\nRequired ID: 1226785406');
-      navigate('/blog');
-    }
+    fetchAllPosts();
   }, []);
 
   const fetchAllPosts = async () => {
@@ -33,7 +17,9 @@ export default function BlogDashboard() {
       const data = await adminBlogService.fetchAllPosts();
       if (data) setPosts(data);
     } catch (error: any) {
-      alert('❌ Error fetching posts: ' + error.message);
+      console.error('❌ Admin access denied:', error);
+      alert('⛔ Admin access required\n\n' + error.message);
+      navigate('/blog');
     }
     setLoading(false);
   };
