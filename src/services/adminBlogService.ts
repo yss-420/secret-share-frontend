@@ -1,19 +1,32 @@
 const FUNCTION_URL = 'https://pfuyxdqzbrjrtqlbkbku.supabase.co/functions/v1/admin-blog-operations';
 
-const getTelegramId = () => {
+const getTelegramInitData = (): string | null => {
   if (typeof window === 'undefined') return null;
   const tg = (window as any).Telegram?.WebApp;
-  return tg?.initDataUnsafe?.user?.id || null;
+  return tg?.initData || null;
+};
+
+const createHeaders = (): HeadersInit => {
+  const initData = getTelegramInitData();
+  
+  if (!initData) {
+    throw new Error('Telegram authentication required');
+  }
+
+  return {
+    'Content-Type': 'application/json',
+    'X-Telegram-Init-Data': initData
+  };
 };
 
 export const adminBlogService = {
   async createPost(postData: any) {
     const response = await fetch(FUNCTION_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: createHeaders(),
       body: JSON.stringify({
         operation: 'create',
-        data: { postData, telegramId: getTelegramId() }
+        postData
       })
     });
     
@@ -28,11 +41,11 @@ export const adminBlogService = {
   async updatePost(postId: string, postData: any) {
     const response = await fetch(FUNCTION_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: createHeaders(),
       body: JSON.stringify({
         operation: 'update',
         postId,
-        data: { postData, telegramId: getTelegramId() }
+        postData
       })
     });
     
@@ -47,11 +60,10 @@ export const adminBlogService = {
   async deletePost(postId: string) {
     const response = await fetch(FUNCTION_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: createHeaders(),
       body: JSON.stringify({
         operation: 'delete',
-        postId,
-        data: { telegramId: getTelegramId() }
+        postId
       })
     });
     
@@ -66,11 +78,10 @@ export const adminBlogService = {
   async fetchPost(postSlug: string) {
     const response = await fetch(FUNCTION_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: createHeaders(),
       body: JSON.stringify({
         operation: 'fetch',
-        postSlug,
-        data: { telegramId: getTelegramId() }
+        postSlug
       })
     });
     
@@ -85,10 +96,9 @@ export const adminBlogService = {
   async fetchAllPosts() {
     const response = await fetch(FUNCTION_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: createHeaders(),
       body: JSON.stringify({
-        operation: 'fetchAll',
-        data: { telegramId: getTelegramId() }
+        operation: 'fetchAll'
       })
     });
     
@@ -103,11 +113,12 @@ export const adminBlogService = {
   async togglePublish(postId: string, status: string, published_at: string | null) {
     const response = await fetch(FUNCTION_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: createHeaders(),
       body: JSON.stringify({
         operation: 'togglePublish',
         postId,
-        data: { status, published_at, telegramId: getTelegramId() }
+        status,
+        published_at
       })
     });
     

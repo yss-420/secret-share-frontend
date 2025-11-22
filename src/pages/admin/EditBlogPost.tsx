@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { requireAdmin, getTelegramUser } from '@/lib/adminCheck';
 import { adminBlogService } from '@/services/adminBlogService';
 import QuillEditor from '@/components/QuillEditor';
 import { ArrowLeft, Save, Send } from 'lucide-react';
@@ -8,7 +7,6 @@ import { ArrowLeft, Save, Send } from 'lucide-react';
 export default function EditBlogPost() {
   const { slug } = useParams();
   const navigate = useNavigate();
-  const [user, setUser] = useState<any>(null);
   const [postId, setPostId] = useState('');
   const [title, setTitle] = useState('');
   const [postSlug, setPostSlug] = useState('');
@@ -20,16 +18,7 @@ export default function EditBlogPost() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    try {
-      const tgUser = getTelegramUser();
-      requireAdmin(tgUser);
-      setUser(tgUser);
-      
-      if (slug) fetchPost(slug);
-    } catch {
-      alert('⛔ Admin access required');
-      navigate('/blog');
-    }
+    if (slug) fetchPost(slug);
   }, [slug]);
 
   const fetchPost = async (postSlug: string) => {
@@ -46,7 +35,9 @@ export default function EditBlogPost() {
         setContent(data.content);
       }
     } catch (error: any) {
-      alert('❌ Error fetching post: ' + error.message);
+      console.error('❌ Admin access denied:', error);
+      alert('⛔ Admin access required\n\n' + error.message);
+      navigate('/blog');
     }
     setLoading(false);
   };
@@ -104,12 +95,6 @@ export default function EditBlogPost() {
   if (loading) return (
     <div className="min-h-screen bg-background flex items-center justify-center">
       <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-    </div>
-  );
-  
-  if (!user) return (
-    <div className="min-h-screen bg-background flex items-center justify-center">
-      <div>Verifying access...</div>
     </div>
   );
 
