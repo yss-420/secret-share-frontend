@@ -1,6 +1,6 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3'
 import { corsHeaders } from '../_shared/cors.ts'
-import { validateTelegramWebAppData, extractTelegramUserId } from '../validate-telegram-webapp/index.ts'
+import { validateTelegramWebAppData, extractTelegramUserId } from '../_shared/telegram-validation.ts'
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
