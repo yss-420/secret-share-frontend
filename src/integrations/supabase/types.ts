@@ -1053,29 +1053,47 @@ export type Database = {
           ads_rewarded_today: number
           age_verified: boolean | null
           bemob_cid: string | null
+          blocked: boolean | null
           blocked_at: string | null
           bonus_messages_in_window: number
+          characters_tried: string[] | null
           created_at: string | null
+          deactivated: boolean | null
+          discovery_prompts_sent: number | null
+          first_rating_used: boolean | null
+          follow_up_count: number | null
+          free_arena_battles_used: number | null
           gems: number | null
+          has_completed_onboarding: boolean | null
           id: string
           last_active: string | null
           last_bonus_reminder_at: string | null
+          last_conversation_topic: string | null
           last_daily_claim_at: string | null
+          last_discovery_prompt_at: string | null
+          last_follow_up_sent: string | null
+          last_login_date: string | null
           last_message_date: string | null
+          last_reward_claimed_at: string | null
           last_seen: string | null
           launch_promo_seen_at: string | null
+          login_streak: number | null
           message_window_index: number
           message_window_started_at: string | null
           messages_today: number | null
           nickname: string | null
+          onboarding_quiz_answers: Json | null
           pending_gem_refund: number | null
+          recommended_character: string | null
           session_data: Json | null
+          streak_broken_at: string | null
           streak_count: number
           subscription_end: string | null
           subscription_type: string | null
           telegram_id: number
           tier: string | null
           total_gems_spent: number | null
+          total_logins: number | null
           total_messages: number | null
           total_spent: number | null
           updated_at: string | null
@@ -1091,29 +1109,47 @@ export type Database = {
           ads_rewarded_today?: number
           age_verified?: boolean | null
           bemob_cid?: string | null
+          blocked?: boolean | null
           blocked_at?: string | null
           bonus_messages_in_window?: number
+          characters_tried?: string[] | null
           created_at?: string | null
+          deactivated?: boolean | null
+          discovery_prompts_sent?: number | null
+          first_rating_used?: boolean | null
+          follow_up_count?: number | null
+          free_arena_battles_used?: number | null
           gems?: number | null
+          has_completed_onboarding?: boolean | null
           id?: string
           last_active?: string | null
           last_bonus_reminder_at?: string | null
+          last_conversation_topic?: string | null
           last_daily_claim_at?: string | null
+          last_discovery_prompt_at?: string | null
+          last_follow_up_sent?: string | null
+          last_login_date?: string | null
           last_message_date?: string | null
+          last_reward_claimed_at?: string | null
           last_seen?: string | null
           launch_promo_seen_at?: string | null
+          login_streak?: number | null
           message_window_index?: number
           message_window_started_at?: string | null
           messages_today?: number | null
           nickname?: string | null
+          onboarding_quiz_answers?: Json | null
           pending_gem_refund?: number | null
+          recommended_character?: string | null
           session_data?: Json | null
+          streak_broken_at?: string | null
           streak_count?: number
           subscription_end?: string | null
           subscription_type?: string | null
           telegram_id: number
           tier?: string | null
           total_gems_spent?: number | null
+          total_logins?: number | null
           total_messages?: number | null
           total_spent?: number | null
           updated_at?: string | null
@@ -1129,29 +1165,47 @@ export type Database = {
           ads_rewarded_today?: number
           age_verified?: boolean | null
           bemob_cid?: string | null
+          blocked?: boolean | null
           blocked_at?: string | null
           bonus_messages_in_window?: number
+          characters_tried?: string[] | null
           created_at?: string | null
+          deactivated?: boolean | null
+          discovery_prompts_sent?: number | null
+          first_rating_used?: boolean | null
+          follow_up_count?: number | null
+          free_arena_battles_used?: number | null
           gems?: number | null
+          has_completed_onboarding?: boolean | null
           id?: string
           last_active?: string | null
           last_bonus_reminder_at?: string | null
+          last_conversation_topic?: string | null
           last_daily_claim_at?: string | null
+          last_discovery_prompt_at?: string | null
+          last_follow_up_sent?: string | null
+          last_login_date?: string | null
           last_message_date?: string | null
+          last_reward_claimed_at?: string | null
           last_seen?: string | null
           launch_promo_seen_at?: string | null
+          login_streak?: number | null
           message_window_index?: number
           message_window_started_at?: string | null
           messages_today?: number | null
           nickname?: string | null
+          onboarding_quiz_answers?: Json | null
           pending_gem_refund?: number | null
+          recommended_character?: string | null
           session_data?: Json | null
+          streak_broken_at?: string | null
           streak_count?: number
           subscription_end?: string | null
           subscription_type?: string | null
           telegram_id?: number
           tier?: string | null
           total_gems_spent?: number | null
+          total_logins?: number | null
           total_messages?: number | null
           total_spent?: number | null
           updated_at?: string | null
@@ -1561,10 +1615,7 @@ export type Database = {
         Args: { p_invoice_id: string; p_provider_payment_id: string }
         Returns: boolean
       }
-      cleanup_old_sessions: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
+      cleanup_old_sessions: { Args: never; Returns: undefined }
       create_renewal_invoice: {
         Args: { p_amount_stars?: number; p_subscription_id: string }
         Returns: string
@@ -1583,7 +1634,7 @@ export type Database = {
         }[]
       }
       get_earnings_analytics: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           date: string
           stars_earned: number
@@ -1601,7 +1652,7 @@ export type Database = {
         }[]
       }
       get_monthly_earnings: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           avg_transaction_value: number
           month: string
@@ -1611,7 +1662,7 @@ export type Database = {
         }[]
       }
       get_my_stats: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           gems: number
           messages_today: number
@@ -1651,7 +1702,7 @@ export type Database = {
         }[]
       }
       get_session_analytics: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           avg_hours_since_last_seen: number
           total_users: number
@@ -1668,7 +1719,7 @@ export type Database = {
         }[]
       }
       get_total_earnings: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           gems_revenue: number
           subscription_revenue: number
@@ -1698,7 +1749,7 @@ export type Database = {
         }[]
       }
       get_user_status: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           gems: number
           messages_today: number
@@ -1731,7 +1782,7 @@ export type Database = {
         }[]
       }
       get_voice_call_analytics: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           avg_call_duration: number
           last_call_date: string
@@ -1757,10 +1808,7 @@ export type Database = {
         }
         Returns: undefined
       }
-      process_daily_return_bonus: {
-        Args: { p_user_id: number }
-        Returns: Json
-      }
+      process_daily_return_bonus: { Args: { p_user_id: number }; Returns: Json }
       process_payment_safely: {
         Args: {
           p_amount: number
