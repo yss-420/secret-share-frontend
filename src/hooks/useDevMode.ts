@@ -31,22 +31,25 @@ export const useDevMode = () => {
   const [isDevMode, setIsDevMode] = useState(false);
 
   useEffect(() => {
-    // Force dev mode in preview environments
+    // Only enable dev mode in actual development environments
     const hostname = window.location.hostname;
     const isDev = import.meta.env.DEV;
     const isLocalhost = hostname === 'localhost';
     const hasDevParam = new URLSearchParams(window.location.search).has('dev');
-    const isLovablePreview = hostname.includes('lovable.app') || hostname.includes('preview');
     
-    // Always enable dev mode in preview
-    const isDevEnvironment = isDev || isLocalhost || hasDevParam || isLovablePreview;
+    // SECURITY: Never enable dev mode in production
+    // Only activate in actual development or with explicit dev parameter
+    const isDevEnvironment = 
+      import.meta.env.MODE === 'development' ||
+      isLocalhost ||
+      (import.meta.env.DEV && hasDevParam);
     
     console.log('🔍 Dev mode detection:', { 
       hostname, 
+      mode: import.meta.env.MODE,
       isDev, 
       isLocalhost, 
       hasDevParam, 
-      isLovablePreview, 
       isDevEnvironment 
     });
     

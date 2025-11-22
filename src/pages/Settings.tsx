@@ -14,6 +14,7 @@ import { FreeGemsButton } from "@/components/FreeGemsButton";
 import { EarnModal } from "@/components/EarnModal";
 import { adService } from "@/services/adService";
 import { useTelegramAuth } from "@/hooks/useTelegramAuth";
+import { supabase } from "@/integrations/supabase/client";
 import { useState, useEffect } from "react";
 
 const Settings = () => {
@@ -26,25 +27,46 @@ const Settings = () => {
   const { user: telegramUser } = useTelegramAuth();
   const [earnModalOpen, setEarnModalOpen] = useState(false);
   
-  // Check if current user is admin
+  // Check if current user is admin (server-side validation)
   const [isAdmin, setIsAdmin] = useState(false);
   
   useEffect(() => {
-    const checkAdminStatus = () => {
-      const tg = (window as any).Telegram?.WebApp;
-      const user = tg?.initDataUnsafe?.user;
-      const adminId = 1226785406;
-      
-      console.log('🔍 Admin check:', {
-        telegramId: user?.id,
-        isAdmin: user?.id === adminId
-      });
-      
-      setIsAdmin(user?.id === adminId);
+    const checkAdminStatus = async () => {
+      if (!telegramUser?.id) {
+        setIsAdmin(false);
+        return;
+      }
+
+      try {
+        // Query user_roles table to check for admin role
+        const { data: roles, error } = await supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', telegramUser.id);
+
+        if (error) {
+          console.error('Error checking admin status:', error);
+          setIsAdmin(false);
+          return;
+        }
+
+        // Check if user has admin role
+        const hasAdminRole = roles?.some(r => r.role === 'admin');
+        setIsAdmin(hasAdminRole || false);
+        
+        console.log('🔍 Admin check (database):', {
+          telegramId: telegramUser.id,
+          roles: roles,
+          isAdmin: hasAdminRole
+        });
+      } catch (error) {
+        console.error('Error checking admin status:', error);
+        setIsAdmin(false);
+      }
     };
-    
+
     checkAdminStatus();
-  }, []);
+  }, [telegramUser?.id]);
 
   // Check if user should see Free Gems
   const shouldShowFreeGems = !adService.isPaidUser(userStats?.subscription_type);
