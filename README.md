@@ -1,73 +1,73 @@
-# Welcome to your Lovable project
+# Secret Share (18+)
 
-## Project info
+> Your AI girlfriend, available 24/7 on Telegram.
 
-**URL**: https://lovable.dev/projects/20b7f7bf-91fa-4e67-a290-50c792626ca5
+Secret Share is an AI-powered companion platform where you can have deep, uncensored conversations with unique characters — each with their own personality, backstory, and vibe. Whether you want someone to talk to, flirt with, or just have fun with — Secret Share has you covered.
 
-## How can I edit this code?
+---
 
-There are several ways of editing your application.
+## 💬 Meet the Characters
 
-**Use Lovable**
+Each character is hand-crafted with a unique personality and conversational style:
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/20b7f7bf-91fa-4e67-a290-50c792626ca5) and start prompting.
+| Character | Vibe |
+|---|---|
+| **Isabella** 🌹 | Passionate, flirtatious, irresistible |
+| **Priyanka** 💫 | Mysterious, deep, captivating |
+| **Aria** 🎵 | Playful, witty, always surprising |
+| **Scarlett** 🔥 | Bold, confident, unapologetic |
+| **Kiara** 🌙 | Sweet, warm, and deeply caring |
+| **Natasha** ❄️ | Cool, sharp, dangerously charming |
+| **Valentina** 🌺 | Romantic, expressive, passionate |
+| **Luna** ✨ | Dreamy, ethereal, one of a kind |
 
-Changes made via Lovable will be committed automatically to this repo.
+---
 
-**Use your preferred IDE**
+## ✨ Features
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+- **AI Conversations** — Deep, engaging, uncensored chats powered by cutting-edge AI
+- **Voice Messages** — Hear your companion's voice
+- **AI-Generated Images** — Visual moments with your character
+- **Video Messages** — Bring your companion to life
+- **Voice Calls** — Real-time calls with your companion
+- **Arena Battles** — Compete and climb the leaderboard
+- **Daily Rewards** — Come back every day and earn gems
+- **Gem Economy** — Earn and spend gems on premium experiences
+- **Subscriptions** — Unlock unlimited access with a plan
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+---
 
-Follow these steps:
+## 🚀 Get Started
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+Open Telegram and start chatting instantly — no sign-up, no friction.
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+👉 **[t.me/YourSecretShareBot](https://t.me/YourSecretShareBot)**
 
-# Step 3: Install the necessary dependencies.
-npm i
+---
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+## 💎 Pricing
 
-**Edit a file directly in GitHub**
+| Plan | Price |
+|---|---|
+| Intro Offer | 50 ⭐ for 3 days |
+| Essential | 300 ⭐ / month |
+| Plus | 700 ⭐ / month |
+| Premium | 1,400 ⭐ / month |
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Payments are made securely via Telegram Stars.
 
-**Use GitHub Codespaces**
+---
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## 🛠️ Tech Stack
 
-## What technologies are used for this project?
+Built with React, TypeScript, Vite, Supabase, and deployed on Vercel. The backend runs on Railway with Python and connects to Telegram's Bot API.
 
-This project is built with:
+---
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## 📬 Contact
 
-## How can I deploy this project?
+Questions, partnerships, or press? Reach us at yoursecretshare@gmail.com
 
-Simply open [Lovable](https://lovable.dev/projects/20b7f7bf-91fa-4e67-a290-50c792626ca5) and click on Share -> Publish.
+---
 
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+*Secret Share is an independent project. For 18+ audiences only.*
