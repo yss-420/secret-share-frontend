@@ -52,7 +52,7 @@ const Store = () => {
   const [earnModalOpen, setEarnModalOpen] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { updateGems, userStats, refreshUserData } = useUserData();
+  const { updateGems, userStats, refreshUserData, loading: userDataLoading } = useUserData();
   const { user: telegramUser } = useTelegramAuth();
   const { t } = useTranslation();
 
@@ -67,7 +67,7 @@ const Store = () => {
   }, [searchParams]);
 
   // Check if user should see Free Gems
-  const shouldShowFreeGems = !adService.isPaidUser(userStats?.subscription_type);
+  const shouldShowFreeGems = !userDataLoading && !adService.isPaidUser(userStats?.subscription_type);
 
   const handleFreeGemsClick = () => {
     setEarnModalOpen(true);

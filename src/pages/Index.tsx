@@ -20,7 +20,7 @@ const Index = () => {
   const { user, telegramUser, isLoading, isAuthenticated } = useAuth();
   const { isDevMode } = useDevMode();
   const { t } = useTranslation();
-  const { stats } = useHeaderStats();
+  const { stats, loading: statsLoading } = useHeaderStats();
 
   // Initialize passive ad system
   usePassiveAd(telegramUser?.id, stats?.subscription_type);
@@ -81,7 +81,7 @@ const Index = () => {
   };
 
   // Check if user should see Free Gems button
-  const shouldShowFreeGems = !adService.isPaidUser(stats?.subscription_type);
+  const shouldShowFreeGems = !statsLoading && !adService.isPaidUser(stats?.subscription_type);
 
   const handleFreeGemsClick = () => {
     setEarnModalOpen(true);

@@ -76,6 +76,19 @@ serve(async (req) => {
       )
     }
 
+    // Reject stale initData (older than 1 hour) to prevent replay attacks
+    const authDate = urlParams.get('auth_date')
+    if (authDate) {
+      const authTimestamp = parseInt(authDate, 10)
+      const nowSeconds = Math.floor(Date.now() / 1000)
+      if (nowSeconds - authTimestamp > 3600) {
+        return new Response(
+          JSON.stringify({ error: 'Expired initData' }),
+          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        )
+      }
+    }
+
     // Extract user data from validated initData
     const userParam = urlParams.get('user')
     if (!userParam) {
