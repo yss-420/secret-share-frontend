@@ -29,93 +29,67 @@ export const useTelegramAuth = (): TelegramAuthData => {
   useEffect(() => {
     const initTelegram = () => {
       try {
-        // Check if we're running in Telegram WebApp environment
-        const isTelegramAvailable = typeof window !== 'undefined' && 
-          window.Telegram && 
+        const isTelegramAvailable = typeof window !== 'undefined' &&
+          window.Telegram &&
           window.Telegram.WebApp;
 
         if (!isTelegramAvailable) {
-          console.log('Telegram WebApp not available - likely running outside Telegram');
           setError('Not running in Telegram environment');
           setIsLoading(false);
           return;
         }
 
-        // Initialize Telegram WebApp
         WebApp.ready();
-        
-        // Get user data first
+
         const telegramUser = WebApp.initDataUnsafe?.user;
         if (telegramUser) {
           setUser(telegramUser);
-          console.log('Telegram user found:', telegramUser);
-        } else {
-          console.log('No Telegram user data available');
         }
 
-        // Initialize Telegram Analytics SDK with user ID
+        // Initialize analytics
         try {
           import('@/utils/analytics').then(({ initAnalytics, trackEvent }) => {
             initAnalytics(telegramUser?.id);
-            
-            // Track app launch event
             trackEvent('app_launch', {
               platform: 'telegram',
               user_id: telegramUser?.id || 0,
               timestamp: Date.now()
             });
           });
-        } catch (error) {
-          console.warn('Failed to initialize Telegram Analytics:', error);
+        } catch {
+          // Analytics init failed — non-critical
         }
-        
-        // Get init data
+
         const telegramInitData = WebApp.initData;
         setInitData(telegramInitData);
-        
-        // BeMob tracking - capture CID from start_param
+
+        // BeMob tracking
         const startParam = WebApp.initDataUnsafe?.start_param || '';
         const cid = startParam.startsWith('cid-') ? startParam.slice(4) : null;
         if (cid) {
-          console.log('BeMob CID captured:', cid);
           localStorage.setItem('bemob_cid', cid);
-          
-          // Send CID to backend for tracking
           try {
             WebApp.sendData(JSON.stringify({ action: 'init', cid }));
-          } catch (error) {
-            console.warn('Failed to send CID to backend:', error);
+          } catch {
+            // Non-critical
           }
         }
 
-        // Configure WebApp appearance
         WebApp.expand();
-        
-        // Use try-catch for setHeaderColor and setBackgroundColor as they might not be supported
-        try {
-          WebApp.setHeaderColor('#000000');
-        } catch (e) {
-          console.warn('setHeaderColor not supported in this Telegram version');
-        }
-        
-        try {
-          WebApp.setBackgroundColor('#000000');
-        } catch (e) {
-          console.warn('setBackgroundColor not supported in this Telegram version');
-        }
-        
+
+        try { WebApp.setHeaderColor('#000000'); } catch { /* unsupported */ }
+        try { WebApp.setBackgroundColor('#000000'); } catch { /* unsupported */ }
+
         setIsLoading(false);
-      } catch (error) {
-        console.error('Failed to initialize Telegram WebApp:', error);
+      } catch (err) {
+        if (import.meta.env.DEV) console.error('Failed to initialize Telegram WebApp:', err);
         setError('Failed to initialize Telegram WebApp');
         setIsLoading(false);
       }
     };
 
-    // Add timeout to prevent infinite loading
     const timeoutId = setTimeout(() => {
       if (isLoading) {
-        console.log('Telegram initialization timeout');
         setError('Telegram initialization timeout');
         setIsLoading(false);
       }

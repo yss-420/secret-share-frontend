@@ -16,9 +16,7 @@ export const useUserData = () => {
       setLoading(true);
       setError(null);
 
-      // Use dev data in development mode
       if (isDevMode && devUser) {
-        console.log('🔧 Using dev mode data:', devUser);
         setUserStats({
           gems: devUser.gems,
           total_messages: devUser.total_messages,
@@ -32,81 +30,35 @@ export const useUserData = () => {
       }
 
       const telegramId = telegramUser?.id;
-      let backendSuccess = false;
-      let currentStats: UserStats | null = null;
-
-      // Try backend first for authoritative data
-      if (telegramId) {
-        try {
-          console.log('🌐 Attempting backend fetch for telegram_id:', telegramId);
-          const backend = await apiService.getUserStatus(telegramId);
-          if (backend) {
-            console.log('✅ Backend data received:', backend);
-            backendSuccess = true;
-            currentStats = {
-              gems: backend.gems,
-              messages_today: backend.messages_today,
-              subscription_type: backend.subscription_type,
-              // Default values for fields not from backend
-              total_messages: 0,
-              subscription_end: null,
-              tier: 'free'
-            };
-          } else {
-            console.log('❌ Backend returned null');
-          }
-        } catch (backendError) {
-          console.error('🚨 Backend fetch failed:', backendError);
-        }
+      if (!telegramId) {
+        setLoading(false);
+        return;
       }
 
-      // Use Supabase as fallback or to supplement missing fields
-      if (telegramId) {
-        try {
-          const { data, error } = await supabase
-            .from('users')
-            .select('gems, total_messages, messages_today, subscription_type, subscription_end, tier')
-            .eq('telegram_id', telegramId)
-            .single();
-
-          if (error) throw error;
-
-          if (backendSuccess && currentStats) {
-            // Backend succeeded - only supplement missing fields from Supabase
-            console.log('📊 Supplementing backend data with Supabase fields');
-            currentStats = {
-              ...currentStats,
-              // Keep backend gems/messages, get other fields from Supabase
-              total_messages: data.total_messages,
-              subscription_end: data.subscription_end,
-              tier: data.tier || 'free'
-            };
-          } else {
-            // Backend failed - use Supabase as complete fallback
-            console.log('🔄 Using Supabase as complete fallback:', data);
-            currentStats = {
-              gems: data.gems,
-              total_messages: data.total_messages,
-              messages_today: data.messages_today,
-              subscription_type: data.subscription_type,
-              subscription_end: data.subscription_end,
-              tier: data.tier || 'free'
-            };
-          }
-        } catch (supabaseError) {
-          console.error('🚨 Supabase fetch failed:', supabaseError);
-          if (!backendSuccess) {
-            throw supabaseError;
-          }
-        }
-      }
-
-      if (currentStats) {
-        console.log('📈 Final user stats:', currentStats);
-        setUserStats(currentStats);
+      // Use edge function only (bypasses RLS via service_role)
+      const backend = await apiService.getUserStatus(telegramId);
+      if (backend) {
+        setUserStats({
+          gems: backend.gems,
+          messages_today: backend.messages_today,
+          subscription_type: backend.subscription_type,
+          total_messages: user?.total_messages ?? 0,
+          subscription_end: user?.subscription_end ?? null,
+          tier: user?.tier || backend.subscription_type || 'free'
+        });
+      } else if (user) {
+        // Fallback: use AuthContext user data
+        setUserStats({
+          gems: user.gems ?? 0,
+          total_messages: user.total_messages ?? 0,
+          messages_today: user.messages_today ?? 0,
+          subscription_type: user.subscription_type ?? null,
+          subscription_end: user.subscription_end ?? null,
+          tier: user.tier || 'free'
+        });
       }
     } catch (err) {
-      console.error('Failed to fetch user data:', err);
+      if (import.meta.env.DEV) console.error('Failed to fetch user data:', err);
       setError('Failed to load user data');
     } finally {
       setLoading(false);
@@ -123,7 +75,7 @@ export const useUserData = () => {
     }
   }, [isAuthenticated, user, isDevMode]);
 
-  // Set up real-time subscription for gem updates
+  // Real-time subscription for gem updates
   useEffect(() => {
     if (!telegramUser?.id || isDevMode) return;
 
@@ -141,13 +93,13 @@ export const useUserData = () => {
           if (payload.new) {
             setUserStats(prev => ({
               ...prev,
-              gems: payload.new.gems,
-              total_messages: payload.new.total_messages,
-              messages_today: payload.new.messages_today,
-              subscription_type: payload.new.subscription_type,
-              subscription_end: payload.new.subscription_end,
-              tier: payload.new.tier
-            }));
+              gems: (payload.new as any).gems,
+              total_messages: (payload.new as any).total_messages,
+              messages_today: (payload.new as any).messages_today,
+              subscription_type: (payload.new as any).subscription_type,
+              subscription_end: (payload.new as any).subscription_end,
+              tier: (payload.new as any).tier
+            } as UserStats));
           }
         }
       )

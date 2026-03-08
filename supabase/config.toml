@@ -3,6 +3,12 @@ project_id = "pfuyxdqzbrjrtqlbkbku"
 [functions.validate-telegram-auth]
 verify_jwt = false
 
+[functions.upsert-user]
+verify_jwt = false
+
+[functions.claim-daily-reward]
+verify_jwt = false
+
 [functions.admin-blog-operations]
 verify_jwt = false
 

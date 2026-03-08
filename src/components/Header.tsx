@@ -11,7 +11,7 @@ export const Header = () => {
   const { stats, loading } = useHeaderStats();
   const navigate = useNavigate();
 
-  console.log('🔍 Header - Auth state:', { user, telegramUser, authError });
+  if (import.meta.env.DEV) console.log('Header auth state:', { user: !!user, authError });
 
   // Check if user has an active subscription
   const hasActiveSubscription = () =>

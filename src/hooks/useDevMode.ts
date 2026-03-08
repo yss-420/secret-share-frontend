@@ -31,28 +31,16 @@ export const useDevMode = () => {
   const [isDevMode, setIsDevMode] = useState(false);
 
   useEffect(() => {
-    // Only enable dev mode in actual development environments
     const hostname = window.location.hostname;
-    const isDev = import.meta.env.DEV;
     const isLocalhost = hostname === 'localhost';
     const hasDevParam = new URLSearchParams(window.location.search).has('dev');
-    
-    // SECURITY: Never enable dev mode in production
-    // Only activate in actual development or with explicit dev parameter
-    const isDevEnvironment = 
+
+    // Only enable dev mode in actual development environments
+    const isDevEnvironment =
       import.meta.env.MODE === 'development' ||
       isLocalhost ||
       (import.meta.env.DEV && hasDevParam);
-    
-    console.log('🔍 Dev mode detection:', { 
-      hostname, 
-      mode: import.meta.env.MODE,
-      isDev, 
-      isLocalhost, 
-      hasDevParam, 
-      isDevEnvironment 
-    });
-    
+
     setIsDevMode(isDevEnvironment);
   }, []);
 

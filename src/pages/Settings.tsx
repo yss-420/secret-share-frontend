@@ -54,11 +54,7 @@ const Settings = () => {
         const hasAdminRole = roles?.some(r => r.role === 'admin');
         setIsAdmin(hasAdminRole || false);
         
-        console.log('🔍 Admin check (database):', {
-          telegramId: telegramUser.id,
-          roles: roles,
-          isAdmin: hasAdminRole
-        });
+        if (import.meta.env.DEV) console.log('Admin check:', { telegramId: telegramUser.id, isAdmin: hasAdminRole });
       } catch (error) {
         console.error('Error checking admin status:', error);
         setIsAdmin(false);

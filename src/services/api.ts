@@ -27,26 +27,26 @@ export interface GemPurchase {
 class ApiService {
   async getUserStatus(telegramId: number): Promise<Pick<UserStats, 'gems' | 'messages_today' | 'subscription_type'> | null> {
     try {
-      // Use Supabase function instead of direct external API call
       const { data, error } = await supabase.functions.invoke('get-user-status', {
         body: { telegram_id: telegramId }
       });
 
       if (error) {
-        console.error('Error fetching user status:', error);
+        if (import.meta.env.DEV) console.error('Error fetching user status:', error);
         return null;
       }
 
       return data;
     } catch (error) {
-      console.error('Error fetching user status:', error);
+      if (import.meta.env.DEV) console.error('Error fetching user status:', error);
       return null;
     }
   }
 
   async purchaseGems(purchase: GemPurchase): Promise<boolean> {
     try {
-      // In development, simulate successful purchase
+      // Gem purchases are handled through Railway backend invoice flow (Store.tsx)
+      // This method is kept for API compatibility but should not be called directly
       if (import.meta.env.DEV) {
         toast({
           title: "Purchase Successful!",
@@ -55,21 +55,13 @@ class ApiService {
         return true;
       }
 
-      // TODO: Implement actual payment processing
-      // This would typically involve calling a payment processor
-      const { error } = await supabase.functions.invoke('process-gem-purchase', {
-        body: purchase
-      });
-
-      if (error) throw error;
-
       toast({
-        title: "Purchase Successful!",
-        description: `You've received ${purchase.gems} gems!`,
+        title: "Use Store",
+        description: "Please purchase gems through the Store page.",
       });
-      return true;
+      return false;
     } catch (error) {
-      console.error('Gem purchase failed:', error);
+      if (import.meta.env.DEV) console.error('Gem purchase failed:', error);
       toast({
         title: "Purchase Failed",
         description: "Unable to process your purchase. Please try again.",
@@ -79,36 +71,34 @@ class ApiService {
     }
   }
 
-  async getTransactionHistory(userId: string): Promise<Transaction[]> {
+  async getTransactionHistory(telegramId: number): Promise<Transaction[]> {
     try {
+      // Route through get-user-status or direct query with telegram_id (bigint, not UUID)
       const { data, error } = await supabase
         .from('transactions')
         .select('*')
-        .eq('user_id', userId)
+        .eq('user_id', telegramId)
         .order('created_at', { ascending: false })
         .limit(50);
 
       if (error) throw error;
       return data || [];
     } catch (error) {
-      console.error('Failed to fetch transaction history:', error);
+      if (import.meta.env.DEV) console.error('Failed to fetch transaction history:', error);
       return [];
     }
   }
 
   async updateUserSettings(userId: string, settings: Record<string, any>): Promise<boolean> {
     try {
-      // For now, store settings in local storage
-      // In production, this would sync to Supabase
       localStorage.setItem(`user_settings_${userId}`, JSON.stringify(settings));
-      
       toast({
         title: "Settings Updated",
         description: "Your preferences have been saved.",
       });
       return true;
     } catch (error) {
-      console.error('Failed to update settings:', error);
+      if (import.meta.env.DEV) console.error('Failed to update settings:', error);
       toast({
         title: "Update Failed",
         description: "Unable to save settings. Please try again.",
@@ -123,17 +113,16 @@ class ApiService {
       const stored = localStorage.getItem(`user_settings_${userId}`);
       return stored ? JSON.parse(stored) : {};
     } catch (error) {
-      console.error('Failed to get user settings:', error);
+      if (import.meta.env.DEV) console.error('Failed to get user settings:', error);
       return {};
     }
   }
 
-  async claimDailyReward(userId: string): Promise<boolean> {
+  async claimDailyReward(telegramId: number): Promise<boolean> {
     try {
-      // Check if already claimed today
-      const lastClaim = localStorage.getItem(`daily_claim_${userId}`);
+      const lastClaim = localStorage.getItem(`daily_claim_${telegramId}`);
       const today = new Date().toDateString();
-      
+
       if (lastClaim === today) {
         toast({
           title: "Already Claimed",
@@ -143,16 +132,30 @@ class ApiService {
         return false;
       }
 
-      // Simulate claiming reward
-      localStorage.setItem(`daily_claim_${userId}`, today);
-      
-      toast({
-        title: "Daily Reward Claimed!",
-        description: "You've received 10 free gems!",
+      // Call the claim-daily-reward edge function
+      const { data, error } = await supabase.functions.invoke('claim-daily-reward', {
+        body: { telegram_id: telegramId }
       });
-      return true;
+
+      if (error) throw error;
+
+      if (data?.awarded) {
+        localStorage.setItem(`daily_claim_${telegramId}`, today);
+        toast({
+          title: "Daily Reward Claimed!",
+          description: `You've received ${data.amount || 10} gems!`,
+        });
+        return true;
+      } else {
+        localStorage.setItem(`daily_claim_${telegramId}`, today);
+        toast({
+          title: "Already Claimed",
+          description: "You've already claimed your daily reward today!",
+        });
+        return false;
+      }
     } catch (error) {
-      console.error('Failed to claim daily reward:', error);
+      if (import.meta.env.DEV) console.error('Failed to claim daily reward:', error);
       toast({
         title: "Claim Failed",
         description: "Unable to claim reward. Please try again.",
