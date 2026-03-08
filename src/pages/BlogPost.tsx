@@ -26,12 +26,14 @@ export default function BlogPost() {
     if (data) {
       setPost(data);
       
-      // Increment view count
-      (supabase as any)
-        .from('blog_posts')
-        .update({ view_count: data.view_count + 1 })
-        .eq('id', data.id)
-        .then(() => {});
+      // Increment view count atomically via RPC (fallback to client-side if RPC missing)
+      (supabase as any).rpc('increment_blog_view', { post_id: data.id }).catch(() => {
+        (supabase as any)
+          .from('blog_posts')
+          .update({ view_count: (data.view_count || 0) + 1 })
+          .eq('id', data.id)
+          .then(() => {});
+      });
     }
     
     setLoading(false);

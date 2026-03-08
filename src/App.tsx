@@ -24,6 +24,7 @@ import BlogPost from "./pages/BlogPost";
 import BlogDashboard from "./pages/admin/BlogDashboard";
 import NewBlogPost from "./pages/admin/NewBlogPost";
 import EditBlogPost from "./pages/admin/EditBlogPost";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +38,7 @@ const App = () => (
           <SpeedInsights />
           <Toaster />
           <Sonner />
+          <ErrorBoundary>
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />
@@ -58,6 +60,7 @@ const App = () => (
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
+          </ErrorBoundary>
           </TooltipProvider>
         </LanguageProvider>
       </AuthProvider>

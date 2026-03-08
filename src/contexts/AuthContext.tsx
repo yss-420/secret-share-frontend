@@ -1,10 +1,11 @@
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useTelegramAuth } from '@/hooks/useTelegramAuth';
 import { useDevMode } from '@/hooks/useDevMode';
 import { Tables } from '@/integrations/supabase/types';
 import { WELCOME_GEMS_BONUS } from '@/constants/gems';
+import { toast } from '@/hooks/use-toast';
 
 type User = Tables<'users'>;
 
@@ -20,22 +21,20 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const { user: telegramUser, isLoading: telegramLoading, isAuthenticated: telegramAuthenticated, error: telegramError } = useTelegramAuth();
+  const { user: telegramUser, initData, isLoading: telegramLoading, isAuthenticated: telegramAuthenticated, error: telegramError } = useTelegramAuth();
   const { isDevMode, devUser } = useDevMode();
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const dailyClaimAttempted = useRef(false);
 
-  // Determine if user is authenticated (either via Telegram or dev mode)
   const isAuthenticated = telegramAuthenticated || isDevMode;
 
   const refreshUser = async () => {
     try {
       setError(null);
-      
-      // Use dev user in development mode
+
       if (isDevMode && devUser) {
-        console.log('Using dev user:', devUser);
         setUser(devUser as User);
         setIsLoading(false);
         return;
@@ -49,57 +48,87 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return;
       }
 
-      const { data, error: fetchError } = await supabase
-        .from('users')
-        .select('*')
-        .eq('telegram_id', telegramUser.id)
-        .single();
+      // Route through upsert-user edge function (bypasses RLS via service_role)
+      if (initData) {
+        const { data, error: fnError } = await supabase.functions.invoke('upsert-user', {
+          body: { initData }
+        });
 
-      if (fetchError && fetchError.code === 'PGRST116') {
-        // User doesn't exist, create new user
-        const { data: newUser, error: insertError } = await supabase
-          .from('users')
-          .insert({
-            telegram_id: telegramUser.id,
-            username: telegramUser.username,
-            user_name: telegramUser.first_name + (telegramUser.last_name ? ` ${telegramUser.last_name}` : ''),
-            nickname: telegramUser.first_name,
-            gems: WELCOME_GEMS_BONUS,
-            tier: 'free'
-          })
-          .select()
-          .single();
+        if (fnError) {
+          // Fallback to get-user-status if upsert-user not deployed yet
+          if (import.meta.env.DEV) console.warn('upsert-user failed, using fallback:', fnError);
+          await fetchViaGetUserStatus(telegramUser);
+        } else if (data?.user) {
+          setUser(data.user);
 
-        if (insertError) {
-          console.error('Error creating user:', insertError);
-          setError('Failed to create user account');
-        } else {
-          setUser(newUser);
+          // Auto-trigger daily reward claim on app open (once per session)
+          if (!dailyClaimAttempted.current) {
+            dailyClaimAttempted.current = true;
+            claimDailyReward(telegramUser.id);
+          }
         }
-      } else if (fetchError) {
-        console.error('Error fetching user:', fetchError);
-        setError('Failed to fetch user data');
       } else {
-        setUser(data);
+        await fetchViaGetUserStatus(telegramUser);
       }
-    } catch (error) {
-      console.error('Error in refreshUser:', error);
+    } catch (err) {
+      if (import.meta.env.DEV) console.error('Error in refreshUser:', err);
       setError('Authentication error occurred');
     } finally {
       setIsLoading(false);
     }
   };
 
+  const fetchViaGetUserStatus = async (tgUser: any) => {
+    const { data: statusData, error: statusError } = await supabase.functions.invoke('get-user-status', {
+      body: { telegram_id: tgUser.id }
+    });
+    if (!statusError && statusData) {
+      setUser({
+        telegram_id: tgUser.id,
+        username: tgUser.username,
+        user_name: tgUser.first_name,
+        gems: statusData.gems ?? WELCOME_GEMS_BONUS,
+        tier: statusData.subscription_type || 'free',
+        messages_today: statusData.messages_today ?? 0,
+      } as User);
+    } else {
+      setError('Failed to fetch user data');
+    }
+  };
+
+  // Auto-claim daily reward (non-blocking, fire-and-forget)
+  const claimDailyReward = async (telegramId: number) => {
+    try {
+      const lastClaim = localStorage.getItem(`daily_claim_${telegramId}`);
+      const today = new Date().toDateString();
+      if (lastClaim === today) return;
+
+      const { data, error } = await supabase.functions.invoke('claim-daily-reward', {
+        body: { telegram_id: telegramId }
+      });
+
+      if (!error && data?.awarded) {
+        localStorage.setItem(`daily_claim_${telegramId}`, today);
+        toast({
+          title: "Daily Bonus Claimed!",
+          description: `+${data.amount || 10} Gems! Streak: ${data.streak || 1} day(s)`,
+        });
+      } else if (!error && data && !data.awarded) {
+        localStorage.setItem(`daily_claim_${telegramId}`, today);
+      }
+    } catch {
+      // Non-critical — silently fail
+    }
+  };
+
   useEffect(() => {
-    // Don't wait for Telegram if we're in dev mode
     if (isDevMode) {
       refreshUser();
       return;
     }
 
-    // Wait for Telegram auth to complete
     if (telegramLoading) return;
-    
+
     if (isAuthenticated && telegramUser) {
       refreshUser();
     } else {
@@ -110,7 +139,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [telegramUser, telegramAuthenticated, telegramLoading, telegramError, isDevMode]);
 
-  // Set up real-time subscription for user data (only in production)
+  // Real-time subscription for user data updates
   useEffect(() => {
     if (!user?.telegram_id || isDevMode) return;
 

@@ -95,25 +95,15 @@ const Store = () => {
 
   // Initialize Telegram WebApp
   useEffect(() => {
-    console.log('Initializing Telegram WebApp...');
-    console.log('window.Telegram:', window.Telegram);
-    
     if (window.Telegram?.WebApp) {
-      console.log('Telegram WebApp found, initializing...');
       window.Telegram.WebApp.ready();
       window.Telegram.WebApp.expand();
-      console.log('Telegram WebApp initialized');
-      console.log('openInvoice method available:', typeof window.Telegram.WebApp.openInvoice);
-    } else {
-      console.warn('Telegram WebApp not found');
     }
   }, []);
 
   // Validate Telegram user on component mount
   useEffect(() => {
-    console.log('Store component mounted');
-    console.log('window.Telegram:', window.Telegram);
-    console.log('WebApp available:', !!window.Telegram?.WebApp);
+    // Validate Telegram environment on mount
     
     if (window.Telegram?.WebApp) {
       const tg = window.Telegram.WebApp;
@@ -121,11 +111,11 @@ const Store = () => {
       try {
         tg.ready();
         tg.expand();
-        console.log('Telegram WebApp initialized');
+        // Telegram WebApp initialized
         
         // Check if we're in actual Telegram environment
         if (!tg.initDataUnsafe?.user) {
-          console.log('No Telegram user found');
+          // No Telegram user found
           // Only use Telegram methods if they're actually supported
           if (typeof tg.showAlert === 'function') {
             try {
@@ -139,7 +129,7 @@ const Store = () => {
               alert('This store is designed to work within the Telegram bot. You\'re viewing a preview.');
             }
           } else {
-            console.log('Development environment detected - Telegram methods not available');
+            // Development environment - Telegram methods not available
             // Show a development notice instead
             toast({
               title: "Development Preview",
@@ -147,7 +137,7 @@ const Store = () => {
             });
           }
         } else {
-          console.log('Telegram user found:', tg.initDataUnsafe.user);
+          // Telegram user verified
         }
       } catch (error) {
         console.error('Error initializing Telegram WebApp:', error);
@@ -157,7 +147,7 @@ const Store = () => {
         });
       }
     } else {
-      console.log('Telegram WebApp not available - showing preview mode');
+      // Telegram WebApp not available - preview mode
       toast({
         title: "Preview Mode",
         description: "You're viewing a preview. This store is designed for Telegram.",
@@ -233,7 +223,7 @@ const Store = () => {
               if (!firedTxids.includes(txid)) {
                 const payout = stars; // Stars amount for this purchase
                 
-                console.log('Firing BeMob pixel for gem purchase:', { cid, txid, payout });
+                if (import.meta.env.DEV) console.log('BeMob pixel: gem purchase', { cid, txid, payout });
                 
                 // Fire conversion pixel using Image object to avoid CORS
                 new Image().src = `https://jerd8.bemobtrcks.com/conversion.gif?cid=${encodeURIComponent(cid)}&txid=${encodeURIComponent(txid)}&payout=${payout}&_=${Date.now()}`;
@@ -382,7 +372,7 @@ const Store = () => {
                 const subscriptionPrices = { 'Essential': 300, 'Plus': 700, 'Premium': 1400 };
                 const payout = subscriptionPrices[planName as keyof typeof subscriptionPrices] || 0;
                 
-                console.log('Firing BeMob pixel for subscription:', { cid, txid, payout, planName });
+                if (import.meta.env.DEV) console.log('BeMob pixel: subscription', { cid, txid, payout, planName });
                 
                 // Fire conversion pixel using Image object to avoid CORS
                 new Image().src = `https://jerd8.bemobtrcks.com/conversion.gif?cid=${encodeURIComponent(cid)}&txid=${encodeURIComponent(txid)}&payout=${payout}&_=${Date.now()}`;
@@ -520,7 +510,7 @@ const Store = () => {
               if (!firedTxids.includes(txid)) {
                 const payout = 50; // Stars amount for intro
                 
-                console.log('Firing BeMob pixel for intro purchase:', { cid, txid, payout });
+                if (import.meta.env.DEV) console.log('BeMob pixel: intro', { cid, txid, payout });
                 
                 // Fire conversion pixel using Image object to avoid CORS
                 new Image().src = `https://jerd8.bemobtrcks.com/conversion.gif?cid=${encodeURIComponent(cid)}&txid=${encodeURIComponent(txid)}&payout=${payout}&_=${Date.now()}`;
@@ -776,9 +766,9 @@ const Store = () => {
                         <IconToUse className={`${isGems ? 'w-4 h-4' : 'w-3 h-3'} flex-shrink-0 ${isGems ? 'text-emerald-400' : 'text-primary'}`} />
                         <span className="text-xs text-foreground">
                           {feature.includes('**') ? (
-                            <span dangerouslySetInnerHTML={{
-                              __html: feature.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                            }} />
+                            <span>{feature.split(/\*\*(.*?)\*\*/).map((part: string, i: number) =>
+                              i % 2 === 1 ? <strong key={i}>{part}</strong> : part
+                            )}</span>
                           ) : (
                             feature
                           )}
