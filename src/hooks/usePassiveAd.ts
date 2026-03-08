@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 
 const isDev = import.meta.env.DEV;
 const log = (...args: any[]) => { if (isDev) console.log('[usePassiveAd]', ...args); };
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'https://secret-share-backend-production.up.railway.app';
 
 export const usePassiveAd = (
   userId?: number,
@@ -31,7 +32,7 @@ export const usePassiveAd = (
           return;
         }
 
-        const startResponse = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/ads/start`, {
+        const startResponse = await fetch(`${BACKEND_URL}/api/ads/start`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ user_id: userId, type: 'interstitial' })
@@ -42,7 +43,7 @@ export const usePassiveAd = (
         const session = await startResponse.json();
         await showMonetag(session.session_id);
 
-        const completeResponse = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/ads/complete`, {
+        const completeResponse = await fetch(`${BACKEND_URL}/api/ads/complete`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -71,7 +72,7 @@ export const usePassiveAd = (
 
     const checkEligibility = async (userId: number) => {
       const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/api/ads/eligibility?user_id=${userId}&type=interstitial&first_session=0`
+        `${BACKEND_URL}/api/ads/eligibility?user_id=${userId}&type=interstitial&first_session=0`
       );
       if (!response.ok) throw new Error(`Eligibility check failed: ${response.status}`);
       return await response.json();

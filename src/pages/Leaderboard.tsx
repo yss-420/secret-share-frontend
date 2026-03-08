@@ -10,6 +10,8 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { trackNavigation } from "@/utils/analytics";
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'https://secret-share-backend-production.up.railway.app';
+
 interface LeaderboardEntry {
   rank: number;
   champion_name: string;
@@ -51,7 +53,7 @@ const Leaderboard = () => {
     
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/api/arena/leaderboard?period=${selectedPeriod}&limit=50`
+        `${BACKEND_URL}/api/arena/leaderboard?period=${selectedPeriod}&limit=50`
       );
       
       if (!response.ok) {
