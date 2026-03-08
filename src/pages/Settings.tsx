@@ -21,7 +21,7 @@ const Settings = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { userStats } = useUserData();
+  const { userStats, loading: userDataLoading } = useUserData();
   const { t } = useTranslation();
   const { availableLanguages, currentLanguage, changeLanguage } = useLanguage();
   const { user: telegramUser } = useTelegramAuth();
@@ -65,7 +65,7 @@ const Settings = () => {
   }, [telegramUser?.id]);
 
   // Check if user should see Free Gems
-  const shouldShowFreeGems = !adService.isPaidUser(userStats?.subscription_type);
+  const shouldShowFreeGems = !userDataLoading && !adService.isPaidUser(userStats?.subscription_type);
 
   // Check if user is subscribed (has active paid subscription)
   const isSubscribed = adService.isPaidUser(userStats?.subscription_type);
