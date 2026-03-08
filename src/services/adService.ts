@@ -28,7 +28,7 @@ export interface AdStatusResponse {
 export type AdType = 'interstitial' | 'quick' | 'bonus';
 
 class AdService {
-  private baseUrl = 'https://secret-share-backend-production.up.railway.app';
+  private baseUrl = import.meta.env.VITE_BACKEND_URL || 'https://secret-share-backend-production.up.railway.app';
   private isAdRunning = false;
 
   // Debounce mechanism to ensure only one ad runs at a time

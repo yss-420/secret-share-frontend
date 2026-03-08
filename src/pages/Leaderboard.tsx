@@ -51,7 +51,7 @@ const Leaderboard = () => {
     
     try {
       const response = await fetch(
-        `https://secret-share-backend-production.up.railway.app/api/arena/leaderboard?period=${selectedPeriod}&limit=50`
+        `${import.meta.env.VITE_BACKEND_URL}/api/arena/leaderboard?period=${selectedPeriod}&limit=50`
       );
       
       if (!response.ok) {
