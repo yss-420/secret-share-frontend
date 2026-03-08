@@ -196,7 +196,7 @@ const Store = () => {
       const packageType = `gems_${gemPackage.gems}`;
 
       // Create invoice via backend using the approved method
-      const response = await fetch('https://secret-share-backend-production.up.railway.app/api/create-invoice', {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/create-invoice`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -337,7 +337,7 @@ const Store = () => {
       const packageType = `sub_${planName.toLowerCase()}`;
 
       // Create invoice via backend using the new subscription endpoint
-      const response = await fetch('https://secret-share-backend-production.up.railway.app/create_invoice_link', {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/create-invoice`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -482,7 +482,7 @@ const Store = () => {
 
     try {
       // Use correct endpoint and package type for intro subscription
-      const response = await fetch('https://secret-share-backend-production.up.railway.app/create_invoice_link', {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/create-invoice`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
