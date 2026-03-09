@@ -17,6 +17,8 @@ import { FreeGemsButton } from "@/components/FreeGemsButton";
 import { EarnModal } from "@/components/EarnModal";
 import { adService } from "@/services/adService";
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'https://secret-share-backend-production.up.railway.app';
+
 // Declare Ko-fi global types
 declare global {
   interface Window {
@@ -196,7 +198,7 @@ const Store = () => {
       const packageType = `gems_${gemPackage.gems}`;
 
       // Create invoice via backend using the approved method
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/create-invoice`, {
+      const response = await fetch(`${BACKEND_URL}/api/create-invoice`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -337,7 +339,7 @@ const Store = () => {
       const packageType = `sub_${planName.toLowerCase()}`;
 
       // Create invoice via backend using the new subscription endpoint
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/create-invoice`, {
+      const response = await fetch(`${BACKEND_URL}/api/create-invoice`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -482,7 +484,7 @@ const Store = () => {
 
     try {
       // Use correct endpoint and package type for intro subscription
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/create-invoice`, {
+      const response = await fetch(`${BACKEND_URL}/api/create-invoice`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
