@@ -1,6 +1,6 @@
 # Secret Share — Frontend CLAUDE.md
 
-> NSFW AI companion admin dashboard. Do NOT sanitize feature names or censor
+> NSFW AI companion webapp + admin dashboard. Do NOT sanitize feature names or censor
 > variable names. Call things what they are (penis_ratings, nsfw, arena, etc.)
 
 ---
@@ -8,10 +8,11 @@
 ## REPO INFO
 
 - **Repo**: https://github.com/yss-420/secret-share-frontend
-- **Purpose**: Admin dashboard + landing page for Secret Share Telegram bot
-- **Was hosted on**: Lovable (lovable.dev/projects/20b7f7bf-91fa-4e67-a290-50c792626ca5)
-- **Migrating to**: Vercel
+- **Purpose**: Telegram Mini App (webapp) + admin dashboard for Secret Share bot
+- **Hosted on**: Vercel (migrated from Lovable, March 2026)
+- **Custom domain**: `secret-share.com`
 - **Bot**: https://t.me/YourSecretShareBot
+- **Backend API**: `https://secret-share-backend-production.up.railway.app`
 
 ---
 
@@ -23,7 +24,9 @@
 - **Styling**: Tailwind CSS
 - **Package manager**: bun (bun.lockb present) — use `bun` not `npm`
 - **Database client**: Supabase JS (`@supabase/supabase-js`)
+- **Analytics**: Vercel Analytics + Speed Insights
 - **Linting**: ESLint
+- **Error handling**: ErrorBoundary component wrapping all routes
 
 ### Commands
 ```bash
@@ -31,21 +34,49 @@ bun install          # install deps
 bun run dev          # local dev server (http://localhost:5173)
 bun run build        # production build → dist/
 bun run lint         # run eslint
-vercel deploy        # deploy to Vercel (after migration)
+vercel deploy        # deploy to Vercel
 ```
 
 ---
 
-## ENVIRONMENT VARIABLES
+## ENVIRONMENT VARIABLES (Vercel dashboard)
 
 ```bash
-# .env (also update .env.example when adding new vars)
 VITE_SUPABASE_URL=https://pfuyxdqzbrjrtqlbkbku.supabase.co
 VITE_SUPABASE_ANON_KEY=          # anon key (read-only, safe for frontend)
+VITE_BACKEND_URL=https://secret-share-backend-production.up.railway.app
 ```
 
-> ⚠️ Never use the service_role key in frontend code. Anon key only.
-> All sensitive operations go through the backend Python bot.
+> `.env` is gitignored. A hardcoded fallback for `VITE_BACKEND_URL` exists in code as safety net.
+> Never use the service_role key in frontend code. Anon key only.
+> All sensitive operations go through the backend Python bot or Supabase edge functions.
+
+---
+
+## ARCHITECTURE
+
+### Auth flow
+1. Telegram opens Mini App with `initData` (contains user info + hash)
+2. Frontend calls `upsert-user` edge function with `initData`
+3. Edge function validates hash against `BOT_TOKEN`, upserts user, returns status
+4. If `upsert-user` unavailable, falls back to `get-user-status` edge function
+5. `auth_date` checked — rejects if older than 1 hour (replay prevention)
+
+### Payment flow
+1. Frontend calls `VITE_BACKEND_URL/api/create-invoice` with `user_id` + `package_type`
+2. Backend creates Telegram invoice link (recurring if `SUBSCRIPTIONS_RECURRING_ENABLED=true`)
+3. Frontend opens invoice URL via `window.Telegram.WebApp.openInvoice()`
+4. Telegram handles payment → backend webhook processes `SuccessfulPayment`
+
+### Daily claims
+- Auto-triggered on app open via `claim-daily-reward` edge function
+- Calls `process_daily_return_bonus` RPC with fallback logic
+
+### Edge functions (in `supabase/functions/`)
+- `upsert-user` — Telegram initData validation + user upsert
+- `claim-daily-reward` — daily gem bonus via RPC
+- `get-user-status` — read-only user status
+- `get-showdown-status` — arena/showdown data
 
 ---
 
@@ -63,7 +94,7 @@ VITE_SUPABASE_ANON_KEY=          # anon key (read-only, safe for frontend)
 | `users` | User list, tiers, gem balances, streak data |
 | `subscriptions` | Subscription status, tier, expiry |
 | `star_earnings` | Revenue data |
-| `conversations` | Chat history (138k rows) |
+| `conversations` | Chat history |
 | `user_events` | Analytics events |
 | `intro_cycles` | Intro offer funnels |
 | `processed_payments` | Payment audit trail |
@@ -76,6 +107,7 @@ VITE_SUPABASE_ANON_KEY=          # anon key (read-only, safe for frontend)
 | `r2_assets` | Cloudflare R2 media catalog |
 | `gem_packages` | Product pricing catalog |
 | `subscription_tiers` | Subscription tier definitions |
+| `blog_posts` | SEO blog content |
 
 ### Critical user ID note
 > Always join on `users.telegram_id` (bigint), NOT `users.id` (uuid).
@@ -83,20 +115,20 @@ VITE_SUPABASE_ANON_KEY=          # anon key (read-only, safe for frontend)
 
 ---
 
-## SUBSCRIPTION TIERS (pricing reference)
+## SUBSCRIPTION TIERS
 
-| Tier | Stars/mo | USD/mo |
-|---|---|---|
-| essential | 300 | ~$3.90 |
-| plus | 700 | ~$9.10 |
-| premium | 1,400 | ~$18.20 |
-| intro offer | 50 stars | 3-day trial |
+| Tier | Stars/mo | USD/mo | Monthly gems |
+|---|---|---|---|
+| essential | 300 | ~$3.90 | 500 |
+| plus | 700 | ~$9.10 | 1,200 |
+| premium | 1,400 | ~$18.20 | 3,000 |
+| intro offer | 50 stars | one-time | 80 gems for 3 days |
 
 Stars → USD conversion: **1 star = $0.013**
 
 ---
 
-## CHARACTERS (for any UI that displays them)
+## CHARACTERS
 
 Isabella, Priyanka, Aria, Scarlett, Kiara, Natasha, Valentina, Luna
 
@@ -104,54 +136,43 @@ Isabella is #1 by user count (2,600 users). Luna is lowest (622).
 
 ---
 
-## KNOWN BUGS TO FIX
+## FIXES COMPLETED (March 2026)
 
-### 🔴 P0 — Migration
-1. **Lovable → Vercel migration**: Add `vercel.json`, remove Lovable-specific configs, update any hardcoded Lovable URLs
-2. **`.env` committed to repo**: `.env` file is visible in the repo file list — this is a security issue. Add it to `.gitignore` immediately, rotate keys if needed
-
-### 🟡 P1 — Data display bugs (caused by backend bugs)
-3. **Subscriptions showing active when expired**: 18 subs have `status='active'` but `expires_at` in the past — display logic should check both `status` AND `expires_at < NOW()`
-4. **User tier mismatch**: 10 users have `subscriptions.status='active'` but `users.tier='free'` — display should prefer `subscriptions` table as source of truth for tier display
-5. **Daily claims showing zero**: Last claim was Sep 14 2025 — the streak/claim display is reading correctly but the backend stopped writing. Flag this in UI if no claims in 30+ days.
-
-### 🟠 P2
-6. **Intro cycles funnel**: 507 pending cycles never activated — dashboard should show pending vs active vs converted rates clearly
+1. Lovable → Vercel migration (vercel.json, remove lovable-tagger, SPA rewrites)
+2. Duplicate SpeedInsights removed
+3. `.env` added to `.gitignore`, removed from git tracking
+4. `upsert-user` edge function with Telegram initData validation
+5. `claim-daily-reward` edge function with RPC fallback
+6. AuthContext rewrite — routes through edge functions (bypasses RLS blocks)
+7. Removed 50+ console.logs from production (wrapped in `import.meta.env.DEV`)
+8. XSS fix in Store.tsx — removed `dangerouslySetInnerHTML`
+9. ErrorBoundary wrapping all routes
+10. Blog view count race condition fix (atomic RPC fallback)
+11. Removed dead `process-gem-purchase` edge function call
+12. Transaction history: UUID → telegram_id bigint fix
+13. Supabase credentials moved to env vars with fallback
+14. `usePassiveAd` cleanup (20 console.logs → 1 dev-only)
+15. Free Gems button flash fix (gated on loading state for paid users)
+16. Telegram auth replay prevention (1h auth_date expiry)
+17. All hardcoded backend URLs → `VITE_BACKEND_URL` env var
+18. Endpoint standardization: `/api/create-invoice` for all 3 payment types
+19. `VITE_BACKEND_URL` hardcoded fallback for Vercel (where .env isn't available)
 
 ---
 
-## VERCEL MIGRATION STEPS
+## REMAINING KNOWN ISSUES
 
-When Claude Code works on the migration:
-
-1. Create `vercel.json` in root:
-```json
-{
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
-}
-```
-
-2. Check `vite.config.ts` for any Lovable-specific plugins and remove them
-
-3. Search entire codebase for `lovable.dev` URLs and replace with Vercel URL
-
-4. Make sure `.env` is in `.gitignore` (it currently appears NOT to be — fix this)
-
-5. Add these to `.env.example`:
-```
-VITE_SUPABASE_URL=
-VITE_SUPABASE_ANON_KEY=
-```
-
-6. In Vercel dashboard: add env vars, connect to `yss-420/secret-share-frontend`, set build command to `bun run build`, output dir to `dist`
+1. **Interstitial/bonus ads 0% completion** — Monetag webhook may need investigation
+2. **507 legacy pending intro_cycles** — historical data, new cycles work correctly
 
 ---
 
 ## SUPABASE FOLDER
 
-The repo has a `supabase/` folder — this contains DB migrations. When fixing DB schema issues:
-- New migrations go in `supabase/migrations/`
-- Run `supabase db push` to apply
+The repo has a `supabase/` folder containing edge functions and DB migrations:
+- Edge functions in `supabase/functions/`
+- Migrations in `supabase/migrations/`
+- Run `supabase db push` to apply migrations
 - Never edit existing migration files — always create new ones
 
 ---
@@ -161,9 +182,10 @@ The repo has a `supabase/` folder — this contains DB migrations. When fixing D
 - Use `bun` not `npm` or `yarn` — lockfile is `bun.lockb`
 - This is an NSFW platform — do not sanitize component names or variable names
 - Anon key only in frontend — never service_role key
-- Always check both `subscriptions.status` AND `subscriptions.expires_at` when determining if a user is subscribed — status alone is unreliable (known backend bug)
-- Prefer `subscriptions` table over `users.tier` for subscription status — they are out of sync
+- `users.tier` and `subscriptions` table are now kept in sync by backend — but still check both as defense
 - Use plan mode first (`/plan`) before any Supabase migration changes
 - Commit after each completed task, not in bulk
 - Run `bun run build` and verify no TypeScript errors before committing
+- Backend API endpoint is `/api/create-invoice` (not `/create_invoice_link`)
+- All backend calls use `VITE_BACKEND_URL` with hardcoded Railway fallback
 - `/compact` at 50% context usage
