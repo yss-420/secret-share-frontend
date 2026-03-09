@@ -166,6 +166,29 @@ Isabella is #1 by user count (2,600 users). Luna is lowest (622).
 
 ---
 
+## PR HISTORY (all 11 merged to main)
+
+| PR | Title |
+|---|---|
+| #1 | feat: fetch gems/messages from backend /user_status via Telegram id |
+| #2 | Add Supabase temporary directory to gitignore |
+| #3 | Set up Vercel Speed Insights tracking |
+| #4-7 | Multiple frontend fixes (auth, env vars, paid user flash) |
+| #8 | fix: use VITE_BACKEND_URL env var, standardize endpoints |
+| #9 | fix: add VITE_BACKEND_URL fallback for payments |
+| #10-11 | docs: update CLAUDE-frontend.md |
+
+---
+
+## LIVE STATUS (Verified March 9, 2026)
+
+- Frontend: `https://secret-share.com/` — HTTP 200
+- Backend URL present in JS bundle (2 references)
+- CORS: working (OPTIONS returns 200)
+- All 5 payment types verified live (gems, essential, plus, premium, intro)
+
+---
+
 ## SUPABASE FOLDER
 
 The repo has a `supabase/` folder containing edge functions and DB migrations:
