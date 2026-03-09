@@ -163,7 +163,6 @@ Isabella is #1 by user count (2,600 users). Luna is lowest (622).
 ## REMAINING KNOWN ISSUES
 
 1. **Interstitial/bonus ads 0% completion** — Monetag webhook may need investigation
-2. **507 legacy pending intro_cycles** — historical data, new cycles work correctly
 
 ---
 
