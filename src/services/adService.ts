@@ -21,7 +21,7 @@ export interface AdCompleteResponse {
 }
 
 export interface AdStatusResponse {
-  status: 'started' | 'completed' | 'failed';
+  status: 'started' | 'completed' | 'closed' | 'rejected' | 'expired' | 'failed';
   gems_awarded?: number;
 }
 
@@ -190,23 +190,26 @@ class AdService {
   async showQuickEarnAd(userId: number): Promise<{ success: boolean; message: string; gemsAdded?: number; remaining_today?: number; next_available_at?: string; cooldown_seconds?: number }> {
     return this.withAdLock(async () => {
       const eligibility = await this.checkEligibility(userId, 'quick');
-      
+
       if (!eligibility.allowed) {
-        return { 
-          success: false, 
+        return {
+          success: false,
           message: eligibility.reason || 'Ad not available right now'
         };
       }
 
       const session = await this.startAdSession(userId, 'quick');
-      
+
       try {
         await this.showMonetag(undefined, session.session_id);
+
+        // Monetag SDK resolved — the ad was shown. Try the backend complete call
+        // (which credits gems for quick ads). The webhook may also fire, but the
+        // backend is idempotent so double-calling is safe.
         const result = await this.completeAdSession(userId, 'quick', session.session_id, true);
-        
-        // Mark that a rewarded ad was just watched
+
         this.markRewardedAdWatched();
-        
+
         if (result.ok) {
           return {
             success: true,
@@ -216,15 +219,38 @@ class AdService {
             next_available_at: result.next_available_at,
             cooldown_seconds: result.cooldown_seconds
           };
-        } else {
-          return {
-            success: false,
-            message: result.message || 'Watch the full video to earn gems.'
-          };
         }
+
+        // Backend didn't confirm — poll for webhook completion as fallback
+        let status = 'started';
+        let attempts = 0;
+        const maxAttempts = 15; // 30 seconds
+        while (status !== 'completed' && attempts < maxAttempts) {
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          const statusResponse = await this.getAdStatus(session.session_id);
+          status = statusResponse.status;
+          attempts++;
+          if (status === 'completed') {
+            this.markRewardedAdWatched();
+            return {
+              success: true,
+              message: `+${statusResponse.gems_awarded || 10} gems`,
+              gemsAdded: statusResponse.gems_awarded || 10,
+            };
+          }
+        }
+
+        return {
+          success: false,
+          message: result.message || 'Watch the full video to earn gems.'
+        };
       } catch (error) {
         console.error('Quick earn ad failed:', error);
-        await this.completeAdSession(userId, 'quick', session.session_id, false);
+        try {
+          await this.completeAdSession(userId, 'quick', session.session_id, false);
+        } catch {
+          // Best-effort cleanup
+        }
         return {
           success: false,
           message: 'Watch the full video to earn gems.'
@@ -237,32 +263,33 @@ class AdService {
   async showBigBonusAd(userId: number): Promise<{ success: boolean; message: string; gemsAdded?: number }> {
     return this.withAdLock(async () => {
       const eligibility = await this.checkEligibility(userId, 'bonus');
-      
+
       if (!eligibility.allowed) {
-        return { 
-          success: false, 
+        return {
+          success: false,
           message: eligibility.reason || 'Bonus not available yet'
         };
       }
 
       const session = await this.startAdSession(userId, 'bonus');
-      
+
       try {
         await this.showMonetag('pop', session.session_id);
-        
-        // Poll for completion status
+
+        // Poll for completion status — the Monetag webhook will update the
+        // session status server-side when the offer wall completes.
+        // Extended timeout to 120s (offer walls can take a while).
         let status = 'started';
         let attempts = 0;
-        const maxAttempts = 30;
-        
-        while (status !== 'completed' && attempts < maxAttempts) {
+        const maxAttempts = 60; // 120 seconds (2s intervals)
+
+        while (attempts < maxAttempts) {
           await new Promise(resolve => setTimeout(resolve, 2000));
           const statusResponse = await this.getAdStatus(session.session_id);
           status = statusResponse.status;
           attempts++;
-          
+
           if (status === 'completed') {
-            // Mark that a rewarded ad was just watched
             this.markRewardedAdWatched();
             return {
               success: true,
@@ -270,11 +297,19 @@ class AdService {
               gemsAdded: statusResponse.gems_awarded || 50
             };
           }
+
+          // Stop polling if the session was explicitly rejected or errored
+          if (status === 'rejected' || status === 'error' || status === 'closed') {
+            return {
+              success: false,
+              message: 'Offer was not completed. Try again later.'
+            };
+          }
         }
-        
+
         return {
           success: false,
-          message: 'Offer not completed yet.'
+          message: 'Offer timed out. If you completed it, gems will be credited shortly.'
         };
       } catch (error) {
         console.error('Big bonus ad failed:', error);
@@ -288,10 +323,12 @@ class AdService {
 
 
   // Check if user has paid subscription that should hide ads
+  // Paid tiers: essential, plus, premium — these should NEVER see ads
   isPaidUser(subscriptionType?: string): boolean {
-    return subscriptionType !== undefined && 
-           subscriptionType !== 'free' && 
-           subscriptionType !== null;
+    if (!subscriptionType || subscriptionType === 'free') return false;
+    // Intro users get limited ads, not ad-free
+    if (subscriptionType === 'intro') return false;
+    return true;
   }
 
   // Check if user is intro tier (gets limited ads)

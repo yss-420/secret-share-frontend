@@ -158,11 +158,49 @@ Isabella is #1 by user count (2,600 users). Luna is lowest (622).
 18. Endpoint standardization: `/api/create-invoice` for all 3 payment types
 19. `VITE_BACKEND_URL` hardcoded fallback for Vercel (where .env isn't available)
 
+### Ad System Fixes (March 10, 2026) — PR #12
+20. **Edge function rewrite** (`ads-offer-webhook`): Fixed `session.type` → `session.ad_type`; fixed writing non-existent columns; added Monetag macro support (`reward=yes/no`, `event_type`, `estimated_price`); idempotency; always 200
+21. **Interstitial fix** (`usePassiveAd.ts`): Removed premature `completed: true` — completion now via Monetag webhook server-side; added subscriber skip
+22. **Quick earn fix** (`adService.ts`): Added webhook polling fallback if backend complete doesn't confirm; better error handling
+23. **Bonus fix** (`adService.ts`): Extended polling 60s → 120s; early exit on rejected/error/closed; better timeout message
+24. **Subscriber guardrail**: `isPaidUser()` correctly excludes essential/plus/premium; intro still gets limited ads
+25. **DB migration**: Added `completed_at`, `postback_data`, `estimated_price` to `ad_sessions`; `expired` status; indexes
+
+---
+
+## MONETAG AD SYSTEM
+
+### Key files
+- `src/services/adService.ts` — main ad service (eligibility, start, complete, status, Monetag SDK wrapper)
+- `src/hooks/usePassiveAd.ts` — interstitial ads (auto-show on page load, 1x/hour)
+- `src/hooks/useAdEligibility.ts` — eligibility check hook
+- `src/components/EarnModal.tsx` — quick earn + bonus UI
+- `src/components/FreeGemsButton.tsx` — free gems button
+- `supabase/functions/ads-offer-webhook/index.ts` — Monetag postback webhook
+
+### Monetag SDK
+- Zone ID: `9674140`
+- SDK loaded in `index.html`: `<script src='//libtl.com/sdk.js' data-zone='9674140' data-sdk='show_9674140'></script>`
+- Global function: `window.show_9674140`
+
+### Completion flow (after March 10 fix)
+1. Frontend calls `/api/ads/start` → gets `session_id`
+2. Frontend calls Monetag SDK with `ymid=session_id` (for postback tracking)
+3. Monetag fires postback → edge function processes it, marks session completed, awards gems
+4. Frontend polls `/api/ads/status` for bonus/quick fallback
+5. Interstitial: NO frontend complete call — webhook only
+
+### Postback URL format (Monetag dashboard)
+```
+https://pfuyxdqzbrjrtqlbkbku.supabase.co/functions/v1/ads-offer-webhook?session_id={ymid}&user_id={telegram_id}&reward={reward}&event_type={event_type}&zone_id={zone_id}&subzone_id={subzone_id}&price={estimated_price}
+```
+
 ---
 
 ## REMAINING KNOWN ISSUES
 
-1. **Interstitial/bonus ads 0% completion** — Monetag webhook may need investigation
+1. ~~**Interstitial/bonus ads 0% completion**~~ ✅ FIXED (March 10, 2026)
+2. **Monetag postback URL**: Must be configured in Monetag dashboard to point to edge function URL with correct macros (see above)
 
 ---
 
