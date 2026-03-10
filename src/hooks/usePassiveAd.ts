@@ -13,6 +13,12 @@ export const usePassiveAd = (
     const runPassiveAd = async () => {
       if (!userId) return;
 
+      // Don't show ads to paid users
+      if (subscriptionType && subscriptionType !== 'free') return;
+
+      // Suppress after recent payment
+      if (suppressAfterPayment) return;
+
       const now = Date.now();
       const lastShown = (window as any).__passiveShownTime || 0;
       const oneHour = 60 * 60 * 1000;
@@ -41,21 +47,42 @@ export const usePassiveAd = (
         if (!startResponse.ok) return;
 
         const session = await startResponse.json();
-        await showMonetag(session.session_id);
 
-        const completeResponse = await fetch(`${BACKEND_URL}/api/ads/complete`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            user_id: userId,
-            type: 'interstitial',
-            session_id: session.session_id,
-            completed: true
-          })
-        });
+        // Show the ad — Monetag SDK call.
+        // Completion is handled server-side via Monetag's postback webhook,
+        // NOT by the frontend marking it complete. This fixes the 0% completion rate
+        // where the SDK promise would resolve/reject instantly without the ad
+        // actually being watched.
+        try {
+          await showMonetag(session.session_id);
+          log('Monetag SDK call resolved for session:', session.session_id);
+        } catch (sdkError) {
+          log('Monetag SDK call rejected:', sdkError);
+          // Mark as closed since the ad didn't show properly
+          try {
+            await fetch(`${BACKEND_URL}/api/ads/complete`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                user_id: userId,
+                type: 'interstitial',
+                session_id: session.session_id,
+                completed: false
+              })
+            });
+          } catch {
+            // Best-effort cleanup
+          }
+          return;
+        }
 
-        if (!completeResponse.ok) return;
-        log('Passive ad flow completed');
+        // Don't call /api/ads/complete with completed: true here.
+        // The Monetag postback webhook will handle marking the session
+        // as completed server-side when the ad actually finishes.
+        // We just update the local cooldown timestamp so we don't
+        // try showing another ad in the same hour.
+        log('Passive ad flow initiated — webhook will handle completion');
+
       } catch (error) {
         if (isDev) console.error('[usePassiveAd] Failed:', error);
       }
