@@ -164,17 +164,13 @@ class AdService {
             .then((result: any) => resolve(result))
             .catch((error: any) => reject(error));
         } else if (type === 'pop') {
-          // Set global options as fallback if SDK doesn't carry options properly
-          if (sessionId) {
-            (window as any).monetagOpts = { ymid: sessionId, requestVar: sessionId };
-          }
-          monetag('pop', options)
+          // Monetag SDK expects a single options object, NOT ('pop', options)
+          // See: https://docs.monetag.com/docs/sdk-reference/
+          options.type = 'pop';
+          console.log('[AdService] Calling show_9674140 with pop options:', options);
+          monetag(options)
             .then((result: any) => resolve(result))
-            .catch((error: any) => reject(error))
-            .finally(() => {
-              // Clear global to avoid leaking session
-              delete (window as any).monetagOpts;
-            });
+            .catch((error: any) => reject(error));
         } else {
           // Default rewarded interstitial
           monetag(sessionId ? options : undefined)
