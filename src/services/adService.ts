@@ -128,7 +128,8 @@ class AdService {
   }
 
   // Monetag SDK wrapper - now public for direct use in usePassiveAd
-  async showMonetag(type?: 'inApp' | 'pop', sessionId?: string): Promise<void> {
+  // Returns SDK result for pop/rewarded ads (contains reward_event_type)
+  async showMonetag(type?: 'inApp' | 'pop', sessionId?: string): Promise<any> {
     return new Promise((resolve, reject) => {
       try {
         // Check if Monetag SDK is available
@@ -137,14 +138,14 @@ class AdService {
         }
 
         const monetag = (window as any).show_9674140;
-        
+
         // Create options object with session ID for postback tracking
         const options: any = {};
         if (sessionId) {
           options.ymid = sessionId; // Pass session_id as YMID for postback tracking
           options.requestVar = sessionId; // Pass session_id as requestVar for safety
         }
-        
+
         if (type === 'inApp') {
           options.type = 'inApp';
           options.inAppSettings = {
@@ -160,7 +161,7 @@ class AdService {
           }
           console.log('[AdService] Calling show_9674140 with inApp options:', options);
           monetag(options)
-            .then(() => resolve())
+            .then((result: any) => resolve(result))
             .catch((error: any) => reject(error));
         } else if (type === 'pop') {
           // Set global options as fallback if SDK doesn't carry options properly
@@ -168,7 +169,7 @@ class AdService {
             (window as any).monetagOpts = { ymid: sessionId, requestVar: sessionId };
           }
           monetag('pop', options)
-            .then(() => resolve())
+            .then((result: any) => resolve(result))
             .catch((error: any) => reject(error))
             .finally(() => {
               // Clear global to avoid leaking session
@@ -177,7 +178,7 @@ class AdService {
         } else {
           // Default rewarded interstitial
           monetag(sessionId ? options : undefined)
-            .then(() => resolve())
+            .then((result: any) => resolve(result))
             .catch((error: any) => reject(error));
         }
       } catch (error) {
@@ -274,10 +275,28 @@ class AdService {
       const session = await this.startAdSession(userId, 'bonus');
 
       try {
-        await this.showMonetag('pop', session.session_id);
+        const sdkResult = await this.showMonetag('pop', session.session_id);
 
-        // Poll for completion status — the Monetag webhook will update the
-        // session status server-side when the offer wall completes.
+        // If SDK returns reward_event_type=valued, complete immediately from frontend
+        // (like quick ads do). This bypasses the webhook which may not fire for pop ads.
+        if (sdkResult?.reward_event_type === 'valued') {
+          console.log('[AdService] Bonus ad SDK returned valued, completing from frontend');
+          try {
+            const result = await this.completeAdSession(userId, 'bonus', session.session_id, true);
+            if (result.ok) {
+              this.markRewardedAdWatched();
+              return {
+                success: true,
+                message: `+${result.gems_awarded || 50} gems`,
+                gemsAdded: result.gems_awarded || 50
+              };
+            }
+          } catch (e) {
+            console.error('[AdService] Frontend bonus complete failed, falling through to poll:', e);
+          }
+        }
+
+        // Fallback: poll for completion status via webhook
         // Extended timeout to 120s (offer walls can take a while).
         let status = 'started';
         let attempts = 0;
