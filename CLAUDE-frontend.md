@@ -190,17 +190,18 @@ Isabella is #1 by user count (2,600 users). Luna is lowest (622).
 4. Frontend polls `/api/ads/status` for bonus/quick fallback
 5. Interstitial: NO frontend complete call — webhook only
 
-### Postback URL format (Monetag dashboard)
+### Postback URL format (Monetag dashboard) — ✅ Updated March 14, 2026
 ```
-https://pfuyxdqzbrjrtqlbkbku.supabase.co/functions/v1/ads-offer-webhook?session_id={ymid}&user_id={telegram_id}&reward={reward}&event_type={event_type}&zone_id={zone_id}&subzone_id={subzone_id}&price={estimated_price}
+https://secret-share-backend-production.up.railway.app/api/ads/offer-webhook?session_id={ymid}&user_id={telegram_id}&reward={reward_event_type}&event_type={event_type}&zone_id={zone_id}&subzone_id={sub_zone_id}&price={estimated_price}
 ```
+> Postbacks activated for zone 9674140 (confirmed by Monetag support).
 
 ---
 
 ## REMAINING KNOWN ISSUES
 
-1. ~~**Interstitial/bonus ads 0% completion**~~ ✅ FIXED (March 10, 2026)
-2. **Monetag postback URL**: Must be configured in Monetag dashboard to point to edge function URL with correct macros (see above)
+1. ~~**Interstitial/bonus ads 0% completion**~~ ✅ FULLY FIXED (March 14, 2026) — code fixed March 10-11; Monetag postback URL updated to Railway backend with correct macros; postbacks activated for zone 9674140.
+2. ~~**Monetag postback URL**~~ ✅ DONE — Configured in Monetag dashboard pointing to Railway backend with correct macros (`{reward_event_type}`, `{sub_zone_id}`)
 
 ---
 
