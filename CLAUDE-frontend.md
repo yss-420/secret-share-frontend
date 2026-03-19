@@ -132,7 +132,7 @@ Stars → USD conversion: **1 star = $0.013**
 
 Isabella, Priyanka, Aria, Scarlett, Kiara, Natasha, Valentina, Luna
 
-Isabella is #1 by user count (2,600 users). Luna is lowest (622).
+Isabella is #1 by user count (3,640 users). Luna is lowest (871).
 
 ---
 

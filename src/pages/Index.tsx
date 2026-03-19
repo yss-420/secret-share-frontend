@@ -31,49 +31,49 @@ const Index = () => {
     {
       name: "Aria",
       description: t('characters.aria.description'),
-      points: 1435,
+      points: 2009,
       image: "/lovable-uploads/ed5f65c3-2811-4c61-95f0-bb60d3e98f47.png"
     },
     {
       name: "Kiara",
       description: t('characters.kiara.description'),
-      points: 1052,
+      points: 1473,
       image: "/lovable-uploads/fb446c37-8762-4d69-9f23-3a78cc53c8e9.png"
     },
     {
       name: "Luna",
       description: t('characters.luna.description'),
-      points: 622,
+      points: 871,
       image: "/lovable-uploads/f4cb3191-0f77-4b97-9c96-65a954a5dec7.png"
     },
     {
       name: "Valentina",
       description: t('characters.valentina.description'),
-      points: 886,
+      points: 1240,
       image: "/lovable-uploads/5d917985-c59f-4815-9c31-fbc3bb34a88d.png"
     },
     {
       name: "Scarlett",
       description: t('characters.scarlett.description'),
-      points: 1070,
+      points: 1498,
       image: "/lovable-uploads/ff507a9a-caa3-4185-b987-c793493f0fbe.png"
     },
     {
       name: "Natasha",
       description: t('characters.natasha.description'),
-      points: 961,
+      points: 1345,
       image: "/lovable-uploads/a966a842-02ab-4922-a9dd-8ea904e06504.png"
     },
     {
       name: "Isabella",
       description: t('characters.isabella.description'),
-      points: 2600,
+      points: 3640,
       image: "/lovable-uploads/cf3cd7ac-d0a8-4d28-8cee-c3f7b9207c26.png"
     },
     {
       name: "Priyanka",
       description: t('characters.priyanka.description'),
-      points: 1510,
+      points: 2114,
       image: "/lovable-uploads/0c5dca49-a71d-43d9-a495-c79a2079aab2.png"
     }
   ];
