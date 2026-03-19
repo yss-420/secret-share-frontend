@@ -198,6 +198,28 @@ https://secret-share-backend-production.up.railway.app/api/ads/offer-webhook?ses
 
 ---
 
+## SECRET SCORE (CHEMISTRY %) — Frontend Components
+
+### Files
+- `src/components/ChemistryHeart.tsx` — SVG heart that fills proportional to score + color-coded percentage pill
+  - Colors: 0-20 red (#EF4444), 21-40 orange (#F97316), 41-60 yellow (#EAB308), 61-80 green (#22C55E), 81-100 bright green (#10B981)
+  - Click opens Popover with score explanation + tips to raise it
+  - Uses Radix UI Popover (`@/components/ui/popover`)
+- `src/hooks/useChemistryScores.ts` — Fetches scores from `BACKEND_URL/api/chemistry?user_id={telegramId}`
+  - Returns `{ scores: Record<string, number>, loading: boolean }`
+  - Graceful degradation: silently fails if API is down, cards render without hearts
+- `src/components/CompanionCard.tsx` — Updated with optional `chemistryScore` prop, renders ChemistryHeart at bottom-left
+- `src/pages/Index.tsx` — Calls `useChemistryScores(telegramUser?.id)`, passes scores to CompanionCard via `companion.name.toLowerCase()` key
+
+### How it works
+1. `useChemistryScores` hook fetches all scores for the user on page load
+2. Each CompanionCard receives its score via `chemistryScore` prop
+3. If score > 0, a ChemistryHeart badge appears at bottom-left of the card image
+4. Clicking the heart opens a Popover explaining the score and how to increase it
+5. Only visible to authenticated users (score is undefined when not logged in)
+
+---
+
 ## REMAINING KNOWN ISSUES
 
 1. ~~**Interstitial/bonus ads 0% completion**~~ ✅ FULLY FIXED (March 14, 2026) — code fixed March 10-11; Monetag postback URL updated to Railway backend with correct macros; postbacks activated for zone 9674140.

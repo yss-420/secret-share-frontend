@@ -13,6 +13,7 @@ import { useHeaderStats } from '@/hooks/useHeaderStats';
 import { FreeGemsButton } from '@/components/FreeGemsButton';
 import { EarnModal } from '@/components/EarnModal';
 import { adService } from '@/services/adService';
+import { useChemistryScores } from '@/hooks/useChemistryScores';
 
 const Index = () => {
   const [earnModalOpen, setEarnModalOpen] = useState(false);
@@ -21,6 +22,7 @@ const Index = () => {
   const { isDevMode } = useDevMode();
   const { t } = useTranslation();
   const { stats, loading: statsLoading } = useHeaderStats();
+  const { scores: chemistryScores } = useChemistryScores(telegramUser?.id);
 
   // Initialize passive ad system
   usePassiveAd(telegramUser?.id, stats?.subscription_type);
@@ -29,49 +31,49 @@ const Index = () => {
     {
       name: "Aria",
       description: t('characters.aria.description'),
-      points: 1250,
+      points: 1435,
       image: "/lovable-uploads/ed5f65c3-2811-4c61-95f0-bb60d3e98f47.png"
     },
     {
-      name: "Kiara", 
+      name: "Kiara",
       description: t('characters.kiara.description'),
-      points: 980,
+      points: 1052,
       image: "/lovable-uploads/fb446c37-8762-4d69-9f23-3a78cc53c8e9.png"
     },
     {
       name: "Luna",
       description: t('characters.luna.description'),
-      points: 2100,
+      points: 622,
       image: "/lovable-uploads/f4cb3191-0f77-4b97-9c96-65a954a5dec7.png"
     },
     {
       name: "Valentina",
       description: t('characters.valentina.description'),
-      points: 1850,
+      points: 886,
       image: "/lovable-uploads/5d917985-c59f-4815-9c31-fbc3bb34a88d.png"
     },
     {
       name: "Scarlett",
       description: t('characters.scarlett.description'),
-      points: 1650,
+      points: 1070,
       image: "/lovable-uploads/ff507a9a-caa3-4185-b987-c793493f0fbe.png"
     },
     {
       name: "Natasha",
       description: t('characters.natasha.description'),
-      points: 1420,
+      points: 961,
       image: "/lovable-uploads/a966a842-02ab-4922-a9dd-8ea904e06504.png"
     },
     {
       name: "Isabella",
       description: t('characters.isabella.description'),
-      points: 1320,
+      points: 2600,
       image: "/lovable-uploads/cf3cd7ac-d0a8-4d28-8cee-c3f7b9207c26.png"
     },
     {
       name: "Priyanka",
       description: t('characters.priyanka.description'),
-      points: 1150,
+      points: 1510,
       image: "/lovable-uploads/0c5dca49-a71d-43d9-a495-c79a2079aab2.png"
     }
   ];
@@ -136,6 +138,7 @@ const Index = () => {
                 points={companion.points}
                 image={companion.image}
                 onClick={() => handleCharacterSelect(companion.name)}
+                chemistryScore={chemistryScores[companion.name.toLowerCase()]}
               />
             ))}
         </div>
