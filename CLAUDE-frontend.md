@@ -214,9 +214,10 @@ https://secret-share-backend-production.up.railway.app/api/ads/offer-webhook?ses
 ### How it works
 1. `useChemistryScores` hook fetches all scores for the user on page load
 2. Each CompanionCard receives its score via `chemistryScore` prop
-3. If score > 0, a ChemistryHeart badge appears at bottom-left of the card image
-4. Clicking the heart opens a Popover explaining the score and how to increase it
-5. Only visible to authenticated users (score is undefined when not logged in)
+3. **Authenticated users**: Heart always shown (defaults to 0% if no messages sent with that character)
+4. **Unauthenticated users**: No heart shown (score is undefined)
+5. Clicking the heart opens a Popover explaining the score and how to increase it
+6. Score increases very slowly (retention feature) — at least ~30 days of active chatting to approach 100%
 
 ---
 

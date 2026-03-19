@@ -34,7 +34,7 @@ export const CompanionCard = ({ name, description, points, image, onClick, chemi
             e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjI1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJoc2woMjI1IDE1JSAxNSUpIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMiIgZmlsbD0iaHNsKDIxMCA0MCUgOTglKSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlPC90ZXh0Pjwvc3ZnPg==';
           }}
         />
-        {chemistryScore != null && chemistryScore > 0 && (
+        {chemistryScore != null && (
           <div className="absolute bottom-2 left-2">
             <ChemistryHeart score={chemistryScore} characterName={name} />
           </div>

@@ -20,7 +20,8 @@ function getScoreLabel(score: number): string {
   if (score >= 76) return "Intense chemistry!";
   if (score >= 51) return "Things are heating up!";
   if (score >= 26) return "A spark is forming...";
-  return "Just getting started";
+  if (score > 0) return "Just getting started";
+  return "Start chatting to build chemistry!";
 }
 
 export const ChemistryHeart = ({ score, characterName, size = "sm" }: ChemistryHeartProps) => {

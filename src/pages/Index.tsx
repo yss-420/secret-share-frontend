@@ -138,7 +138,7 @@ const Index = () => {
                 points={companion.points}
                 image={companion.image}
                 onClick={() => handleCharacterSelect(companion.name)}
-                chemistryScore={chemistryScores[companion.name.toLowerCase()]}
+                chemistryScore={isAuthenticated ? (chemistryScores[companion.name.toLowerCase()] ?? 0) : undefined}
               />
             ))}
         </div>
