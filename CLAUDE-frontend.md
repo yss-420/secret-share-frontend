@@ -132,7 +132,7 @@ Stars → USD conversion: **1 star = $0.013**
 
 Isabella, Priyanka, Aria, Scarlett, Kiara, Natasha, Valentina, Luna
 
-Isabella is #1 by user count (2,600 users). Luna is lowest (622).
+Isabella is #1 by user count (8,640 users). Luna is lowest (5,871).
 
 ---
 
@@ -195,6 +195,28 @@ Isabella is #1 by user count (2,600 users). Luna is lowest (622).
 https://secret-share-backend-production.up.railway.app/api/ads/offer-webhook?session_id={ymid}&user_id={telegram_id}&reward={reward_event_type}&event_type={event_type}&zone_id={zone_id}&subzone_id={sub_zone_id}&price={estimated_price}
 ```
 > Postbacks activated for zone 9674140 (confirmed by Monetag support).
+
+---
+
+## SECRET SCORE (CHEMISTRY %) — Frontend Components
+
+### Files
+- `src/components/ChemistryHeart.tsx` — SVG heart that fills proportional to score + color-coded percentage pill
+  - Colors: 0-20 red (#EF4444), 21-40 orange (#F97316), 41-60 yellow (#EAB308), 61-80 green (#22C55E), 81-100 bright green (#10B981)
+  - Click opens Popover with score explanation + tips to raise it
+  - Uses Radix UI Popover (`@/components/ui/popover`)
+- `src/hooks/useChemistryScores.ts` — Fetches scores from `BACKEND_URL/api/chemistry?user_id={telegramId}`
+  - Returns `{ scores: Record<string, number>, loading: boolean }`
+  - Graceful degradation: silently fails if API is down, cards render without hearts
+- `src/components/CompanionCard.tsx` — Updated with optional `chemistryScore` prop, renders ChemistryHeart at bottom-left
+- `src/pages/Index.tsx` — Calls `useChemistryScores(telegramUser?.id)`, passes scores to CompanionCard via `companion.name.toLowerCase()` key
+
+### How it works
+1. `useChemistryScores` hook fetches all scores for the user on page load
+2. Each CompanionCard receives its score via `chemistryScore` prop
+3. If score > 0, a ChemistryHeart badge appears at bottom-left of the card image
+4. Clicking the heart opens a Popover explaining the score and how to increase it
+5. Only visible to authenticated users (score is undefined when not logged in)
 
 ---
 
