@@ -205,7 +205,7 @@ https://secret-share-backend-production.up.railway.app/api/ads/offer-webhook?ses
 
 ---
 
-## PR HISTORY (all 11 merged to main)
+## PR HISTORY (all 17 merged to main)
 
 | PR | Title |
 |---|---|
@@ -215,16 +215,22 @@ https://secret-share-backend-production.up.railway.app/api/ads/offer-webhook?ses
 | #4-7 | Multiple frontend fixes (auth, env vars, paid user flash) |
 | #8 | fix: use VITE_BACKEND_URL env var, standardize endpoints |
 | #9 | fix: add VITE_BACKEND_URL fallback for payments |
-| #10-11 | docs: update CLAUDE-frontend.md |
+| #10-12 | docs: update CLAUDE-frontend.md (multiple updates) |
+| #13 | fix: repair entire ad system — edge function, completion flows |
+| #14 | feat: enable ads-offer-webhook edge function as backup handler |
+| #15 | fix: bonus ad completion — read SDK reward_event_type from pop ads |
+| #16 | fix: Monetag SDK pop call — use single options object |
+| #17 | docs: update CLAUDE-frontend.md — Monetag postbacks fully configured |
 
 ---
 
-## LIVE STATUS (Verified March 9, 2026)
+## LIVE STATUS (Verified March 19, 2026)
 
-- Frontend: `https://secret-share.com/` — HTTP 200
-- Backend URL present in JS bundle (2 references)
-- CORS: working (OPTIONS returns 200)
-- All 5 payment types verified live (gems, essential, plus, premium, intro)
+- Frontend: `https://secret-share.com/` — deployed on Vercel, latest commit: PR #17
+- Backend: `https://secret-share-backend-production.up.railway.app/api/ads/health` — HTTP 200, healthy
+- Vercel project: `secret-share-frontend` — READY/PROMOTED
+- All payment types verified live (gems, essential, plus, premium, intro)
+- Monetag postbacks: ✅ active, 17 bonus completions confirmed
 
 ---
 
