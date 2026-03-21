@@ -49,13 +49,28 @@ export const usePassiveAd = (
         const session = await startResponse.json();
 
         // Show the ad — Monetag SDK call.
-        // Completion is handled server-side via Monetag's postback webhook,
-        // NOT by the frontend marking it complete. This fixes the 0% completion rate
-        // where the SDK promise would resolve/reject instantly without the ad
-        // actually being watched.
+        // Interstitials are impression-based: Monetag does NOT fire postbacks
+        // for inApp ads, so we must mark completion from the frontend when
+        // the SDK resolves (meaning the ad was displayed). This is safe
+        // because interstitials award 0 gems.
         try {
           await showMonetag(session.session_id);
           log('Monetag SDK call resolved for session:', session.session_id);
+          // Mark as completed — interstitials give 0 gems, no exploit risk
+          try {
+            await fetch(`${BACKEND_URL}/api/ads/complete`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                user_id: userId,
+                type: 'interstitial',
+                session_id: session.session_id,
+                completed: true
+              })
+            });
+          } catch {
+            // Best-effort — session will expire via cron if this fails
+          }
         } catch (sdkError) {
           log('Monetag SDK call rejected:', sdkError);
           // Mark as closed since the ad didn't show properly
@@ -75,13 +90,6 @@ export const usePassiveAd = (
           }
           return;
         }
-
-        // Don't call /api/ads/complete with completed: true here.
-        // The Monetag postback webhook will handle marking the session
-        // as completed server-side when the ad actually finishes.
-        // We just update the local cooldown timestamp so we don't
-        // try showing another ad in the same hour.
-        log('Passive ad flow initiated — webhook will handle completion');
 
       } catch (error) {
         if (isDev) console.error('[usePassiveAd] Failed:', error);
