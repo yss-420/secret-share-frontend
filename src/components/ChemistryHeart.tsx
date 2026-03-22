@@ -95,17 +95,24 @@ export const ChemistryHeart = ({ score, characterName, size = "sm" }: ChemistryH
             </span>{" "}
             — {getScoreLabel(score)}
           </p>
+          <p className="text-xs text-gray-400">
+            Your Secret Score reflects how deep your connection with{" "}
+            {characterName} is. The more you chat, the higher it grows!
+          </p>
           <div className="text-xs text-gray-400 space-y-1 pt-1 border-t border-gray-700">
             <p>How to raise your score:</p>
             <ul className="list-disc pl-4 space-y-0.5">
               <li>Chat more with {characterName}</li>
               <li>Send longer, more engaging messages</li>
               <li>Flirty conversations boost it faster</li>
-              <li>Stay consistent — inactivity lowers it</li>
+              <li>Stay consistent — daily activity matters</li>
             </ul>
           </div>
+          <p className="text-xs text-red-400/80 pt-1">
+            ⚠️ Your score decreases after 2 days of inactivity
+          </p>
           <p className="text-xs text-purple-300 pt-1">
-            💯 Hit 100% as a subscriber to unlock exclusive perks!
+            🎁 A special bonus awaits at 100%...
           </p>
         </div>
       </PopoverContent>
