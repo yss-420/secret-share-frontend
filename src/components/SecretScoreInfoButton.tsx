@@ -23,10 +23,10 @@ export const SecretScoreInfoButton = () => {
       <style>{heartFillStyle}</style>
       <Drawer open={open} onOpenChange={setOpen}>
         <DrawerTrigger asChild>
-          <button className="inline-flex items-center gap-1 px-1.5 py-1 rounded-lg bg-rose-600/90 backdrop-blur-sm border border-rose-500/50 shadow-lg shadow-rose-500/25 text-white transition-all duration-300 hover:bg-rose-700 cursor-pointer">
+          <button className="inline-flex items-center gap-1 px-1.5 py-1 rounded-lg bg-rose-600/90 backdrop-blur-sm border border-rose-500/50 shadow-lg shadow-rose-500/25 text-white transition-all duration-300 hover:bg-rose-700 cursor-pointer animate-breathing">
             <svg
-              width={14}
-              height={14}
+              width={16}
+              height={16}
               viewBox="0 0 24 24"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
@@ -36,9 +36,9 @@ export const SecretScoreInfoButton = () => {
                 fill="white"
               />
             </svg>
-            <div className="flex flex-col leading-none">
-              <span className="text-[9px] font-semibold">Secret</span>
-              <span className="text-[9px] font-semibold">Score</span>
+            <div className="flex flex-col leading-none items-start">
+              <span className="text-[10px] font-semibold">Secret</span>
+              <span className="text-[10px] font-semibold">Score</span>
             </div>
           </button>
         </DrawerTrigger>
