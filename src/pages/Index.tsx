@@ -14,6 +14,7 @@ import { FreeGemsButton } from '@/components/FreeGemsButton';
 import { EarnModal } from '@/components/EarnModal';
 import { adService } from '@/services/adService';
 import { useChemistryScores } from '@/hooks/useChemistryScores';
+import { SecretScoreInfoButton } from '@/components/SecretScoreInfoButton';
 
 const Index = () => {
   const [earnModalOpen, setEarnModalOpen] = useState(false);
@@ -97,7 +98,8 @@ const Index = () => {
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5" />
         <div className="relative px-4 pt-6 pb-4">
-          <div className="text-center mb-2">
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <SecretScoreInfoButton />
             {user && (
               <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-4">
                 <div className="w-1.5 h-1.5 bg-primary rounded-full mr-2" />
