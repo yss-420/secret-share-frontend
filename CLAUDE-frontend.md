@@ -5,6 +5,16 @@
 
 ---
 
+## DEPLOYMENT WORKFLOW
+
+**IMPORTANT**: Always create a PR to merge changes into `main` when making any frontend changes. Vercel auto-deploys from `main` — the Telegram mini-app only shows production deployments (merged to `main`), not preview deployments from feature branches. Workflow:
+1. Develop on feature branch
+2. Commit and push to feature branch
+3. Create PR to merge into `main`
+4. Once merged, Vercel auto-deploys to production
+
+---
+
 ## REPO INFO
 
 - **Repo**: https://github.com/yss-420/secret-share-frontend
