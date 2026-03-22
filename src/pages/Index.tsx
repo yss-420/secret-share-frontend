@@ -98,8 +98,10 @@ const Index = () => {
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5" />
         <div className="relative px-4 pt-6 pb-4">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <SecretScoreInfoButton />
+          <div className="relative flex items-center justify-center mb-4">
+            <div className="absolute left-0">
+              <SecretScoreInfoButton />
+            </div>
             {user && (
               <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20">
                 <div className="w-1.5 h-1.5 bg-primary rounded-full mr-2" />
