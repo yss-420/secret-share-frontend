@@ -8,10 +8,10 @@ import {
   DrawerDescription,
 } from "@/components/ui/drawer";
 
-const heartbeatStyle = `
-@keyframes heartbeat {
-  0%, 100% { transform: scale(0.8); opacity: 0.6; }
-  50% { transform: scale(1.15); opacity: 1; }
+const heartFillStyle = `
+@keyframes heart-fill {
+  0%, 100% { clip-path: inset(100% 0 0 0); }
+  50% { clip-path: inset(0 0 0 0); }
 }
 `;
 
@@ -20,10 +20,10 @@ export const SecretScoreInfoButton = () => {
 
   return (
     <>
-      <style>{heartbeatStyle}</style>
+      <style>{heartFillStyle}</style>
       <Drawer open={open} onOpenChange={setOpen}>
         <DrawerTrigger asChild>
-          <button className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg bg-rose-600/90 backdrop-blur-sm border border-rose-500/50 shadow-lg shadow-rose-500/25 text-white text-xs font-medium transition-all duration-300 hover:bg-rose-700 cursor-pointer">
+          <button className="inline-flex items-center gap-1 px-1.5 py-1 rounded-lg bg-rose-600/90 backdrop-blur-sm border border-rose-500/50 shadow-lg shadow-rose-500/25 text-white transition-all duration-300 hover:bg-rose-700 cursor-pointer">
             <svg
               width={14}
               height={14}
@@ -36,28 +36,40 @@ export const SecretScoreInfoButton = () => {
                 fill="white"
               />
             </svg>
-            <span>Secret Score</span>
+            <div className="flex flex-col leading-none">
+              <span className="text-[9px] font-semibold">Secret</span>
+              <span className="text-[9px] font-semibold">Score</span>
+            </div>
           </button>
         </DrawerTrigger>
         <DrawerContent>
           <DrawerHeader>
-            <DrawerTitle className="text-lg flex items-center gap-2">
+            <DrawerTitle className="text-lg flex items-center justify-center gap-2">
               <svg
                 width={22}
                 height={22}
                 viewBox="0 0 24 24"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
-                style={{ animation: "heartbeat 2s ease-in-out infinite" }}
               >
+                {/* Outline heart (always visible, faded) */}
+                <path
+                  d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                  stroke="#EF4444"
+                  strokeWidth="1.5"
+                  fill="none"
+                  opacity="0.4"
+                />
+                {/* Filled heart with fill animation */}
                 <path
                   d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
                   fill="#EF4444"
+                  style={{ animation: "heart-fill 2s ease-in-out infinite" }}
                 />
               </svg>
               Secret Score
             </DrawerTitle>
-            <DrawerDescription>How your chemistry score works</DrawerDescription>
+            <DrawerDescription className="text-center">How your chemistry score works</DrawerDescription>
           </DrawerHeader>
           <div className="px-4 pb-6 space-y-4 text-sm">
             <p className="text-muted-foreground">
