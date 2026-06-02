@@ -63,18 +63,6 @@ export const useTelegramAuth = (): TelegramAuthData => {
         const telegramInitData = WebApp.initData;
         setInitData(telegramInitData);
 
-        // BeMob tracking
-        const startParam = WebApp.initDataUnsafe?.start_param || '';
-        const cid = startParam.startsWith('cid-') ? startParam.slice(4) : null;
-        if (cid) {
-          localStorage.setItem('bemob_cid', cid);
-          try {
-            WebApp.sendData(JSON.stringify({ action: 'init', cid }));
-          } catch {
-            // Non-critical
-          }
-        }
-
         WebApp.expand();
 
         try { WebApp.setHeaderColor('#000000'); } catch { /* unsupported */ }

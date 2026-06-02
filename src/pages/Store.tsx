@@ -214,27 +214,6 @@ const Store = () => {
         // Open Telegram payment using invoice link
         window.Telegram.WebApp.openInvoice(data.invoice_url, async (status) => {
           if (status === "paid") {
-            // Fire BeMob pixel for successful gem purchase
-            const cid = localStorage.getItem('bemob_cid');
-            if (cid) {
-              const txid = (crypto?.randomUUID?.() ?? `${Date.now()}_${Math.random()}`);
-              
-              // Deduplication check using sessionStorage
-              const firedTxids = JSON.parse(sessionStorage.getItem('bemob_fired_txids') || '[]');
-              if (!firedTxids.includes(txid)) {
-                const payout = stars; // Stars amount for this purchase
-                
-                if (import.meta.env.DEV) console.log('BeMob pixel: gem purchase', { cid, txid, payout });
-                
-                // Fire conversion pixel using Image object to avoid CORS
-                new Image().src = `https://jerd8.bemobtrcks.com/conversion.gif?cid=${encodeURIComponent(cid)}&txid=${encodeURIComponent(txid)}&payout=${payout}&_=${Date.now()}`;
-                
-                // Store txid to prevent duplicates
-                firedTxids.push(txid);
-                sessionStorage.setItem('bemob_fired_txids', JSON.stringify(firedTxids));
-              }
-            }
-
             // Safe alert call
             if (typeof window.Telegram.WebApp.showAlert === 'function') {
               try {
@@ -359,29 +338,6 @@ const Store = () => {
         // Open Telegram payment using invoice link
         window.Telegram.WebApp.openInvoice(data.invoice_url, async (status) => {
           if (status === "paid") {
-            // Fire BeMob pixel for successful subscription purchase
-            const cid = localStorage.getItem('bemob_cid');
-            if (cid) {
-              const txid = (crypto?.randomUUID?.() ?? `${Date.now()}_${Math.random()}`);
-              
-              // Deduplication check using sessionStorage
-              const firedTxids = JSON.parse(sessionStorage.getItem('bemob_fired_txids') || '[]');
-              if (!firedTxids.includes(txid)) {
-                // Get subscription price in stars
-                const subscriptionPrices = { 'Essential': 300, 'Plus': 700, 'Premium': 1400 };
-                const payout = subscriptionPrices[planName as keyof typeof subscriptionPrices] || 0;
-                
-                if (import.meta.env.DEV) console.log('BeMob pixel: subscription', { cid, txid, payout, planName });
-                
-                // Fire conversion pixel using Image object to avoid CORS
-                new Image().src = `https://jerd8.bemobtrcks.com/conversion.gif?cid=${encodeURIComponent(cid)}&txid=${encodeURIComponent(txid)}&payout=${payout}&_=${Date.now()}`;
-                
-                // Store txid to prevent duplicates
-                firedTxids.push(txid);
-                sessionStorage.setItem('bemob_fired_txids', JSON.stringify(firedTxids));
-              }
-            }
-
             if (typeof window.Telegram.WebApp.showAlert === 'function') {
               try {
                 window.Telegram.WebApp.showAlert('Subscription activated! 🎉');
@@ -497,26 +453,6 @@ const Store = () => {
         // Open Telegram payment using invoice link
         window.Telegram.WebApp.openInvoice(data.invoice_url, async (status) => {
           if (status === "paid") {
-            // Fire BeMob pixel for successful intro purchase
-            const cid = localStorage.getItem('bemob_cid');
-            if (cid) {
-              const txid = (crypto?.randomUUID?.() ?? `${Date.now()}_${Math.random()}`);
-              
-              // Deduplication check using sessionStorage
-              const firedTxids = JSON.parse(sessionStorage.getItem('bemob_fired_txids') || '[]');
-              if (!firedTxids.includes(txid)) {
-                const payout = 50; // Stars amount for intro
-                
-                if (import.meta.env.DEV) console.log('BeMob pixel: intro', { cid, txid, payout });
-                
-                // Fire conversion pixel using Image object to avoid CORS
-                new Image().src = `https://jerd8.bemobtrcks.com/conversion.gif?cid=${encodeURIComponent(cid)}&txid=${encodeURIComponent(txid)}&payout=${payout}&_=${Date.now()}`;
-                
-                // Store txid to prevent duplicates
-                firedTxids.push(txid);
-                sessionStorage.setItem('bemob_fired_txids', JSON.stringify(firedTxids));
-              }
-            }
 
             // Safe alert call
             if (typeof window.Telegram.WebApp.showAlert === 'function') {
