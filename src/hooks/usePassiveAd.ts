@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { telegramAuthHeaders } from '../lib/telegramAuth';
 
 const isDev = import.meta.env.DEV;
 const log = (...args: any[]) => { if (isDev) console.log('[usePassiveAd]', ...args); };
@@ -40,7 +41,7 @@ export const usePassiveAd = (
 
         const startResponse = await fetch(`${BACKEND_URL}/api/ads/start`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: telegramAuthHeaders({ 'Content-Type': 'application/json' }),
           body: JSON.stringify({ user_id: userId, type: 'interstitial' })
         });
 
@@ -60,7 +61,7 @@ export const usePassiveAd = (
           try {
             await fetch(`${BACKEND_URL}/api/ads/complete`, {
               method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
+              headers: telegramAuthHeaders({ 'Content-Type': 'application/json' }),
               body: JSON.stringify({
                 user_id: userId,
                 type: 'interstitial',
@@ -77,7 +78,7 @@ export const usePassiveAd = (
           try {
             await fetch(`${BACKEND_URL}/api/ads/complete`, {
               method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
+              headers: telegramAuthHeaders({ 'Content-Type': 'application/json' }),
               body: JSON.stringify({
                 user_id: userId,
                 type: 'interstitial',
@@ -107,7 +108,8 @@ export const usePassiveAd = (
 
     const checkEligibility = async (userId: number) => {
       const response = await fetch(
-        `${BACKEND_URL}/api/ads/eligibility?user_id=${userId}&type=interstitial&first_session=0`
+        `${BACKEND_URL}/api/ads/eligibility?user_id=${userId}&type=interstitial&first_session=0`,
+        { headers: telegramAuthHeaders() }
       );
       if (!response.ok) throw new Error(`Eligibility check failed: ${response.status}`);
       return await response.json();
