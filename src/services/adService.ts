@@ -1,3 +1,5 @@
+import { telegramAuthHeaders } from '../lib/telegramAuth';
+
 export interface AdEligibilityResponse {
   allowed: boolean;
   next_available_at?: string;
@@ -52,7 +54,8 @@ class AdService {
         `${this.baseUrl}/api/ads/eligibility?user_id=${userId}&type=${type}&first_session=${firstSession ? 1 : 0}`,
         {
           method: 'GET',
-          // No Content-Type header on GET to avoid preflight
+          // initData header authenticates the user server-side (triggers a CORS preflight, which the backend handles)
+          headers: telegramAuthHeaders(),
         }
       );
 
@@ -71,9 +74,7 @@ class AdService {
     console.log(`[AdService] Starting ad session: user_id=${userId}, type=${type}`);
     const response = await fetch(`${this.baseUrl}/api/ads/start`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: telegramAuthHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify({
         user_id: userId,
         type,
@@ -96,9 +97,7 @@ class AdService {
     console.log(`[AdService] Completing ad session: user_id=${userId}, type=${type}, session_id=${sessionId}, completed=${completed}`);
     const response = await fetch(`${this.baseUrl}/api/ads/complete`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: telegramAuthHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify({
         user_id: userId,
         type,

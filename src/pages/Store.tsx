@@ -1,4 +1,5 @@
 
+import { telegramAuthHeaders } from "@/lib/telegramAuth";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -200,9 +201,7 @@ const Store = () => {
       // Create invoice via backend using the approved method
       const response = await fetch(`${BACKEND_URL}/api/create-invoice`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: telegramAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({
           user_id: telegramUser.id,
           package_type: packageType
@@ -341,9 +340,7 @@ const Store = () => {
       // Create invoice via backend using the new subscription endpoint
       const response = await fetch(`${BACKEND_URL}/api/create-invoice`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: telegramAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({
           user_id: telegramUser.id,
           package_type: packageType
@@ -486,9 +483,7 @@ const Store = () => {
       // Use correct endpoint and package type for intro subscription
       const response = await fetch(`${BACKEND_URL}/api/create-invoice`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: telegramAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({
           user_id: telegramUser.id,
           package_type: 'intro_3d',
