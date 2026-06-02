@@ -321,9 +321,11 @@ class AdService {
           }
         }
 
+        // Not a hard failure: if Monetag confirms later, the backend credits exactly-once via
+        // the webhook and the gem balance updates live (realtime). So tell the user the truth.
         return {
           success: false,
-          message: 'Offer timed out. If you completed it, gems will be credited shortly.'
+          message: 'Still confirming your offer — if it completed, your gems will appear automatically within a minute.'
         };
       } catch (error) {
         console.error('Big bonus ad failed:', error);
