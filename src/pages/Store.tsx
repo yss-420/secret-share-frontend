@@ -702,90 +702,90 @@ const Store = () => {
           </TabsList>
 
           <TabsContent value="subscriptions" className="space-y-4">
-            {/* Intro + Ko-fi Cards Row */}
-            <div className="flex flex-col xs:flex-row gap-4 mb-4">
-              {/* Ko-fi Support Card - First on mobile */}
-              <Card className="card-premium transition-smooth group p-4 relative flex-1 order-1 xs:order-2">
-                <div className="text-center">
-                  <div className="w-10 h-10 mx-auto mb-3 rounded-full bg-gradient-to-br from-pink-500 to-red-500 flex items-center justify-center">
-                    <Heart className="w-5 h-5 text-white" />
-                  </div>
-                  
-                  <p className="text-xs text-white font-bold leading-relaxed mb-4">
-                    Love Secret Share? Your support keeps our shared dream alive. ❤️
-                  </p>
-                  
-                  <Button 
-                    onClick={handleKofiSupport}
-                    className="flicker text-sm font-medium px-3 py-1.5 h-8 inline-flex items-center gap-1"
-                    style={{ 
-                      background: '#ff38b8', 
-                      color: 'white',
-                      border: 'none'
-                    }}
-                  >
-                    <img 
-                      src="/lovable-uploads/cda871ac-f737-430c-936f-0f6188957017.png" 
-                      alt="Ko-fi" 
-                      className="w-4 h-4"
-                    />
-                    Support Us
-                  </Button>
+            {/* Intro Offer — HERO. The proven impulse buy (the large majority of all purchases),
+                so it leads the store at full width with a best-value badge. */}
+            <Card className="card-premium transition-smooth group p-6 relative border-2 border-primary/40 mb-4">
+              <div className="absolute top-3 right-3 z-10">
+                <div className="bg-gradient-to-r from-primary to-accent px-3 py-1 rounded-full text-xs font-bold text-white shadow-sm animate-breathing">
+                  ⭐ BEST VALUE
                 </div>
-              </Card>
+              </div>
 
-              {/* Intro Card - Reduced Size - Second on mobile */}
-              <Card className="card-premium transition-smooth group p-4 relative flex-1 order-2 xs:order-1">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex items-center space-x-2">
-                    <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${introSubscription.color} flex items-center justify-center`}>
-                      <Gift className="w-5 h-5 text-white" />
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-1">
-                        <h3 className="text-base font-bold text-gradient">{introSubscription.name}</h3>
-                      </div>
-                      <div className="flex items-baseline gap-1">
-                        <span className="text-lg font-bold text-foreground whitespace-nowrap">{introSubscription.price}</span>
-                        <span className="text-sm text-muted-foreground whitespace-nowrap">{introSubscription.period}</span>
-                      </div>
-                    </div>
+              <div className="flex items-center space-x-3 mb-4">
+                <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${introSubscription.color} flex items-center justify-center`}>
+                  <Gift className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-gradient">{introSubscription.name}</h3>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-2xl font-bold text-foreground whitespace-nowrap">{introSubscription.price}</span>
+                    <span className="text-sm text-muted-foreground whitespace-nowrap">{introSubscription.period}</span>
                   </div>
                 </div>
+              </div>
 
-                <div className="space-y-1 mb-4">
-                  {introSubscription.features.map((feature, index) => {
-                    const isGems = feature.includes('Gems');
-                    const IconToUse = isGems ? Gem : Check;
-                    
-                    return (
-                      <div key={index} className="flex items-center space-x-2">
-                        <IconToUse className={`${isGems ? 'w-4 h-4' : 'w-3 h-3'} flex-shrink-0 ${isGems ? 'text-emerald-400' : 'text-primary'}`} />
-                        <span className="text-xs text-foreground">
-                          {feature.includes('**') ? (
-                            <span>{feature.split(/\*\*(.*?)\*\*/).map((part: string, i: number) =>
-                              i % 2 === 1 ? <strong key={i}>{part}</strong> : part
-                            )}</span>
-                          ) : (
-                            feature
-                          )}
-                        </span>
-                      </div>
-                    );
-                  })}
+              <div className="space-y-1.5 mb-4">
+                {introSubscription.features.map((feature, index) => {
+                  const isGems = feature.includes('Gems');
+                  const IconToUse = isGems ? Gem : Check;
+
+                  return (
+                    <div key={index} className="flex items-center space-x-2">
+                      <IconToUse className={`${isGems ? 'w-4 h-4' : 'w-3.5 h-3.5'} flex-shrink-0 ${isGems ? 'text-emerald-400' : 'text-primary'}`} />
+                      <span className="text-sm text-foreground">
+                        {feature.includes('**') ? (
+                          <span>{feature.split(/\*\*(.*?)\*\*/).map((part: string, i: number) =>
+                            i % 2 === 1 ? <strong key={i}>{part}</strong> : part
+                          )}</span>
+                        ) : (
+                          feature
+                        )}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <Button
+                variant="premium"
+                size="lg"
+                className="w-full"
+                onClick={handleIntroSubscribe}
+                disabled={loadingIntro}
+              >
+                {loadingIntro ? <LoadingSpinner size="sm" /> : "Try everything — 50⭐"}
+              </Button>
+            </Card>
+
+            {/* Ko-fi Support Card (secondary) */}
+            <Card className="card-premium transition-smooth group p-4 relative mb-4">
+              <div className="text-center">
+                <div className="w-10 h-10 mx-auto mb-3 rounded-full bg-gradient-to-br from-pink-500 to-red-500 flex items-center justify-center">
+                  <Heart className="w-5 h-5 text-white" />
                 </div>
 
-                <Button 
-                  variant="premium" 
-                  size="sm" 
-                  className="w-full"
-                  onClick={handleIntroSubscribe}
-                  disabled={loadingIntro}
+                <p className="text-xs text-white font-bold leading-relaxed mb-4">
+                  Love Secret Share? Your support keeps our shared dream alive. ❤️
+                </p>
+
+                <Button
+                  onClick={handleKofiSupport}
+                  className="flicker text-sm font-medium px-3 py-1.5 h-8 inline-flex items-center gap-1"
+                  style={{
+                    background: '#ff38b8',
+                    color: 'white',
+                    border: 'none'
+                  }}
                 >
-                  {loadingIntro ? <LoadingSpinner size="sm" /> : "Pay 50⭐"}
+                  <img
+                    src="/lovable-uploads/cda871ac-f737-430c-936f-0f6188957017.png"
+                    alt="Ko-fi"
+                    className="w-4 h-4"
+                  />
+                  Support Us
                 </Button>
-              </Card>
-            </div>
+              </div>
+            </Card>
 
             {/* Regular Subscription Plans */}
             {subscriptionPlans.map((plan) => {
