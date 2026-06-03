@@ -80,7 +80,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const fetchViaGetUserStatus = async (tgUser: any) => {
     const { data: statusData, error: statusError } = await supabase.functions.invoke('get-user-status', {
-      body: { telegram_id: tgUser.id }
+      body: { telegram_id: tgUser.id, initData: (window as any)?.Telegram?.WebApp?.initData || '' }
     });
     if (!statusError && statusData) {
       setUser({
@@ -104,7 +104,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (lastClaim === today) return;
 
       const { data, error } = await supabase.functions.invoke('claim-daily-reward', {
-        body: { telegram_id: telegramId }
+        body: { telegram_id: telegramId, initData: (window as any)?.Telegram?.WebApp?.initData || '' }
       });
 
       if (!error && data?.awarded) {

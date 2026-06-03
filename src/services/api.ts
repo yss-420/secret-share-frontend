@@ -28,7 +28,7 @@ class ApiService {
   async getUserStatus(telegramId: number): Promise<Pick<UserStats, 'gems' | 'messages_today' | 'subscription_type'> | null> {
     try {
       const { data, error } = await supabase.functions.invoke('get-user-status', {
-        body: { telegram_id: telegramId }
+        body: { telegram_id: telegramId, initData: (window as any)?.Telegram?.WebApp?.initData || '' }
       });
 
       if (error) {
@@ -134,7 +134,7 @@ class ApiService {
 
       // Call the claim-daily-reward edge function
       const { data, error } = await supabase.functions.invoke('claim-daily-reward', {
-        body: { telegram_id: telegramId }
+        body: { telegram_id: telegramId, initData: (window as any)?.Telegram?.WebApp?.initData || '' }
       });
 
       if (error) throw error;

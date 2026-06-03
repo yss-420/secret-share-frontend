@@ -1,19 +1,23 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0'
-import { corsHeaders } from '../_shared/cors.ts'
+import { verifyTelegramInitData, corsHeadersFor } from '../_shared/telegram-auth.ts'
 
 serve(async (req) => {
+  const corsHeaders = corsHeadersFor(req.headers.get('Origin'))
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
   }
 
   try {
-    const { telegram_id } = await req.json()
-
+    const body = await req.json()
+    // Authenticate via signed Telegram initData; derive the user id from it. This MUTATES (grants
+    // daily gems) — previously callable for ANY telegram_id with no auth.
+    const botToken = Deno.env.get('TELEGRAM_BOT_TOKEN') ?? ''
+    const telegram_id = await verifyTelegramInitData(body?.initData ?? '', botToken)
     if (!telegram_id) {
       return new Response(
-        JSON.stringify({ error: 'telegram_id is required' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        JSON.stringify({ error: 'unauthorized' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
 
@@ -22,7 +26,6 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    // Call the existing process_daily_return_bonus RPC
     const { data, error } = await supabaseClient.rpc('process_daily_return_bonus', {
       p_user_id: telegram_id
     })
@@ -35,7 +38,6 @@ serve(async (req) => {
       )
     }
 
-    // RPC returns dict with: awarded, amount, reward_type, streak, day_in_cycle
     const result = Array.isArray(data) ? data[0] : data
 
     return new Response(
