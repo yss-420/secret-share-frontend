@@ -116,7 +116,7 @@ class AdService {
   async getAdStatus(sessionId: string): Promise<AdStatusResponse> {
     const response = await fetch(`${this.baseUrl}/api/ads/status?session_id=${sessionId}`, {
       method: 'GET',
-      // No Content-Type header on GET to avoid preflight
+      headers: telegramAuthHeaders(), // initData auth (backend requires it)
     });
 
     if (!response.ok) {

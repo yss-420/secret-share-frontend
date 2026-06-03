@@ -1,23 +1,22 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+import { verifyTelegramInitData, corsHeadersFor } from '../_shared/telegram-auth.ts'
 
 serve(async (req) => {
+  const corsHeaders = corsHeadersFor(req.headers.get('Origin'))
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
 
   try {
-    const { telegram_id } = await req.json()
-    
+    const body = await req.json()
+    // Authenticate via signed Telegram initData; derive the user id (never trust a client id).
+    const botToken = Deno.env.get('TELEGRAM_BOT_TOKEN') ?? ''
+    const telegram_id = await verifyTelegramInitData(body?.initData ?? '', botToken)
     if (!telegram_id) {
       return new Response(
-        JSON.stringify({ error: 'telegram_id required' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        JSON.stringify({ error: 'unauthorized' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
 
@@ -40,24 +39,21 @@ serve(async (req) => {
       )
     }
 
-    // Constants
     const RATING_GEM_COST = 150
     const ARENA_GEM_COST = 200
 
-    // Rating Status
     const ratingStatus = {
       cost: RATING_GEM_COST,
       free: !user.first_rating_used,
       canAfford: user.gems >= RATING_GEM_COST,
       gems: user.gems,
-      message: !user.first_rating_used 
+      message: !user.first_rating_used
         ? '🎁 First rating FREE!'
         : user.gems >= RATING_GEM_COST
         ? `${RATING_GEM_COST} gems`
         : `Need ${RATING_GEM_COST} gems (you have ${user.gems})`
     }
 
-    // Arena Status  
     const freeBattlesRemaining = Math.max(0, 3 - (user.free_arena_battles_used || 0))
     const arenaStatus = {
       cost: ARENA_GEM_COST,
@@ -85,7 +81,7 @@ serve(async (req) => {
   } catch (error) {
     console.error('Edge function error:', error)
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: (error as Error).message }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   }
