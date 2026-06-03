@@ -51,7 +51,7 @@ const Showdown = () => {
     try {
       setRefreshing(true);
       const { data, error } = await supabase.functions.invoke('get-showdown-status', {
-        body: { telegram_id: telegramUser.id }
+        body: { telegram_id: telegramUser.id, initData: (window as any)?.Telegram?.WebApp?.initData || '' }
       });
 
       if (error) throw error;
