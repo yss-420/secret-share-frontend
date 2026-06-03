@@ -48,7 +48,7 @@ async function fetchHeaderStats() {
   }
 
   const { data, error } = await supabase.functions.invoke('get-user-status', {
-    body: { telegram_id }
+    body: { telegram_id, initData: (window as any)?.Telegram?.WebApp?.initData || '' }
   });
 
   if (error) {
